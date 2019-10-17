@@ -19,7 +19,7 @@ const enhancer = composeEnhancers(
 
 // Redux
 const store = createStore(
-  (reducers) => [],
+  reducers,
   enhancer
 );
 
