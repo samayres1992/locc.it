@@ -6,11 +6,11 @@ import { Layout } from 'antd';
 
 // Templating
 import HeaderTemplate from './HeaderTemplate';
+import LandingTemplate from './LandingTemplate';
 
 const Footer = () => <h2>Footer</h2>;
 const Dashboard = () => <h2>Dashboard</h2>;
 const NewPass = () => <h2>NewPass</h2>;
-const Landing = () => <h2>Landing</h2>;
 
 const mapStateToProps = (state) => {
   const { auth } = state;
@@ -30,7 +30,7 @@ class App extends Component {
         <BrowserRouter>
           <div>
             <HeaderTemplate />
-              <Route exact path="/" component={Landing} />
+              <Route exact path="/" component={LandingTemplate} />
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/newpass" component={NewPass} />
             <Footer />
@@ -41,4 +41,4 @@ class App extends Component {
   }
 }
 
-export default connect(null, actions)(App);
+export default connect(mapStateToProps, actions)(App);
