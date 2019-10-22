@@ -1,4 +1,66 @@
-.logo {
-  height: 50px;
-  width: 50px;
+body {
+  background: #fd746c;
+/* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #ff9068, #fd746c);
+/* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #ff9068, #fd746c);
+/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  color: #fff;
+  font-size: 1.2em;
+}
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+header .logo {
+  width: 100px;
+}
+header .ant-menu {
+  position: relative;
+  top: 25px;
+}
+header .ant-menu-horizontal > .ant-menu-item > a,
+header .ant-menu-item {
+  color: #fff;
+  font-size: 1.2em;
+}
+.content {
+  padding: 3em 0;
+}
+.content:focus {
+  outline: none;
+}
+.content label {
+  color: #fff;
+}
+.content input[type="text"],
+.content input[type="password"],
+.content textarea {
+  font: 15px/24px "Lato", Arial, sans-serif;
+  color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  letter-spacing: 1px;
+  border-radius: 3px;
+  padding: 1em;
+  outline: 0;
+}
+.content textarea {
+  min-width: 100%;
+  max-width: 100%;
+  min-height: 200px;
+  max-height: 500px;
+}
+.content .input-effect {
+  position: relative;
+  margin: 0 0 30px;
+}
+footer {
+  height: 100px;
+  border-top: 2px solid #fff;
+  text-align: center;
+  padding: 35px;
+}
+footer .anticon-heart {
+  color: #f00;
 }

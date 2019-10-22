@@ -1,0 +1,15 @@
+.ant-layout,
+.ant-layout-header,
+.ant-menu {
+  background: transparent;
+}
+.ant-layout-header {
+  height: 100px;
+  border-bottom: 2px solid #fff;
+}
+.ant-menu-horizontal,
+.ant-menu-horizontal > .ant-menu-item-selected,
+.ant-menu-horizontal > .ant-menu-item:hover,
+.ant-menu-horizontal > .ant-menu-item {
+  border-bottom: 0;
+}
