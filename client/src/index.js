@@ -4,7 +4,9 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import reduxThunk from 'redux-thunk';
 import 'antd/dist/antd.css'; // https://ant.design/docs/react/introduce
+import './css/overrides.css';
 import './css/app.css';
+import './css/fancy-form.css';
 
 // Our app
 import App from './components/App';

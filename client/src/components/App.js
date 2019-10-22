@@ -7,9 +7,10 @@ import { Layout } from 'antd';
 // Templating
 import HeaderTemplate from './HeaderTemplate';
 import LandingTemplate from './LandingTemplate';
+import DashboardTemplate from './DashboardTemplate';
+import FaqTemplate from './FaqTemplate';
+import FooterTemplate from './FooterTemplate';
 
-const Footer = () => <h2>Footer</h2>;
-const Dashboard = () => <h2>Dashboard</h2>;
 const NewPass = () => <h2>NewPass</h2>;
 
 const mapStateToProps = (state) => {
@@ -30,10 +31,13 @@ class App extends Component {
         <BrowserRouter>
           <div>
             <HeaderTemplate />
+            <div className="content">
               <Route exact path="/" component={LandingTemplate} />
-              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/dashboard" component={DashboardTemplate} />
+              <Route path="/faq" component={FaqTemplate} />
               <Route path="/newpass" component={NewPass} />
-            <Footer />
+            </div>
+            <FooterTemplate />
           </div>
         </BrowserRouter>
       </Layout>

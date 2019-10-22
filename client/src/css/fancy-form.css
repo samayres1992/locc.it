@@ -1,0 +1,146 @@
+.fancy-input {
+  border: 1px solid rgba(255,255,255,0.5);
+  padding: 14px;
+  transition: 0.4s;
+  background: transparent;
+}
+.fancy-input ~ .focus-border:before,
+.fancy-input ~ .focus-border:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #fff;
+  transition: 0.3s;
+}
+.fancy-input ~ .focus-border:after {
+  top: auto;
+  bottom: 0;
+  left: auto;
+  right: 0;
+}
+.fancy-input ~ .focus-border i:before,
+.fancy-input ~ .focus-border i:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 0;
+  background-color: #fff;
+  transition: 0.4s;
+}
+.fancy-input ~ .focus-border i:after {
+  left: auto;
+  right: 0;
+  top: auto;
+  bottom: 0;
+}
+.fancy-input:focus ~ .focus-border:before,
+.fancy-input:focus ~ .focus-border:after,
+.has-content.fancy-input ~ .focus-border:before,
+.has-content.fancy-input ~ .focus-border:after {
+  width: 100%;
+  transition: 0.3s;
+}
+.fancy-input:focus ~ .focus-border i:before,
+.fancy-input:focus ~ .focus-border i:after,
+.has-content.fancy-input ~ .focus-border i:before,
+.has-content.fancy-input ~ .focus-border i:after {
+  height: 100%;
+  transition: 0.4s;
+}
+.fancy-input ~ label {
+  position: absolute;
+  left: 14px;
+  width: 100%;
+  top: 0.75em;
+  color: #fff;
+  transition: 0.3s;
+  z-index: -1;
+  letter-spacing: 0.5px;
+}
+.fancy-input:focus ~ label,
+.has-content.fancy-input ~ label {
+  top: -18px;
+  left: 0;
+  font-size: 12px;
+  color: #fff;
+  transition: 0.3s;
+}
+button.button {
+  display: inline-block;
+  position: relative;
+  background: rgba(255,255,255,0.25);
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  width: 50%;
+  left: 50%;
+  padding: 15px;
+  border-radius: 3px;
+}
+button.button span {
+  display: block;
+}
+button.button::before,
+button.button::after {
+  content: "";
+  width: 0;
+  height: 2px;
+  position: absolute;
+  transition: all 0.2s linear;
+  background: #fff;
+}
+button.button span::before,
+button.button span::after {
+  content: "";
+  width: 2px;
+  height: 0;
+  position: absolute;
+  transition: all 0.2s linear;
+  background: #fff;
+}
+button.button:hover::before,
+button.button:hover::after {
+  width: 100%;
+}
+button.button:hover span::before,
+button.button:hover span::after {
+  height: 100%;
+}
+.button::before,
+.button::after {
+  transition-delay: 0s;
+}
+.button span::before,
+.button span::after {
+  transition-delay: 0.2s;
+}
+.button::before {
+  right: 0;
+  top: 0;
+}
+.button::after {
+  left: 0;
+  bottom: 0;
+}
+.button span::before {
+  left: 0;
+  top: 0;
+}
+.button span::after {
+  right: 0;
+  bottom: 0;
+}
+.button:hover::before,
+.button:hover::after {
+  transition-delay: 0.2s;
+}
+.button:hover span::before,
+.button:hover span::after {
+  transition-delay: 0s;
+}
