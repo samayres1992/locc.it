@@ -1,51 +1,59 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import classNames from 'classnames';
+import EncryptDetails, { encrypt } from './Encrypt';
 
-import Encrypt from './Encrypt';
+class LandingTemplate extends EncryptDetails {
 
-const inputRender = (field)  => (
-  <input {...field.input} name={field.name} className={classNames({"has-content": field.meta.dirty, "fancy-input": !field.dirty})} type={field.type} placeholder="" type="text" required />
-);
+  inputRender = (field) => (
+    <input {...field.input} name={field.name} className={classNames({"has-content": field.meta.dirty, "fancy-input": !field.dirty})} type={field.type} placeholder="" type="text" required />
+  );
 
-const textareaRender = (field)  => (
-  <textarea {...field.input} name={field.name} className={classNames({"has-content": field.meta.dirty, "fancy-input": !field.dirty})} type={field.type} placeholder="" type="text" required />
-);
+  textareaRender = (field) => (
+    <textarea {...field.input} name={field.name} className={classNames({"has-content": field.meta.dirty, "fancy-input": !field.dirty})} type={field.type} placeholder="" type="text" required />
+  );
 
-const LandingTemplate = (props, { handleSubmit }) => {
-	const { label } = props
-	return(
-		<form onSubmit={handleSubmit}>
-			<div className="input-effect">
-				<Field name="emailUsername" component={inputRender} type="text" />
-		  		<label>Email/Username</label>
-		  		<span className="focus-border">
-		    		<i></i>
-		  		</span>
-			</div>
-			<div className="input-effect">
-				<Field name="password" component={inputRender} type="password" />
-			  	<label>Password</label>
-			  	<span className="focus-border">
-			    	<i></i>
-			  	</span>
-			</div>
-			<div className="input-effect">
-				<Field name="note" component={textareaRender} type="textarea" placeholder="" />
-			  	<label>Note</label>
-			  	<span className="focus-border">
-			    	<i></i>
-			  	</span>
-			</div>
-			<button className="submit button fancy-button" disabled={props.pristine || props.submitting}>
-				Encrypt
-				<span className="focus-border">
-			  	<i></i>
-				</span>
-			</button>
-		</form>
-	);
+  handleSubmit = (e) => {
+		e.preventDefault();
+		this.encrypt();
+		console.log('field', this.props.field);
+  }
+  
+  render() {
+    const { label, pristine, submitting } = this.props;
+    
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <div className="input-effect">
+          <Field name="emailUsername" component={this.inputRender} type="text" />
+            <label>Email/Username</label>
+            <span className="focus-border">
+              <i></i>
+            </span>
+        </div>
+        <div className="input-effect">
+          <Field name="password" component={this.inputRender} type="password" />
+            <label>Password</label>
+            <span className="focus-border">
+              <i></i>
+            </span>
+        </div>
+        <div className="input-effect">
+          <Field name="note" component={this.textareaRender} type="textarea" placeholder="Add a note if you like" />
+            <label>Note</label>
+            <span className="focus-border">
+              <i></i>
+            </span>
+        </div>
+        <button className="submit button fancy-button" disabled={pristine || submitting}>
+          Encrypt
+          <span className="focus-border">
+            <i></i>
+          </span>
+        </button>
+      </form>
+    );
+  }
 }
 
 export default reduxForm({
