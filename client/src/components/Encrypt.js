@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { Component } from 'react';
+import { formValueSelector } from 'redux-form';
 import Crypto from 'crypto';
 
-class EncryptDetails extends React.Component {
+class EncryptDetails extends Component {
 	// Generate the decryption key for user
-	codeGen(len, charSet) {
+	codeGen (len, charSet) {
 	    charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 	    var randomString = '';
 	    for (var i = 0; i < len; i++) {
@@ -13,22 +14,25 @@ class EncryptDetails extends React.Component {
 	    return randomString;
 	}
 
-	encrypt (values) {
+	encrypt () {
+		const form = formValueSelector('form');
+		const values = form('emailUsername', 'password', 'node');
 		const key = this.codeGen(5);
 		// Let's take the value and encrypt it with 
 		const cipher = Crypto.createCipher('aes-256-cbc', key);
-
+		console.log('form', form.state);
+		console.log('values', values);
 		// Encrypt the details using our new cipher
 		cipher.update(values, 'utf8', 'base64');
 
 		// remove this before prod
 		var encryptedPassword = cipher.final('base64');
-		console.log(encryptedPassword);
-		console.log(key);
+		console.log('encryptedPassword', encryptedPassword);
+		console.log('key', key);
+		
 
 		return key;
 	}
 }
-
 
 export default EncryptDetails;

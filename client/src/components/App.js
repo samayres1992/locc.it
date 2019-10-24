@@ -11,8 +11,6 @@ import DashboardTemplate from './DashboardTemplate';
 import FaqTemplate from './FaqTemplate';
 import FooterTemplate from './FooterTemplate';
 
-const NewPass = () => <h2>NewPass</h2>;
-
 const mapStateToProps = (state) => {
   const { auth } = state;
 
@@ -35,7 +33,6 @@ class App extends Component {
               <Route exact path="/" component={LandingTemplate} />
               <Route path="/dashboard" component={DashboardTemplate} />
               <Route path="/faq" component={FaqTemplate} />
-              <Route path="/newpass" component={NewPass} />
             </div>
             <FooterTemplate />
           </div>
