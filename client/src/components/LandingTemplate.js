@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import classNames from 'classnames';
-import { encrypt } from './Encrypt';
+import * as actions from '../actions';
 
 class LandingTemplate extends Component {
-
   inputRender = (field) => (
     <input {...field.input} name={field.name} className={classNames({"has-content": field.meta.dirty, "fancy-input": !field.dirty})} type={field.type} placeholder="" type="text" required />
   );
@@ -15,9 +14,7 @@ class LandingTemplate extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    console.log("this.props.encrypt", this.props.encrypt);
-		// this.props.encrypt();
-		console.log('field', this.props.field);
+    console.log("this.props.encrypt", this.props.encrypt());
   }
   
   render() {

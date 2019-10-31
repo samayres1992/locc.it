@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import * as actions from '../actions';
 import { formValueSelector } from 'redux-form';
 import Crypto from 'crypto';
 
-class EncryptDetails extends Component {
+class Encrypt extends Component {
 	
 	// Generate the decryption key for user
 	codeGen (len, charSet) {
@@ -32,7 +33,11 @@ class EncryptDetails extends Component {
 		console.log('encryptedPassword', encryptedPassword);
 		console.log('key', key);
 	
-		this.setState()
+		this.setState({
+			'encrypt': key
+		});
+
+		console.log('stateEncrypt', this.state.encrypt);
 	}
 }
 
@@ -42,4 +47,4 @@ function mapStateToProps({ key }) {
 	};
 }
 
-export default connect(mapStateToProps)(EncryptDetails);
+export default connect(mapStateToProps, actions)(Encrypt);
