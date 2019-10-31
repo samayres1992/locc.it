@@ -11,7 +11,7 @@ export const handleStripeToken = (token) => async dispatch => {
   dispatch({ type: FETCH_USER, payload: res.data });
 }
 
-export const codeGen = (code) => async dispatch => {
+export const encrypt = () => async dispatch => {
   const code = 'test';
   dispatch({ type: ENCRYPT, payload: code });
 }
