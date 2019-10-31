@@ -57,8 +57,8 @@ class LandingTemplate extends Component {
 
 function mapStateToProps({ key }) {
   return {
-		encrypt: key || null
-	};
+    encrypt: key || null
+  };
 }
 
 export default reduxForm({
