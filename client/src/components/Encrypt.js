@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import Crypto from 'crypto';
 
 class EncryptDetails extends Component {
+	
 	// Generate the decryption key for user
 	codeGen (len, charSet) {
 	    charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -29,10 +31,15 @@ class EncryptDetails extends Component {
 		var encryptedPassword = cipher.final('base64');
 		console.log('encryptedPassword', encryptedPassword);
 		console.log('key', key);
-		
-
-		return key;
+	
+		this.setState()
 	}
 }
 
-export default EncryptDetails;
+function mapStateToProps({ key }) {
+  return {
+		encrypt: key || null
+	};
+}
+
+export default connect(mapStateToProps)(EncryptDetails);

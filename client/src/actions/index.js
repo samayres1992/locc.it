@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { FETCH_USER, CODE_GEN } from './types';
+import { FETCH_USER, ENCRYPT } from './types';
 
 export const fetchUser = () => async dispatch => {
   const res = await axios.get('/api/current_user');
@@ -12,5 +12,6 @@ export const handleStripeToken = (token) => async dispatch => {
 }
 
 export const codeGen = (code) => async dispatch => {
-  dispatch({ type: CODE_GEN, payload: code });
+  const code = 'test';
+  dispatch({ type: ENCRYPT, payload: code });
 }
