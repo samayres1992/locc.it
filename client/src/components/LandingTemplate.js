@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import classNames from 'classnames';
 import * as actions from '../actions';
@@ -16,10 +17,10 @@ class LandingTemplate extends Component {
     e.preventDefault();
     console.log("this.props.encrypt", this.props.encrypt());
   }
-  
+
   render() {
     const { label, pristine, submitting } = this.props;
-    
+
     return (
       <form onSubmit={this.handleSubmit}>
         <div className="input-effect">
@@ -54,7 +55,13 @@ class LandingTemplate extends Component {
   }
 }
 
+function mapStateToProps({ key }) {
+  return {
+		encrypt: key || null
+	};
+}
+
 export default reduxForm({
   form: 'form', // a unique identifier for this form
   fields: ['emailUsername', 'password', 'note'],
-})(LandingTemplate)
+})(connect(mapStateToProps, actions)(LandingTemplate))
