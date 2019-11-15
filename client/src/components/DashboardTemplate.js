@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Encrypt from './Encrypt';
 import { Row, Col } from 'antd';
 
 class DashboardTemplate extends Component {

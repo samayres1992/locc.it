@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 // Our secret keys
 const keys = require('./config/keys');
 require('./models/User');
-require('./models/Password');
+require('./models/Encrypt');
 require('./services/passport');
 
 // Let's connect to our DB
@@ -34,7 +34,7 @@ app.use(passport.session());
 // Get our routes
 require('./routes/authRoutes')(app);
 require('./routes/paymentRoutes')(app);
-require('./routes/passwordRoutes')(app);
+require('./routes/encryptRoutes')(app);
 
 // Production
 if(process.env.NODE_ENV === 'production') {
