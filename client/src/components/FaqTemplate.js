@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Collapse } from 'antd';
 
 const { Panel } = Collapse;
 
-class FaqTemplate extends React.Component {
+class FaqTemplate extends Component {
   render() {
     return (
       <Collapse bordered={false} defaultActiveKey={['1']}>

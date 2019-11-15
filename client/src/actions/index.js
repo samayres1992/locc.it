@@ -11,7 +11,7 @@ export const handleStripeToken = (token) => async dispatch => {
   dispatch({ type: FETCH_USER, payload: res.data });
 }
 
-export const encrypt = () => async dispatch => {
-  const code = 'test';
-  dispatch({ type: ENCRYPT, payload: code });
+export const encrypt = (data) => async dispatch => {
+  const res = await axios.post('/api/encrypt', data);
+  dispatch({ type: ENCRYPT, payload: res.data });
 }

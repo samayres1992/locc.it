@@ -23,21 +23,15 @@ class Encrypt extends Component {
 		const key = this.codeGen(5);
 		// Let's take the value and encrypt it with 
 		const cipher = Crypto.createCipher('aes-256-cbc', key);
-		console.log('form', form.state);
-		console.log('values', values);
 		// Encrypt the details using our new cipher
 		cipher.update(values, 'utf8', 'base64');
-
 		// remove this before prod
-		var encryptedPassword = cipher.final('base64');
-		console.log('encryptedPassword', encryptedPassword);
-		console.log('key', key);
+		let encryptedPassword = cipher.final('base64');
 	
 		this.setState({
-			'encrypt': key
+			'encrypted': encryptedPassword,
+			'key': key
 		});
-
-		console.log('stateEncrypt', this.state.encrypt);
 	}
 }
 

@@ -9,7 +9,7 @@ import './css/app.css';
 import './css/fancy-form.css';
 
 // Our app
-import App from './components/App';
+import App from './App';
 
 // Reducers
 import reducers from './reducers';

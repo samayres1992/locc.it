@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
-import * as actions from '../actions';
+import * as actions from './actions';
 import { Layout } from 'antd';
 
 // Templating
-import HeaderTemplate from './HeaderTemplate';
-import LandingTemplate from './LandingTemplate';
-import DashboardTemplate from './DashboardTemplate';
-import FaqTemplate from './FaqTemplate';
-import FooterTemplate from './FooterTemplate';
+import HeaderTemplate from './components/HeaderTemplate';
+import LandingTemplate from './components/LandingTemplate';
+import DashboardTemplate from './components/DashboardTemplate';
+import FaqTemplate from './components/FaqTemplate';
+import FooterTemplate from './components/FooterTemplate';
 
 const mapStateToProps = (state) => {
   const { auth } = state;
-
   return { auth };
 };
 
