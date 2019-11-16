@@ -10,4 +10,4 @@ const encryptSchema = new Schema({
   active: { type: Boolean, default: true }
 });
 
-mongoose.model('encrypted', encryptSchema);
+mongoose.model('locks', encryptSchema);

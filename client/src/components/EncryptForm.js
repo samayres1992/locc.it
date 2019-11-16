@@ -21,6 +21,7 @@ class EncryptForm extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     let passcode = this.props.encrypt();
+    console.log('key', passcode);
     this.setState({
       key: passcode
     });
