@@ -11,7 +11,10 @@ require('./models/Encrypt');
 require('./services/passport');
 
 // Let's connect to our DB
-mongoose.connect(keys.mongoURI);
+mongoose.connect(keys.mongoURI, { 
+  useNewUrlParser: true,
+  useUnifiedTopology: true 
+});
 
 // Init express
 const app = express();
