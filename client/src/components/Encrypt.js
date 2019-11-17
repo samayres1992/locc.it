@@ -17,19 +17,16 @@ class Encrypt extends Component {
 	    return randomString;
 	}
 
-	encrypt () {
-		const form = formValueSelector('form');
-		const values = form('emailUsername', 'password', 'node');
+	encrypt (data) {
 		const key = this.codeGen(5);
 		// Let's take the value and encrypt it with 
 		const cipher = Crypto.createCipher('aes-256-cbc', key);
 		// Encrypt the details using our new cipher
-		cipher.update(values, 'utf8', 'base64');
+		cipher.update(data, 'utf8', 'base64');
 		// remove this before prod
 		let encryptedPassword = cipher.final('base64');
 	
 		this.setState({
-			'encrypted': encryptedPassword,
 			'key': key
 		});
 	}
@@ -37,7 +34,7 @@ class Encrypt extends Component {
 
 function mapStateToProps({ key }) {
   return {
-		encrypt: key || null
+		key: key
 	};
 }
 
