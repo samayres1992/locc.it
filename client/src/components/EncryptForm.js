@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { Form, Field } from 'react-final-form';
 import classNames from 'classnames';
 import * as actions from '../actions';
+import CryptoJS from 'crypto-js';
+// import Encrypt from './Encrypt';
 
 class EncryptForm extends Component {
 
@@ -18,28 +20,50 @@ class EncryptForm extends Component {
     <textarea {...field.input} name={field.name} className={classNames({"has-content": field.meta.dirty, "fancy-input": !field.dirty})} type={field.type} placeholder="" type="text" required />
   );
 
-  // onSubmit = (values) => {
-  //   alert(JSON.stringify(values));
-    // e.preventDefault();
-    // const formValues = formValueSelector('encryptForm');
-    // let valuesToEncrypt = formValues(this.state, 'emailUsername', 'password', 'note');
-    // // console.log('this.state.form', this.state.form);
-    // let passcode = this.props.encrypt(valuesToEncrypt);
-    // console.log('key', passcode);
-    // this.setState({
-    //   key: passcode
-    // });
-  // }
-
-
   onSubmit = values => {
-    let passcode = this.props.encrypt(values);
-    console.log(values);
-    console.log('key', passcode);
-    this.setState({
-      key: passcode
-    });
+    console.log('values', values);
+    let key = this.encrypt(values);
+
   }
+
+  // Generate the decryption key for user
+	codeGen (len, charSet) {
+	    charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	    var randomString = '';
+	    for (var i = 0; i < len; i++) {
+	        var randomPoz = Math.floor(Math.random() * charSet.length);
+	        randomString += charSet.substring(randomPoz,randomPoz+1);
+	    }
+	    return randomString;
+	}
+
+	encrypt (data) {
+    // Generate a key for the user to use for decryption
+    // This should never be passed to the server
+    const key = this.codeGen(5);
+    // Deconstruct the data we wish to encrypt
+    const { emailUsername, password, note } = data;
+    
+    // Let's take the value and encrypt it with 
+    var ciphertext = CryptoJS.AES.encrypt(JSON.stringify(data), 'secret key 123');
+    const encryptedData = CryptoJS.AES.encrypt(JSON.stringify({ 
+      emailUsername: emailUsername, 
+      password: password, 
+      note: note
+    }), key);
+
+    // Pass over the data to the action
+    this.props.encrypt({ 
+      title: data.title, 
+      encryptedData: encryptedData
+    });
+	
+		this.setState({
+			'title': data.title,
+			'encryptedData': encryptedData,
+			'key': key
+    });
+	}
 
   render() {
     const { pristine, submitting} = this.props;
@@ -89,17 +113,6 @@ class EncryptForm extends Component {
     );
   }
 }
-
-// const onSubmit = values => {
-//   // console.log('this.state.form', this.state.form);
-//   // let passcode = this.props.encrypt(values);
-//   // console.log(values);
-//   // console.log('key', passcode);
-//   // this.setState({
-//   //   key: passcode
-//   // });
-//   alert(JSON.stringify(1, values));
-// }
 
 function mapStateToProps({ key }) {
   return {
