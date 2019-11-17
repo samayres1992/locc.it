@@ -5,7 +5,7 @@ export default function (state = null, action) {
     case ENCRYPT:
       return {
         ...state,
-        encrypt: action.payload
+        key: action.payload
       };
     default:
       return state;
