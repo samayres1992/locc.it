@@ -8,7 +8,7 @@ export default function (state = null, action) {
         ...state,
         title: action.payload.title,
         encryptedData: action.payload,
-        key: action.payload
+        url: action.payload
       };
     default:
       return state;
