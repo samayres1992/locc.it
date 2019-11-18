@@ -7,6 +7,7 @@ const encryptSchema = new Schema({
   // encrypted: { type: Object, required: [true, 'Sensitive data must be provided.'] },
   title: String,
   encryptedData: Object,
+  url: String,
   expiry: Date,
   used: { type: Boolean, default: false },
   active: { type: Boolean, default: true }

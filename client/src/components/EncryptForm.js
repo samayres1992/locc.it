@@ -21,31 +21,38 @@ class EncryptForm extends Component {
   );
 
   onSubmit = values => {
-    console.log('values', values);
-    let key = this.encrypt(values);
-
+    this.encryptData(values);
   }
 
   // Generate the decryption key for user
-	codeGen (len, charSet) {
-	    charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	    var randomString = '';
-	    for (var i = 0; i < len; i++) {
-	        var randomPoz = Math.floor(Math.random() * charSet.length);
-	        randomString += charSet.substring(randomPoz,randomPoz+1);
-	    }
+	stringGenerator (len, charSet) {
+      if (charSet === 'alphabet') {
+        // For URL string
+        charSet = 'abcdefghijklmnopqrstuvwxyz';
+      }
+      else {
+        // AlphaNumeric - for passcode
+        charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      }
+
+      let randomString = '';
+      for (let i = 0; i < len; i++) {
+          let randomPoz = Math.floor(Math.random() * charSet.length);
+          randomString += charSet.substring(randomPoz,randomPoz+1);
+      }
+      
 	    return randomString;
 	}
 
-	encrypt (data) {
+	encryptData (data) {
+    // Deconstruct the data we wish to encrypt
+    const { title, emailUsername, password, note } = data;
     // Generate a key for the user to use for decryption
     // This should never be passed to the server
-    const key = this.codeGen(5);
-    // Deconstruct the data we wish to encrypt
-    const { emailUsername, password, note } = data;
-    
+    const key = this.stringGenerator(5);
+    const url = this.stringGenerator(10, 'alphabet');
+
     // Let's take the value and encrypt it with 
-    var ciphertext = CryptoJS.AES.encrypt(JSON.stringify(data), 'secret key 123');
     const encryptedData = CryptoJS.AES.encrypt(JSON.stringify({ 
       emailUsername: emailUsername, 
       password: password, 
@@ -54,14 +61,16 @@ class EncryptForm extends Component {
 
     // Pass over the data to the action
     this.props.encrypt({ 
-      title: data.title, 
-      encryptedData: encryptedData
+      title: title, 
+      encryptedData: encryptedData,
+      url: url
     });
 	
 		this.setState({
-			'title': data.title,
+			'title': title,
 			'encryptedData': encryptedData,
-			'key': key
+      'key': key,
+      'url': url
     });
 	}
 

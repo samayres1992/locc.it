@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { parse, stringify } from 'flatted/esm';
+import { stringify } from 'flatted/esm';
 import { FETCH_USER, ENCRYPT } from './types';
 
 export const fetchUser = () => async dispatch => {
@@ -13,12 +13,14 @@ export const handleStripeToken = (token) => async dispatch => {
 }
 
 export const encrypt = (data) => async dispatch => {
+  const { title, encryptedData, url } = data;
   const res = await axios({
     method: 'post',
     url: '/api/encrypt',
     data: {
-      title: stringify(data.title),
-      encryptedData: stringify(data.encryptedData)
+      title: title,
+      encryptedData: stringify(encryptedData),
+      url: url
     }
   });
   dispatch({ type: ENCRYPT, payload: res.data });
