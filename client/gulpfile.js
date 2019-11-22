@@ -8,6 +8,7 @@ gulp.task('css', function () {
     return gulp.src([
       './resources/stylus/app.styl',
       './resources/stylus/fancy-form.styl',
+      './resources/stylus/passcode.styl',
       './resources/stylus/overrides.styl'
     ])
     .pipe(stylus())

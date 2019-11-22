@@ -1,39 +1,31 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
+import { Layout } from 'antd';
 import EncryptForm from './EncryptForm';
+import Passcode from './Passcode';
+
+const { Content } = Layout;
+
+const mapStateToProps = (state) => {
+  return {
+    state,
+    ...state
+  };
+}
 
 class LandingTemplate extends Component {
 
-  constructor(props) {
-    super();
-    this.state = {
-      passcode: null
-    };
-  }
-
-  componentDidUpdate(prevState, prevProps) {
-    if (prevState.passcode !== prevProps.passcode) {
-      this.setState({
-        passcode: this.props.passcode
-      });
-    }
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return (nextState.passcode !== this.state.passcode);
-  }
-
   render() {
-    const { passcode } = this.state;
-    const Display = passcode ? passcode : EncryptForm;
-
+    const { encryptForm } = this.props;
+    const landing = <Fragment><h1>Be Safe.</h1><h2>Encrypt your credentials before sharing them online.</h2></Fragment>;
     return (
-      <div>
-        <Display />
-      </div>
+      <Content style={{ padding: '0 50px' }}>
+        { encryptForm ? 
+          <Passcode passcode={encryptForm.passcode } url={encryptForm.url} /> :  <div className="landing">{landing} <EncryptForm /></div> }
+      </Content>
     );
   }
 }
 
-export default connect(null, actions)(LandingTemplate);
+export default connect(mapStateToProps, actions)(LandingTemplate);

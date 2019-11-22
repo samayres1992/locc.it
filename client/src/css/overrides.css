@@ -13,3 +13,30 @@
 .ant-menu-horizontal > .ant-menu-item {
   border-bottom: 0;
 }
+a:hover,
+a:focus,
+a:active {
+  outline: 0;
+  color: #fff;
+}
+a:hover {
+  text-decoration: underline;
+}
+a,
+.ant-menu-horizontal > .ant-menu-item > a:hover {
+  color: #fff;
+}
+.ant-collapse-borderless {
+  background-color: rgba(255,255,255,0.1);
+}
+.ant-collapse-borderless .ant-collapse-item > .ant-collapse-header {
+  font-size: 1.5em;
+  color: #fff;
+}
+.ant-collapse-borderless .ant-collapse-content {
+  font-size: 1.25em;
+  color: #fff;
+}
+.ant-collapse-borderless .ant-collapse-item:last-of-type {
+  border-bottom: none;
+}

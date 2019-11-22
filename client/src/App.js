@@ -7,6 +7,7 @@ import { Layout } from 'antd';
 // Templating
 import HeaderTemplate from './components/HeaderTemplate';
 import LandingTemplate from './components/LandingTemplate';
+import DecryptTemplate from './components/DecryptTemplate';
 import DashboardTemplate from './components/DashboardTemplate';
 import FaqTemplate from './components/FaqTemplate';
 import FooterTemplate from './components/FooterTemplate';
@@ -30,6 +31,7 @@ class App extends Component {
             <HeaderTemplate />
             <div className="content">
               <Route exact path="/" component={LandingTemplate} />
+              <Route path="/decrypt/:url" component={DecryptTemplate} />
               <Route path="/dashboard" component={DashboardTemplate} />
               <Route path="/faq" component={FaqTemplate} />
             </div>

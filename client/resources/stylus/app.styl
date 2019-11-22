@@ -7,6 +7,12 @@ body {
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   color: #fff;
   font-size: 1.2em;
+  &:focus {
+    outline: none;
+	}
+  &:active {
+    outline: none;
+	}
 }
 
 .container {
@@ -30,10 +36,20 @@ header {
 
 .content {
   padding: 3em 0;  
+  
+  h1, h2 {
+    color: #fff;
+  }
 
-  &:focus {
-    outline: none;
-	}
+  h1 {
+    font-size: 3em;
+    margin-bottom: 0;
+  }
+
+  h2 {
+    font-size: 1.25em;
+    margin-bottom: 2em;
+  }
 
 	label {
     color: #fff;

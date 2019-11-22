@@ -1,14 +1,16 @@
-import { ENCRYPT } from '../actions/types'; 
+import { ENCRYPT, PASSCODE } from '../actions/types'; 
 
 export default function (state = null, action) {
   switch (action.type) {
     case ENCRYPT:
-      console.log('action.payload', action.payload);
       return {
         ...state,
-        title: action.payload.title,
-        encryptedData: action.payload,
-        url: action.payload
+        url: action.payload.url
+      };
+    case PASSCODE:
+      return {
+        ...state,
+        passcode: action.payload.passcode
       };
     default:
       return state;
