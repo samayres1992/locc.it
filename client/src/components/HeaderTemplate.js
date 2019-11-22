@@ -6,6 +6,13 @@ import { Layout, Menu } from 'antd';
 import logo from '../images/loccit.svg';
 const { Header } = Layout;
 
+const mapStateToProps = (state) => {
+  const { auth } = state;
+  return {
+    auth: auth
+  };
+}
+
 class HeaderTemplate extends Component {
 
   renderAuthOptions() {
@@ -16,7 +23,7 @@ class HeaderTemplate extends Component {
       // User not logged in
       case false:
         return [
-          <Menu.Item key='1'><Link to="/faq">FAQ</Link></Menu.Item>,
+          <Menu.Item key='1'><Link to="/faq">How it works</Link></Menu.Item>,
           <Menu.Item key='2'><a href="/auth/google">Login</a></Menu.Item>,
           <Menu.Item key='3'><a href="/api/register">Register</a></Menu.Item>
         ];
@@ -47,12 +54,6 @@ class HeaderTemplate extends Component {
       </Header>
     );
   }
-}
-
-function mapStateToProps({ auth }) {
-  return {
-    auth: auth
-  };
 }
 
 export default connect(mapStateToProps)(HeaderTemplate);

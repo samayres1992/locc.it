@@ -16,6 +16,7 @@
     "gulp-update": "0.0.2",
     "http-proxy-middleware": "^0.20.0",
     "react": "^16.10.2",
+    "react-clipboard.js": "^2.0.16",
     "react-dom": "^16.10.2",
     "react-final-form": "^6.3.0",
     "react-redux": "^7.1.1",

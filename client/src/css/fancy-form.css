@@ -1,4 +1,6 @@
 .fancy-input {
+  position: relative;
+  display: block;
   border: 1px solid rgba(255,255,255,0.5);
   padding: 14px;
   transition: 0.4s;
@@ -70,10 +72,33 @@
   color: #fff;
   transition: 0.3s;
 }
+.fancy-input.passcodeInfo:before {
+  background-color: rgba(255,255,255,0.1);
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.fancy-input.passcodeInfo.url {
+  padding-left: 75px;
+}
+.fancy-input.passcodeInfo.passcode {
+  padding-left: 138px;
+}
+.fancy-input.passcodeInfo.url:before {
+  content: "Link";
+  text-transform: uppercase;
+  padding: 14px;
+}
+.fancy-input.passcodeInfo.passcode:before {
+  content: "Passcode";
+  text-transform: uppercase;
+  padding: 14px;
+}
 button.button {
   display: inline-block;
   position: relative;
-  background: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.1);
   border: none;
   color: #fff;
   font-size: 18px;
@@ -83,8 +108,26 @@ button.button {
   padding: 15px;
   border-radius: 3px;
 }
+button.button.copy {
+  position: absolute;
+  display: inline-block;
+  left: auto;
+  right: 14px;
+  top: 10px;
+  padding: 4px;
+  width: 6em;
+}
+button.button.copy svg {
+  margin: 0;
+  display: inline-block;
+  float: left;
+  margin-right: 15px;
+}
 button.button span {
   display: block;
+}
+button.button.copy span {
+  display: inline-block;
 }
 button.button::before,
 button.button::after {

@@ -13,7 +13,6 @@ module.exports = app => {
       url: url,
       expiry: date.setDate(date.getDate() + 7) // TODO: give user option to set amount of time
     }).save();
-    // console.log('encrypted', encrypted);
     res.send(encrypted);
   });
 };

@@ -4,20 +4,19 @@ import { Form, Field } from 'react-final-form';
 import classNames from 'classnames';
 import * as actions from '../actions';
 import CryptoJS from 'crypto-js';
-// import Encrypt from './Encrypt';
 
 class EncryptForm extends Component {
 
-  inputRender = (field) => (
-    <input {...field.input} name={field.name} className={classNames({"has-content": field.meta.dirty, "fancy-input": !field.dirty})} type={field.type} placeholder="" type="text" required />
+  inputRender = (inputField) => (
+    <input {...inputField.input} name={inputField.name} className={classNames({"has-content": inputField.meta.dirty, "fancy-input": !inputField.dirty})} type={inputField.type} placeholder="" type="text" required />
   );
 
-  passwordRender = (field) => (
-    <input {...field.input} name={field.name} className={classNames({"has-content": field.meta.dirty, "fancy-input": !field.dirty})} type={field.type} placeholder="" type="password" required />
+  passwordRender = (passwordField) => (
+    <input {...passwordField.input} name={passwordField.name} className={classNames({"has-content": passwordField.meta.dirty, "fancy-input": !passwordField.dirty})} type={passwordField.type} placeholder="" type="password" required />
   );
 
-  textareaRender = (field) => (
-    <textarea {...field.input} name={field.name} className={classNames({"has-content": field.meta.dirty, "fancy-input": !field.dirty})} type={field.type} placeholder="" type="text" required />
+  textareaRender = (text) => (
+    <textarea {...text.input} name={text.name} className={classNames({"has-content": text.meta.dirty, "fancy-input": !text.dirty})} type={text.type} placeholder="" type="text" required />
   );
 
   onSubmit = values => {
@@ -31,8 +30,8 @@ class EncryptForm extends Component {
         charSet = 'abcdefghijklmnopqrstuvwxyz';
       }
       else {
-        // AlphaNumeric - for passcode
-        charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        // AlphaNumeric - for passcode - only uppercase
+        charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
       }
 
       let randomString = '';
@@ -48,16 +47,19 @@ class EncryptForm extends Component {
     // Deconstruct the data we wish to encrypt
     const { title, emailUsername, password, note } = data;
     // Generate a key for the user to use for decryption
-    // This should never be passed to the server
-    const key = this.stringGenerator(5);
+    const passcode = this.stringGenerator(8);
     const url = this.stringGenerator(10, 'alphabet');
 
-    // Let's take the value and encrypt it with 
+    // Let's take the value and encrypt it with
     const encryptedData = CryptoJS.AES.encrypt(JSON.stringify({ 
       emailUsername: emailUsername, 
       password: password, 
       note: note
-    }), key);
+    }), passcode);
+
+    // Decrypt
+    let bytes  = CryptoJS.AES.decrypt(encryptedData.toString(), passcode);
+    let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
     // Pass over the data to the action
     this.props.encrypt({ 
@@ -65,13 +67,12 @@ class EncryptForm extends Component {
       encryptedData: encryptedData,
       url: url
     });
-	
-		this.setState({
-			'title': title,
-			'encryptedData': encryptedData,
-      'key': key,
-      'url': url
+
+    this.props.updatePasscode({
+      'passcode': passcode
     });
+	
+    return { passcode, url };
 	}
 
   render() {
@@ -123,10 +124,4 @@ class EncryptForm extends Component {
   }
 }
 
-function mapStateToProps({ key }) {
-  return {
-    key: key || null,
-  };
-}
-
-export default connect(mapStateToProps, actions)(EncryptForm);
+export default connect(null, actions)(EncryptForm);

@@ -1,8 +1,12 @@
 import { combineReducers } from 'redux';
 import authReducer from './authReducer';
 import encryptReducer from './encryptReducer';
+import decryptReducer from './decryptReducer';
+import retrieveReducer from './retrieveReducer';
 
 export default combineReducers({
   auth: authReducer,
-  key: encryptReducer
+  encryptForm: encryptReducer,
+  decryptForm: decryptReducer,
+  retrievedData: retrieveReducer
 });

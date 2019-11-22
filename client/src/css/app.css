@@ -8,6 +8,12 @@ body {
   color: #fff;
   font-size: 1.2em;
 }
+body:focus {
+  outline: none;
+}
+body:active {
+  outline: none;
+}
 .container {
   max-width: 1080px;
   margin: 0 auto;
@@ -27,8 +33,17 @@ header .ant-menu-item {
 .content {
   padding: 3em 0;
 }
-.content:focus {
-  outline: none;
+.content h1,
+.content h2 {
+  color: #fff;
+}
+.content h1 {
+  font-size: 3em;
+  margin-bottom: 0;
+}
+.content h2 {
+  font-size: 1.25em;
+  margin-bottom: 2em;
 }
 .content label {
   color: #fff;

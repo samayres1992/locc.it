@@ -3,10 +3,8 @@ const { Schema } = mongoose;
 
 const encryptSchema = new Schema({
   _user: { type: Schema.Types.ObjectId, ref: 'User' },
-  // title: { type: String, required: [true, 'A title must be provided.'] },
-  // encrypted: { type: Object, required: [true, 'Sensitive data must be provided.'] },
-  title: String,
-  encryptedData: Object,
+  title: { type: String, required: [true, 'A title must be provided.'] },
+  encryptedData: { type: Object, required: [true, 'Sensitive data must be provided.'] },
   url: String,
   expiry: Date,
   used: { type: Boolean, default: false },
