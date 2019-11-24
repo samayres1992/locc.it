@@ -4,6 +4,8 @@ import * as actions from '../actions';
 import { Layout } from 'antd';
 import DecryptForm from './DecryptForm';
 import DecryptedData from './DecryptedData';
+import unlockIcon from '../images/unlock.svg';
+import lockIcon from '../images/lock.svg';
 
 const { Content } = Layout;
 
@@ -26,9 +28,14 @@ class DecryptTemplate extends Component {
 
   render() {
     const { decryptForm } = this.props; 
-    console.log('decryptForm template', decryptForm);
+    const whichIcon = decryptForm ? unlockIcon : lockIcon;
+    const whichMessage = decryptForm ? "Thank you for using our service, your decrypted details are below." : "Please enter the passcode you were provided.";
     return (
       <Content style={{ padding: '0 50px' }}>
+        <div className="check">
+          <img src={whichIcon} alt="unlock" />
+          <span className="success">{whichMessage}</span>
+        </div>
         { decryptForm ? <DecryptedData /> : <DecryptForm /> }
       </Content>
     );

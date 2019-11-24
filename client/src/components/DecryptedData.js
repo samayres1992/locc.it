@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { Icon } from 'antd';
 import * as actions from '../actions';
 import Clipboard from 'react-clipboard.js';
-import unlock from '../images/unlock.svg';
 
 const mapStateToProps = (state) => {
   return {
@@ -15,29 +14,29 @@ const mapStateToProps = (state) => {
 class DecryptedData extends Component {
 
   render() {
-    // console.log('this.props.decryptForm', this.props);
-    const { emailUsername, password, note } = this.props.decryptForm.decryptedData;
-    console.log('decrypteddata.js', this.props);
+    const { title, emailUsername, password, note } = this.props.decryptForm.decryptedData;
     return (
       <Fragment>
-        <div className="check">
-          <img className='unlock' src={unlock} alt='lock' />
-          <span className="success">Thank you for using our service.</span>
+        <div className="input-effect">
+          <span className="fancy-input passcodeInfo title">
+            { title }
+            <Clipboard className="button copy" data-clipboard-text={title}><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
+          </span>
         </div>
         <div className="input-effect">
-          <span className="fancy-input passcodeInfo url">
+          <span className="fancy-input passcodeInfo username">
             { emailUsername }
             <Clipboard className="button copy" data-clipboard-text={emailUsername}><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
           </span>
         </div>
         <div className="input-effect">
-          <span className="fancy-input passcodeInfo passcode">
+          <span className="fancy-input passcodeInfo password">
             {password}
             <Clipboard className="button copy" data-clipboard-text={password}><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
           </span>    
         </div>
         <div className="input-effect">
-          <span className="fancy-input passcodeInfo passcode">
+          <span className="fancy-input passcodeInfo note">
             {note}
             <Clipboard className="button copy" data-clipboard-text={note}><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
           </span>    

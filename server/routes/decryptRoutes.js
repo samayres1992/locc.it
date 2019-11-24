@@ -14,4 +14,16 @@ module.exports = app => {
       }
     });
   });
+  app.get('/api/fetch_locks', async (req, res) => {
+    // const { url } = req.body;
+    Encrypt.find({ 'active': true }).then((data) => {
+      if (data) {
+        console.log('data from server', data);
+        res.send(data);
+      } else {
+        // Failed to find a result
+        res.send(false);
+      }
+    });
+  });
 };

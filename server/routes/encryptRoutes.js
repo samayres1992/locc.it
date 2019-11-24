@@ -1,17 +1,18 @@
 const mongoose = require('mongoose');
 const Encrypt = mongoose.model('locks');
+const Moment = require('moment');
 
 module.exports = app => {
   app.post('/api/encrypt', async (req, res) => {
     // Deconstruct the request
-    const { title, encryptedData, url } = req.body;
+    const { title, expiry, encryptedData, url } = req.body;
 
-    let date = new Date();
+    console.log('expiry', expiry);
     const encrypted = await new Encrypt({
       title: title,
       encryptedData: encryptedData,
       url: url,
-      expiry: date.setDate(date.getDate() + 7) // TODO: give user option to set amount of time
+      expiry: Moment(expiry).format()
     }).save();
     res.send(encrypted);
   });

@@ -18,7 +18,7 @@ class LandingTemplate extends Component {
 
   render() {
     const { encryptForm } = this.props;
-    const landing = <Fragment><h1>Be Safe.</h1><h2>Encrypt your credentials before sharing them online.</h2></Fragment>;
+    const landing = <Fragment><h1>Be safe.</h1><h2>Encrypt your credentials before sharing them online.</h2></Fragment>;
     return (
       <Content style={{ padding: '0 50px' }}>
         { encryptForm ? 

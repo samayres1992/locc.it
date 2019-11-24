@@ -40,3 +40,35 @@ a,
 .ant-collapse-borderless .ant-collapse-item:last-of-type {
   border-bottom: none;
 }
+.ant-calendar {
+  top: 2px;
+}
+.ant-calendar .ant-calendar-input-wrap {
+  height: 42px;
+  padding: 10px;
+}
+.ant-calendar .ant-calendar-input-wrap .ant-calendar-footer {
+  display: none;
+}
+.ant-calendar-picker {
+  width: 34%;
+  float: right;
+  position: absolute;
+  top: 8px;
+  right: 15px;
+  cursor: pointer;
+}
+.ant-calendar-picker .ant-calendar-picker-input {
+  height: 40px;
+  background: rgba(255,255,255,0.25);
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+}
+.ant-calendar-picker .ant-calendar-picker-clear {
+  display: none;
+}
+.ant-calendar-picker ::placeholder,
+.ant-calendar-picker .anticon {
+  color: #fff;
+}

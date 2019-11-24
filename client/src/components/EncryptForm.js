@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form, Field } from 'react-final-form';
+import { DatePicker, Icon } from 'antd';
+import Moment from 'moment';
 import classNames from 'classnames';
 import * as actions from '../actions';
 import CryptoJS from 'crypto-js';
@@ -19,33 +21,45 @@ class EncryptForm extends Component {
     <textarea {...text.input} name={text.name} className={classNames({"has-content": text.meta.dirty, "fancy-input": !text.dirty})} type={text.type} placeholder="" type="text" required />
   );
 
+  datePickerRender = ({ input, ...rest }) => {
+    return <DatePicker {...input} {...rest} style={{ width: '34%' }} defaultValue={Moment()} value={input.value !== '' ? input.value : Moment()} placeholder="Set expiry date for password" format={"[Expire on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} />
+  };
+
   onSubmit = values => {
     this.encryptData(values);
   }
 
+  updateExpiry = (date) => {
+    console.log("date", date.format('YYYY-MM-DD'));
+    this.setState({
+      expiry: date.format('YYYY-MM-DD')
+    })
+  }
+
   // Generate the decryption key for user
 	stringGenerator (len, charSet) {
-      if (charSet === 'alphabet') {
-        // For URL string
-        charSet = 'abcdefghijklmnopqrstuvwxyz';
-      }
-      else {
-        // AlphaNumeric - for passcode - only uppercase
-        charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      }
+    if (charSet === 'alphabet') {
+      // For URL string
+      charSet = 'abcdefghijklmnopqrstuvwxyz';
+    }
+    else {
+      // AlphaNumeric - for passcode - only uppercase
+      charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    }
 
-      let randomString = '';
-      for (let i = 0; i < len; i++) {
-          let randomPoz = Math.floor(Math.random() * charSet.length);
-          randomString += charSet.substring(randomPoz,randomPoz+1);
-      }
-      
-	    return randomString;
+    let randomString = '';
+    for (let i = 0; i < len; i++) {
+        let randomPoz = Math.floor(Math.random() * charSet.length);
+        randomString += charSet.substring(randomPoz,randomPoz+1);
+    }
+    
+    return randomString;
 	}
 
 	encryptData (data) {
     // Deconstruct the data we wish to encrypt
-    const { title, emailUsername, password, note } = data;
+    const { title, emailUsername, password, expiry, note } = data;
+    console.log('expiry', expiry);
     // Generate a key for the user to use for decryption
     const passcode = this.stringGenerator(8);
     const url = this.stringGenerator(10, 'alphabet');
@@ -57,15 +71,12 @@ class EncryptForm extends Component {
       note: note
     }), passcode);
 
-    // Decrypt
-    let bytes  = CryptoJS.AES.decrypt(encryptedData.toString(), passcode);
-    let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-
     // Pass over the data to the action
     this.props.encrypt({ 
-      title: title, 
+      title: title,
       encryptedData: encryptedData,
-      url: url
+      url: url,
+      expiry: expiry.format('YYYY-MM-DD')
     });
 
     this.props.updatePasscode({
@@ -85,28 +96,29 @@ class EncryptForm extends Component {
           <form onSubmit={handleSubmit}>
             <div className="input-effect">
               <Field name="title" component={this.inputRender} />
-                <label>Title</label>
+                <label><Icon type="pushpin" /> Title</label>
                 <span className="focus-border">
                   <i></i>
                 </span>
             </div>
             <div className="input-effect">
               <Field name="emailUsername" component={this.inputRender} />
-                <label>Email/Username</label>
+                <label><Icon type="user" /> Email/Username</label>
                 <span className="focus-border">
                   <i></i>
                 </span>
             </div>
             <div className="input-effect">
               <Field name="password" component={this.passwordRender} />
-                <label>Password</label>
-                <span className="focus-border">
-                  <i></i>
-                </span>
+              <label><Icon type="lock" /> Password</label>
+              <span className="focus-border">
+                <i></i>
+              </span>
+              <Field name="expiry" component={this.datePickerRender} />
             </div>
             <div className="input-effect">
               <Field name="note" component={this.textareaRender} />
-                <label>Note</label>
+                <label><Icon type="form" /> Note</label>
                 <span className="focus-border">
                   <i></i>
                 </span>
