@@ -1,10 +1,15 @@
 import axios from 'axios';
 import { stringify } from 'flatted/esm';
-import { FETCH_USER, ENCRYPT, PASSCODE, CHECK_URL, PASSCODE_DECRYPTED } from './types';
+import { FETCH_USER, FETCH_LOCKS, ENCRYPT, PASSCODE, CHECK_URL, PASSCODE_DECRYPTED } from './types';
 
 export const fetchUser = () => async dispatch => {
   const res = await axios.get('/api/current_user');
   dispatch({ type: FETCH_USER, payload: res.data });
+};
+
+export const fetchLocks = () => async dispatch => {
+  const res = await axios.get('/api/fetch_locks');
+  dispatch({ type: FETCH_LOCKS, payload: res.data });
 };
 
 export const handleStripeToken = (token) => async dispatch => {
@@ -13,12 +18,14 @@ export const handleStripeToken = (token) => async dispatch => {
 }
 
 export const encrypt = (data) => async dispatch => {
-  const { title, encryptedData, url } = data;
+  const { title, expiry, encryptedData, url } = data;
+  console.log('action index', expiry);
   const res = await axios({
     method: 'post',
     url: '/api/encrypt',
     data: {
       title: title,
+      expiry: expiry,
       encryptedData: stringify(encryptedData),
       url: url
     }

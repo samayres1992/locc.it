@@ -70,6 +70,9 @@ header .ant-menu-item {
   position: relative;
   margin: 0 0 30px;
 }
+.content .expiry {
+  display: none;
+}
 footer {
   height: 100px;
   border-top: 2px solid #fff;

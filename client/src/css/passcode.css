@@ -9,7 +9,8 @@
   margin-top: 30px;
   width: 100%;
 }
-.check svg {
+.check svg,
+.check img {
   width: 30%;
 }
 .path {
@@ -29,9 +30,6 @@
   stroke-dashoffset: -100;
   -webkit-animation: dash-check 0.9s 0.35s ease-in-out forwards;
   animation: dash-check 0.9s 0.35s ease-in-out forwards;
-}
-.lock {
-  width: 30%;
 }
 @-webkit-keyframes dash {
   0% {

@@ -15,6 +15,7 @@
     "gulp-stylus": "^2.7.0",
     "gulp-update": "0.0.2",
     "http-proxy-middleware": "^0.20.0",
+    "moment": "^2.24.0",
     "react": "^16.10.2",
     "react-clipboard.js": "^2.0.16",
     "react-dom": "^16.10.2",

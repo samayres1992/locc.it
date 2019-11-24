@@ -79,32 +79,53 @@
   top: 0;
   left: 0;
 }
-.fancy-input.passcodeInfo.url {
-  padding-left: 75px;
+.fancy-input.passcodeInfo.title,
+.fancy-input.passcodeInfo.username,
+.fancy-input.passcodeInfo.passcode,
+.fancy-input.passcodeInfo.password,
+.fancy-input.passcodeInfo.url,
+.fancy-input.passcodeInfo.note {
+  padding-left: 8em;
+  padding-right: 8em;
 }
-.fancy-input.passcodeInfo.passcode {
-  padding-left: 138px;
-}
-.fancy-input.passcodeInfo.url:before {
-  content: "Link";
-  text-transform: uppercase;
+.fancy-input.passcodeInfo.title:before,
+.fancy-input.passcodeInfo.username:before,
+.fancy-input.passcodeInfo.passcode:before,
+.fancy-input.passcodeInfo.password:before,
+.fancy-input.passcodeInfo.url:before,
+.fancy-input.passcodeInfo.note:before {
   padding: 14px;
+  text-align: center;
+  width: 7em;
+}
+.fancy-input.passcodeInfo.title:before {
+  content: "Title";
+}
+.fancy-input.passcodeInfo.username:before {
+  content: "Username";
 }
 .fancy-input.passcodeInfo.passcode:before {
   content: "Passcode";
-  text-transform: uppercase;
-  padding: 14px;
+}
+.fancy-input.passcodeInfo.password:before {
+  content: "Password";
+}
+.fancy-input.passcodeInfo.url:before {
+  content: "URL";
+}
+.fancy-input.passcodeInfo.note:before {
+  content: "Note";
 }
 button.button {
   display: inline-block;
   position: relative;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.25);
   border: none;
   color: #fff;
   font-size: 18px;
   cursor: pointer;
   width: 50%;
-  left: 50%;
+  left: 25%;
   padding: 15px;
   border-radius: 3px;
 }
