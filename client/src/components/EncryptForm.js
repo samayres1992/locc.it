@@ -22,18 +22,11 @@ class EncryptForm extends Component {
   );
 
   datePickerRender = ({ input, ...rest }) => {
-    return <DatePicker {...input} {...rest} style={{ width: '34%' }} defaultValue={Moment()} value={input.value !== '' ? input.value : Moment()} placeholder="Set expiry date for password" format={"[Expire on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} />
+    return <DatePicker {...input} {...rest} style={{ width: '34%' }} defaultValue={Moment()} value={input.value !== '' ? input.value : Moment().add(7, 'days')} placeholder="Set expiry date for password" format={"[Expire on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required />
   };
 
   onSubmit = values => {
     this.encryptData(values);
-  }
-
-  updateExpiry = (date) => {
-    console.log("date", date.format('YYYY-MM-DD'));
-    this.setState({
-      expiry: date.format('YYYY-MM-DD')
-    })
   }
 
   // Generate the decryption key for user
@@ -71,19 +64,19 @@ class EncryptForm extends Component {
       note: note
     }), passcode);
 
-    // Pass over the data to the action
+    // Pass over the data to the action, if user doesn't specify, assume a week is fine.
     this.props.encrypt({ 
       title: title,
       encryptedData: encryptedData,
       url: url,
-      expiry: expiry.format('YYYY-MM-DD')
+      expiry: expiry ? expiry.format('YYYY-MM-DD') : Moment().add(7, 'days').format('YYYY-MM-DD')
     });
 
     this.props.updatePasscode({
       'passcode': passcode
     });
 	
-    return { passcode, url };
+    return { passcode, url, expiry };
 	}
 
   render() {
@@ -114,7 +107,7 @@ class EncryptForm extends Component {
               <span className="focus-border">
                 <i></i>
               </span>
-              <Field name="expiry" component={this.datePickerRender} />
+              <Field name="expiry" component={this.datePickerRender} required />
             </div>
             <div className="input-effect">
               <Field name="note" component={this.textareaRender} />

@@ -55,7 +55,6 @@ class DecryptForm extends Component {
       // TODO: Didn't work, notify user
       console.log("error", e);
     }
-
 	}
 
   onSubmit = values => {

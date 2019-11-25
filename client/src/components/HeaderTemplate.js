@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import Payments from './Payments';
+// import Payments from './Payments'; // For the future
 import { Layout, Menu } from 'antd';
 import logo from '../images/loccit.svg';
 const { Header } = Layout;
@@ -24,16 +24,15 @@ class HeaderTemplate extends Component {
       case false:
         return [
           <Menu.Item key='1'><Link to="/faq">How it works</Link></Menu.Item>,
-          <Menu.Item key='2'><a href="/auth/google">Login</a></Menu.Item>,
-          <Menu.Item key='3'><a href="/api/register">Register</a></Menu.Item>
+          <Menu.Item key='2'><a href="https://buymeacoffee.com/aQJ2U8H" target="_blank" rel="noopener noreferrer">Support Us</a></Menu.Item>,
+          <Menu.Item key='3'><Link to="/login">Login</Link></Menu.Item>,
         ];
       //  User is logged in
       default:
         return [
-          <Menu.Item key='1'>{this.props.auth.membership} Member</Menu.Item>,
-          <Menu.Item key='2'><Payments /></Menu.Item>,
-          <Menu.Item key='3'><Link to="/faq">FAQ</Link></Menu.Item>,
-          <Menu.Item key='4'><a href="/api/logout">Logout</a></Menu.Item>
+          <Menu.Item key='1'><Link to="/faq">How it works</Link></Menu.Item>,
+          <Menu.Item key='2'><a href="https://buymeacoffee.com/aQJ2U8H" target="_blank" rel="noopener noreferrer">Support Us</a></Menu.Item>,
+          <Menu.Item key='3'><a href="/api/logout">Logout</a></Menu.Item>
         ];
     }
   }

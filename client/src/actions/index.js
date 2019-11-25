@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { stringify } from 'flatted/esm';
-import { FETCH_USER, FETCH_LOCKS, ENCRYPT, PASSCODE, CHECK_URL, PASSCODE_DECRYPTED } from './types';
+import { FETCH_USER, FETCH_LOCKS, DELETE_LOCK, ENCRYPT, PASSCODE, CHECK_URL, PASSCODE_DECRYPTED } from './types';
 
 export const fetchUser = () => async dispatch => {
   const res = await axios.get('/api/current_user');
@@ -50,4 +50,16 @@ export const checkUrl = (url) => async dispatch => {
     }
   });
   dispatch({ type: CHECK_URL, payload: res.data});
+}
+
+export const deleteSelectedLock = (lockId) => async dispatch => {
+  console.log("deleteselectlock called");
+  const res = await axios({
+    method: 'post',
+    url: '/api/delete_lock',
+    data: {
+      lockId: lockId
+    }
+  });
+  dispatch({ type: DELETE_LOCK, payload: res.data});
 }
