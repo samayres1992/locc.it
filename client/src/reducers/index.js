@@ -8,5 +8,5 @@ export default combineReducers({
   auth: authReducer,
   encryptForm: encryptReducer,
   decryptForm: decryptReducer,
-  retrievedData: retrieveReducer
+  retrievedData: retrieveReducer,
 });

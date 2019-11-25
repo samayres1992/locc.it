@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Icon, Skeleton } from 'antd';
+import { Icon } from 'antd';
 import * as actions from '../actions';
 import Clipboard from 'react-clipboard.js';
+import Moment from 'moment';
 
 class Passcode extends Component {
 
@@ -13,13 +14,11 @@ class Passcode extends Component {
   }
 
   render() {
-    const { url, passcode} = this.props;
-    const fullUrl = url ? process.env.REACT_APP_SITE_URL + 'decrypt/' + url : <Skeleton paragraph={{ rows: 0 }} />;
-    
-    const passToCopy = passcode ? passcode : <Skeleton paragraph={{ rows: 0 }} />;
+    const { url, passcode, expiry } = this.props;
+    const fullUrl = process.env.REACT_APP_SITE_URL + 'decrypt/' + url;
 
     return (
-      <div>
+      <Fragment>
         <div className="check">
           <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
             <circle className="path circle" fill="none" stroke="#fff" strokeWidth="6" strokeMiterlimit="10" cx="65.1" cy="65.1" r="62.1"/>
@@ -35,11 +34,12 @@ class Passcode extends Component {
         </div>
         <div className="input-effect">
           <span className="fancy-input passcodeInfo passcode">
-            {passToCopy}
+            {passcode}
             <Clipboard className="button copy" data-clipboard-text={passcode}><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
           </span>    
         </div>
-      </div>
+        <span className="expiry-info">The details will expire on {Moment(expiry).format("MMMM Do, YYYY" )}.</span>
+      </Fragment>
     );
   }
 }

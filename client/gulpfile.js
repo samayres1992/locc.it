@@ -9,6 +9,7 @@ gulp.task('css', function () {
       './resources/stylus/app.styl',
       './resources/stylus/fancy-form.styl',
       './resources/stylus/passcode.styl',
+      './resources/stylus/login.styl',
       './resources/stylus/overrides.styl'
     ])
     .pipe(stylus())

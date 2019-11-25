@@ -5,7 +5,8 @@ export default function (state = null, action) {
     case ENCRYPT:
       return {
         ...state,
-        url: action.payload.url
+        url: action.payload.url,
+        expiry: action.payload.expiry
       };
     case PASSCODE:
       return {

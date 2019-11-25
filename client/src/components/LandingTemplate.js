@@ -22,7 +22,7 @@ class LandingTemplate extends Component {
     return (
       <Content style={{ padding: '0 50px' }}>
         { encryptForm ? 
-          <Passcode passcode={encryptForm.passcode } url={encryptForm.url} /> :  <div className="landing">{landing} <EncryptForm /></div> }
+          <Passcode passcode={encryptForm.passcode } url={encryptForm.url} expiry={encryptForm.expiry} /> :  <div className="landing">{landing} <EncryptForm /></div> }
       </Content>
     );
   }

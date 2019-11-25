@@ -72,3 +72,15 @@ a,
 .ant-calendar-picker .anticon {
   color: #fff;
 }
+.ant-layout-content .ant-row {
+  margin-bottom: 15px;
+}
+.ant-layout-content .ant-row .ant-card {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+}
+.ant-layout-content .ant-row .ant-card-head,
+.ant-layout-content .ant-row .ant-card-extra {
+  background: transparent;
+  color: #fff;
+}

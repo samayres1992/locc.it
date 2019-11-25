@@ -6,8 +6,6 @@ module.exports = app => {
   app.post('/api/encrypt', async (req, res) => {
     // Deconstruct the request
     const { title, expiry, encryptedData, url } = req.body;
-
-    console.log('expiry', expiry);
     const encrypted = await new Encrypt({
       title: title,
       encryptedData: encryptedData,
