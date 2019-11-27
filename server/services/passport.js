@@ -4,6 +4,11 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 const GitHubStrategy = require('passport-github2').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
+const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
+const bcrypt = require("bcryptjs");
+const validateRegisterInput = require("./validator/registerValidation");
+const validateLoginInput = require("./validator/loginValidation");
 const mongoose = require('mongoose');
 const keys = require('../config/keys');
 
@@ -82,32 +87,42 @@ passport.use(
   })
 );
 
-// passport.use(new LocalStrategy(
-//   User.findOne({
-//     email: req.body.email
-//   }, (err, person) => {
-//     res.statusCode = 200;
-//     res.setHeader('Content-Type', 'application/json');
-//     res.json({
-//       success: true,
-//       status: 'Registration Successful!',
-//     });
-//   });
-// ));
-
-// passport.use(
-//   // Local
-//   new LocalStrategy(
-//     function (username, password, done) {
-//       const existingUser = User.findOne({ localId: profile.id });
-
-//       if(existingUser) {
-//         // User already exists 
-//         return done(null, existingUser);
-//       }
-//       // New user, save them to the DB
-//       const user = new User({ localId: profile.id }).save();
-//       done(null, user);
-//     }
-//   )
-// );
+passport.use(
+  new LocalStrategy({
+    passReqToCallback: true,
+    usernameField: 'email',
+    passwordField: 'password'
+  },
+  async (req, username, password, done) => {
+    if (user) {
+      errors.email = "email already exists";
+      res.status(400).json(errors);
+    } 
+    else {
+      const avatar = gravatar.url(req.body.email, {
+        s: "200", //Size
+        r: "pg", //Rating
+        d: "mm" //Default
+      });
+      //Create a new user from the data provided in the body (Comes from front end form)
+      const User = new User({
+        avatar: avatar,
+        email: req.body.email,
+        password: req.body.password
+      });
+      //Use Bcrypt to encrypt the password using Salt.
+      bcrypt.genSalt(10, (error, salt) => {
+        bcrypt.hash(User.password, salt, (error, hash) => {
+          if (error) {
+            throw error;
+          }
+          User.password = hash;
+          User
+            .save()
+            .then(user => res.json(user))
+            .catch(error => console.log(error));
+        });
+      });
+    }
+  }
+));

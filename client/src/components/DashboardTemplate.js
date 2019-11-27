@@ -21,7 +21,6 @@ class DashboardTemplate extends Component {
   }
 
   deleteLock(lockId) {
-    console.log('lockid', lockId);
     this.props.deleteSelectedLock(lockId);
   }
 

@@ -29,7 +29,7 @@ class LoginTemplate extends Component {
     return (
       <div  className={classNames({"container login": !login, "container login right-panel-active": login })} id="container">
         <div className="form-container sign-up-container">
-          <form action="/auth/local">
+          <form action="/auth/local/register">
             <h1>Sign up</h1>
             <span>or use your email for registration</span>
             <input type="email" placeholder="Email" name="email" />

@@ -52,7 +52,6 @@ class EncryptForm extends Component {
 	encryptData (data) {
     // Deconstruct the data we wish to encrypt
     const { title, emailUsername, password, expiry, note } = data;
-    console.log('expiry', expiry);
     // Generate a key for the user to use for decryption
     const passcode = this.stringGenerator(8);
     const url = this.stringGenerator(10, 'alphabet');
