@@ -19,7 +19,6 @@ export const handleStripeToken = (token) => async dispatch => {
 
 export const encrypt = (data) => async dispatch => {
   const { title, expiry, encryptedData, url } = data;
-  console.log('action index', expiry);
   const res = await axios({
     method: 'post',
     url: '/api/encrypt',
@@ -53,7 +52,6 @@ export const checkUrl = (url) => async dispatch => {
 }
 
 export const deleteSelectedLock = (lockId) => async dispatch => {
-  console.log("deleteselectlock called");
   const res = await axios({
     method: 'post',
     url: '/api/delete_lock',

@@ -6,7 +6,6 @@ module.exports = app => {
     const { url } = req.body;
     Encrypt.findOne({ 'url': url }).then((data) => {
       if (data) {
-        console.log('data from server', data);
         res.send(data);
       } else {
         // Failed to find a result
@@ -18,7 +17,6 @@ module.exports = app => {
     // const { url } = req.body;
     Encrypt.find({ 'active': true }).then((data) => {
       if (data) {
-        console.log('data from server', data);
         res.send(data);
       } else {
         // Failed to find a result

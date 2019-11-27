@@ -6,7 +6,6 @@ module.exports = app => {
     const { lockId } = req.body;
     Encrypt.deleteOne({ 'id': lockId }).then((data) => {
       if (data) {
-        console.log('delete lock server', data);
         res.send(data);
       } else {
         // Failed to find a result
