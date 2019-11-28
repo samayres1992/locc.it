@@ -9,34 +9,31 @@ class FaqTemplate extends Component {
     return (
       <Collapse bordered={false} defaultActiveKey={['1']}>
         <Panel header="What is the purpose of locc.it?" key="1">
-          <p>Locc.it allows users to share private login details online and help reduce risk of unwanted eyes finding the password.</p>
+          <p>Locc.it allows users to share private login details online while reducing the risk of unwanted eyes seeing any passwords.</p>
         </Panel>
         <Panel header="How does it work?" key="2">
           <p>
-            The user provides the details they would like to share. Before being saved a secret passcode is generated and is used 
-            to encrypt the credentials, these details are then stored.
+            After providing credentials to Locc.it they are encrypted with a secret passcode that is generated in user's browser. You can share
+            them with a link that is generated for you along with a secret passcode is exclusive to you and whomever you share it with. 
+            All encryptions are one time use and will be deleted immediately after use, they also have an expiration date that will result 
+            in automatic deletion if not redeemed in time.
           </p>
           <p>
-            After being encrypted, without the passcode the details are completely unreadable and can only be accessed after being decrypted.
-          </p>
-          <p>
-            You will be provided with a link and passcode after encrypting, you can then send this to the person 
-            you wish to receive the details. After they have redeemed the details, the credentials will then be deleted immediately.
+            Not only are all encryptions single-use, there is a time-sensitive expiration. Whether or not the passcode was used, it will be deleted in a user-set amount of time automatically.
           </p>
         </Panel>
         <Panel header="Where is my information stored?" key="3">
           <p>
-            Locc.it uses <a href="https://m.do.co/c/39a1326431a0">Digital Ocean</a> to provide it's service along with 
-            a third party cloud database service of <a href="https://www.mongodb.com/cloud/atlas">MongoDB Atlas</a> 
+            Locc.it uses <a href="https://m.do.co/c/39a1326431a0">Digital Ocean</a> to provide its services, along with a third party cloud database. (<a href="https://www.mongodb.com/cloud/atlas">MongoDB Atlas</a>) 
             to store your encrypted credentials.
           </p>
         </Panel>
         <Panel header="Disclaimer" key="4">
           <p>
-            You accept sole liability for using the locc.it service to share credentials online.  We will ensure the service is as secure as
-            possible but ultimately we are not responsible for any data you disclose online.  The entire repository of the locc.it is available
-            on <a href="https://github.com/samayres1992/loccit-react">Github</a>.  If you notice an issue please 
-            raise it on our <a href="https://github.com/samayres1992/loccit-react/issues">issues page</a>.
+            You accept sole liability for using Locc.it to share your credentials online. We will ensure that the service is as secure as possible, 
+            but ultimately we are not responsible for any disclosed data. The entire repository of Locc.it is aailable on 
+            <a href="https://github.com/samayres1992/loccit-react">Github</a>. If you notice an issue please raise it on our 
+            <a href="https://github.com/samayres1992/loccit-react/issues">issues page</a>.
           </p>
         </Panel>
       </Collapse>

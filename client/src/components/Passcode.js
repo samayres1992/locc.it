@@ -24,7 +24,7 @@ class Passcode extends Component {
             <circle className="path circle" fill="none" stroke="#fff" strokeWidth="6" strokeMiterlimit="10" cx="65.1" cy="65.1" r="62.1"/>
             <polyline className="path check" fill="none" stroke="#fff" strokeWidth="6" strokeLinecap="round" strokeMiterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5 "/>
           </svg>
-          <span className="success">Share the password with details below.</span>
+          <span className="success">Share your encrypted credentials with details below.</span>
         </div>
         <div className="input-effect">
           <span className="fancy-input passcodeInfo url">
@@ -39,7 +39,7 @@ class Passcode extends Component {
           </span>    
         </div>
         <div className="expiry-info">
-          <span className="expiry-details">The credentials will expire on {Moment(expiry).format("MMMM Do, YYYY" )}.</span>
+          <span className="expiry-details">They will expire on {Moment(expiry).format("MMMM Do, YYYY" )}.</span>
         </div>
       </Fragment>
     );

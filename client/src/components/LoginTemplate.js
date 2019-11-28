@@ -85,7 +85,7 @@ class LoginTemplate extends Component {
               </div>
               <button className="button fancy-button">
                 Sign up
-                <span class="focus-border"><i></i></span>
+                <span className="focus-border"><i></i></span>
               </button>
             </form>
           )}
@@ -112,7 +112,7 @@ class LoginTemplate extends Component {
               </div>
               <button className="button fancy-button">
                 Sign in
-                <span class="focus-border"><i></i></span>  
+                <span className="focus-border"><i></i></span>  
               </button>
             </form>
           )}
