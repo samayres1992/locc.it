@@ -1,11 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
-import { Layout } from 'antd';
 import EncryptForm from './EncryptForm';
 import Passcode from './Passcode';
-
-const { Content } = Layout;
 
 const mapStateToProps = (state) => {
   return {
@@ -20,10 +17,11 @@ class LandingTemplate extends Component {
     const { encryptForm } = this.props;
     const landing = <Fragment><h1>Be safe.</h1><h2>Encrypt your credentials before sharing them online.</h2></Fragment>;
     return (
-      <Content style={{ padding: '0 50px' }}>
+      <Fragment>
         { encryptForm ? 
-          <Passcode passcode={encryptForm.passcode } url={encryptForm.url} expiry={encryptForm.expiry} /> :  <div className="landing">{landing} <EncryptForm /></div> }
-      </Content>
+          <Passcode passcode={encryptForm.passcode } url={encryptForm.url} expiry={encryptForm.expiry} /> :  <div className="landing">{landing} <EncryptForm /></div> 
+        }
+      </Fragment>
     );
   }
 }

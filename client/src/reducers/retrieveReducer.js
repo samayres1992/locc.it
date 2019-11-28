@@ -1,4 +1,4 @@
-import { CHECK_URL, FETCH_LOCKS, DELETE_LOCK } from '../actions/types'; 
+import { CHECK_URL, FETCH_LOCKS } from '../actions/types'; 
 
 export default function (state = null, action) {
   switch (action.type) {
