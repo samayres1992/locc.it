@@ -38,7 +38,9 @@ class Passcode extends Component {
             <Clipboard className="button copy" data-clipboard-text={passcode}><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
           </span>    
         </div>
-        <span className="expiry-info">The details will expire on {Moment(expiry).format("MMMM Do, YYYY" )}.</span>
+        <div className="expiry-info">
+          <span className="expiry-details">The credentials will expire on {Moment(expiry).format("MMMM Do, YYYY" )}.</span>
+        </div>
       </Fragment>
     );
   }

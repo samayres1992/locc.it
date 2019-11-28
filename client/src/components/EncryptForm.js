@@ -10,19 +10,19 @@ import CryptoJS from 'crypto-js';
 class EncryptForm extends Component {
 
   inputRender = (inputField) => (
-    <input {...inputField.input} name={inputField.name} className={classNames({"has-content": inputField.meta.dirty, "fancy-input": !inputField.dirty})} type={inputField.type} placeholder="" type="text" required />
+    <input {...inputField.input} name={inputField.name} className={classNames({"has-content": inputField.meta.dirty, "fancy-input": !inputField.dirty})} placeholder="" type="text" required />
   );
 
   passwordRender = (passwordField) => (
-    <input {...passwordField.input} name={passwordField.name} className={classNames({"has-content": passwordField.meta.dirty, "fancy-input": !passwordField.dirty})} type={passwordField.type} placeholder="" type="password" required />
+    <input {...passwordField.input} name={passwordField.name} className={classNames({"has-content": passwordField.meta.dirty, "fancy-input": !passwordField.dirty})}  placeholder="" type="password" required />
   );
 
   textareaRender = (text) => (
-    <textarea {...text.input} name={text.name} className={classNames({"has-content": text.meta.dirty, "fancy-input": !text.dirty})} type={text.type} placeholder="" type="text" required />
+    <textarea {...text.input} name={text.name} className={classNames({"has-content": text.meta.dirty, "fancy-input": !text.dirty})} placeholder="" type="text" required />
   );
 
   datePickerRender = ({ input, ...rest }) => {
-    return <DatePicker {...input} {...rest} style={{ width: '34%' }} defaultValue={Moment()} value={input.value !== '' ? input.value : Moment().add(7, 'days')} placeholder="Set expiry date for password" format={"[Expire on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required />
+    return <DatePicker {...input} {...rest} style={{ width: '34%' }} defaultValue={Moment()} value={input.value !== '' ? input.value : Moment().add(7, 'days')} placeholder="Set expiry date for password" format={"[Expires on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required />
   };
 
   onSubmit = values => {

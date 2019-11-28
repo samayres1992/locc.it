@@ -4,52 +4,16 @@
   border-radius: 5px;
   position: relative;
   overflow: hidden;
-  width: 768px;
   max-width: 100%;
   min-height: 480px;
   border: 2px solid #fff;
 }
-.login.container button {
-  border-radius: 20px;
-  border: 1px solid #ff4b2b;
-  background-color: #ff4b2b;
-  color: #fff;
-  font-size: 12px;
-  font-weight: bold;
-  padding: 12px 45px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  transition: transform 80ms ease-in;
-  cursor: pointer;
-}
-.login.container button:active {
-  transform: scale(0.95);
-}
-.login.container button:focus {
-  outline: none;
+.login.container form button.button {
+  top: 15px;
 }
 .login.container button.ghost {
-  background-color: transparent;
-  border-color: #fff;
-}
-.login.container form {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  padding: 0 50px;
-  text-align: center;
-  height: 100%;
-}
-.login.container form input {
-  border: none;
-  padding: 12px 15px;
-  margin: 8px 0;
-  width: 100%;
-  color: #556893;
-}
-.login.container form input[type="password"] {
-  margin-bottom: 15px;
+  background-color: #4b6cb7;
+  left: 0;
 }
 .login.container.right-panel-active .sign-in-container {
   transform: translateX(100%);
@@ -61,7 +25,7 @@
   animation: show 0.6s;
   background-color: #4b6cb7;
   height: 100%;
-  height: calc(100% - 70px);
+  height: calc(100% - 85px);
 }
 .login.container.right-panel-active .overlay-container {
   transform: translateX(-100%);
@@ -83,29 +47,32 @@
 }
 .login.container .sign-in-container {
   left: 0;
+  top: 15px;
   width: 50%;
   z-index: 2;
   height: 100%;
-  height: calc(100% - 70px);
+  height: calc(100% - 85px);
+  padding: 20px 50px;
 }
 .login.container .sign-in-container h1 {
   padding-top: 15px;
-}
-.login.container .sign-in-container span,
-.login.container .sign-in-container a {
-  padding-bottom: 15px;
+  margin: 0;
+  padding-bottom: 20px;
 }
 .login.container .sign-up-container {
   left: 0;
+  top: 15px;
   width: 50%;
   opacity: 0;
   z-index: 1;
   height: 100%;
-  height: calc(100% - 70px);
+  height: calc(100% - 85px);
+  padding: 20px 50px;
 }
-.login.container .sign-up-container span,
-.login.container .sign-up-container a {
-  padding-bottom: 15px;
+.login.container .sign-up-container h1 {
+  padding-top: 15px;
+  margin: 0;
+  padding-bottom: 20px;
 }
 .login.container .overlay-container {
   background-color: #556893;

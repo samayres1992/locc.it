@@ -35,7 +35,7 @@ class DecryptForm extends Component {
   }
 
   inputRender = (inputField) => (
-    <input {...inputField.input} name={inputField.name} className={classNames({"has-content": inputField.meta.dirty, "fancy-input": !inputField.dirty})} type={inputField.type} placeholder="" type="text" required />
+    <input {...inputField.input} name={inputField.name} className={classNames({"has-content": inputField.meta.dirty, "fancy-input": !inputField.dirty})} placeholder="" type="text" required />
   );
 
   decryptData (passcode) {
