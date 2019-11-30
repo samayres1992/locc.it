@@ -1,13 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
-import { Layout } from 'antd';
 import DecryptForm from './DecryptForm';
 import DecryptedData from './DecryptedData';
 import unlockIcon from '../images/unlock.svg';
 import lockIcon from '../images/lock.svg';
-
-const { Content } = Layout;
 
 const mapStateToProps = (state) => {
   return {

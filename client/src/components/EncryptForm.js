@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Recaptcha from 'react-google-invisible-recaptcha';
 import { Form, Field } from 'react-final-form';
 import { DatePicker, Icon } from 'antd';
 import Moment from 'moment';
@@ -8,6 +9,17 @@ import * as actions from '../actions';
 import CryptoJS from 'crypto-js';
 
 class EncryptForm extends Component {
+
+  constructor (props) {
+    super();
+    this.state = {
+      title: '',
+      emailUsername: '',
+      password: '',
+      expiry: '',
+      note: ''
+    }
+  }
 
   inputRender = (inputField) => (
     <input {...inputField.input} name={inputField.name} className={classNames({"has-content": inputField.meta.dirty, "fancy-input": !inputField.dirty})} placeholder="" type="text" required />
@@ -25,8 +37,20 @@ class EncryptForm extends Component {
     return <DatePicker {...input} {...rest} style={{ width: '34%' }} defaultValue={Moment()} value={input.value !== '' ? input.value : Moment().add(7, 'days')} placeholder="Set expiry date for password" format={"[Expires on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required />
   };
 
-  onSubmit = values => {
-    this.encryptData(values);
+  checkSubmit = ({ title, emailUsername, password, expiry, note }) => {
+    // We need to make sure it's not a bot.
+    this.setState({
+      title: title,
+      emailUsername: emailUsername,
+      password: password,
+      expiry: expiry,
+      note: note
+    });
+    this.recaptcha.execute();
+  }
+
+  onSubmit = () => {
+    this.encryptData();
   }
 
   // Generate the decryption key for user
@@ -51,7 +75,7 @@ class EncryptForm extends Component {
 
 	encryptData (data) {
     // Deconstruct the data we wish to encrypt
-    const { title, emailUsername, password, expiry, note } = data;
+    const { title, emailUsername, password, expiry, note } = this.state;
     // Generate a key for the user to use for decryption
     const passcode = this.stringGenerator(8);
     const url = this.stringGenerator(10, 'alphabet');
@@ -83,9 +107,9 @@ class EncryptForm extends Component {
 
     return (
       <Form 
-        onSubmit={this.onSubmit}
+        onSubmit={this.checkSubmit}
         render={({ handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} action="encrypt">
             <div className="input-effect">
               <Field name="title" component={this.inputRender} />
                 <label><Icon type="pushpin" /> Title</label>
@@ -121,6 +145,11 @@ class EncryptForm extends Component {
                 <i></i>
               </span>
             </button>
+            <Recaptcha
+              ref={ ref => this.recaptcha = ref }
+              sitekey={process.env.REACT_APP_GOOGLE_SITE_KEY}
+              onResolved={this.onSubmit}
+            />
           </form>
         )}
       />
