@@ -11,6 +11,13 @@
 .login.container form button.button {
   top: 15px;
 }
+.login.container .grecaptcha-badge {
+  bottom: -66px !important;
+  box-shadow: none !important;
+}
+.login.container .rc-anchor-invisible {
+  background-color: #fff !important;
+}
 .login.container button.ghost {
   background-color: #4b6cb7;
   left: 0;

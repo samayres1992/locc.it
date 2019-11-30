@@ -7,7 +7,7 @@ const { Panel } = Collapse;
 class FaqTemplate extends Component {
   render() {
     return (
-      <Collapse bordered={false} defaultActiveKey={['1']}>
+      <Collapse bordered={false} defaultActiveKey={['1', '2']}>
         <Panel header="What is the purpose of locc.it?" key="1">
           <p>Locc.it allows users to share private login details online while reducing the risk of unwanted eyes seeing any passwords.</p>
         </Panel>
@@ -31,9 +31,8 @@ class FaqTemplate extends Component {
         <Panel header="Disclaimer" key="4">
           <p>
             You accept sole liability for using Locc.it to share your credentials online. We will ensure that the service is as secure as possible, 
-            but ultimately we are not responsible for any disclosed data. The entire repository of Locc.it is aailable on 
-            <a href="https://github.com/samayres1992/loccit-react">Github</a>. If you notice an issue please raise it on our 
-            <a href="https://github.com/samayres1992/loccit-react/issues">issues page</a>.
+            but ultimately we are not responsible for any disclosed data. The entire repository of Locc.it is available on 
+            <a href="https://github.com/samayres1992/loccit-react">Github</a>. If you notice an issue please raise it on our <a href="https://github.com/samayres1992/loccit-react/issues">issues page</a>.
           </p>
         </Panel>
       </Collapse>

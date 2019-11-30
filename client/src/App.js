@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
-import { Collapse } from 'antd';
 import { connect } from 'react-redux';
 import * as actions from './actions';
 import { Layout } from 'antd';
@@ -26,7 +25,7 @@ class App extends Component {
   componentDidMount() {
     this.props.fetchUser();
   }
-
+  
   render() {
     const { auth } = this.props;
     const pathName = window.pathName;

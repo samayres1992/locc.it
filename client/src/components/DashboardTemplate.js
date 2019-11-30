@@ -25,7 +25,7 @@ class DashboardTemplate extends Component {
   render() {
     const { encryptForm, retrievedData } = this.props;
     const landing = <Fragment><h1>Be safe.</h1><h2>Encrypt your credentials before sharing them online.</h2></Fragment>;
-    const chunkedLocks = chunk(retrievedData, 3);
+    const chunkedLocks = chunk(retrievedData, 2);
     let i = 0;
 
     return (
@@ -34,7 +34,7 @@ class DashboardTemplate extends Component {
           chunkedLocks.map(chunk => (
             <Row gutter={16} key={i++}>
             {chunk.map(lock => (
-              <Col key={lock._id} span={8}>
+              <Col key={lock._id} span={12}>
                 <Card title={lock.title} bordered={false} extra={
                   <Popconfirm placement="top" title={"Are you sure you want to delete?"} onConfirm={this.deleteLock(lock._id)} okText="Yes" cancelText="No">
                     <Icon type="close-circle" />

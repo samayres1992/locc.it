@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
+import Recaptcha from 'react-google-invisible-recaptcha';
 import { Form, Field } from 'react-final-form';
-import { Icon } from 'antd';
+import { Input, Icon } from 'antd';
 import classNames from 'classnames';
 import * as actions from '../actions';
 import '../css/login.css';
@@ -18,6 +19,9 @@ class LoginTemplate extends Component {
     super();
     this.state = {
       login: false,
+      email: '',
+      password: '',
+      recaptcha: true
     }
   }
 
@@ -26,7 +30,7 @@ class LoginTemplate extends Component {
   );
 
   passwordRender = (passwordField) => (
-    <input {...passwordField.input} name={passwordField.name} className={classNames({"has-content": passwordField.meta.dirty, "fancy-input": !passwordField.dirty})} placeholder="" type="password" required />
+    <Input.Password {...passwordField.input} name={passwordField.name} className={classNames({"has-content": passwordField.meta.dirty, "fancy-input": !passwordField.dirty})} placeholder="" type="password" required />
   );
 
   loginSwitch = () => {
@@ -35,12 +39,25 @@ class LoginTemplate extends Component {
     }));
   }
 
-  onLoginSubmit = values => {
-    this.props.loginUser(values);
+  verifyUserSubmission = ({ email, password }) => {
+    // We need to make sure it's not a bot.
+    this.setState({
+      email: email,
+      password: password
+    });
+    this.recaptcha.execute();
   }
 
-  onRegisterSubmit = values => {
-    this.props.registerUser(values);
+  verifiedLoginSubmit = () => {
+    const { email, password } = this.state;
+    this.props.loginUser({ email, password });
+    console.log("login called and submitted");
+  }
+
+  verifiedRegisterSubmit = () => {
+    const { email, password } = this.state;
+    this.props.registerUser({ email, password });
+    console.log("register called and submitted");
   }
 
   renderRedirect = () => {
@@ -59,12 +76,11 @@ class LoginTemplate extends Component {
 
     return (
       <div  className={classNames({"container login": !login, "container login right-panel-active": login })} id="container">
-        { auth && <Redirect to='/dashboard' /> }
         <div className="form-container sign-up-container">
         <Form 
-          onSubmit={this.onRegisterSubmit}
+          onSubmit={this.verifyUserSubmission}
           render={({ handleSubmit }) => (
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} action="register">
               <h1>Sign up.</h1>
               <div className="input-effect">
                 <Field type="email" component={this.emailRender} placeholder="Email" name="email" />
@@ -81,21 +97,27 @@ class LoginTemplate extends Component {
                 </span>
               </div>
               <div className="notice">
-                <span>Check your password before registering.</span>
+                <span>Check password before continuing.</span>
               </div>
               <button className="button fancy-button">
                 Sign up
                 <span className="focus-border"><i></i></span>
               </button>
+              <Recaptcha
+                ref={ ref => this.recaptcha = ref }
+                sitekey={process.env.REACT_APP_GOOGLE_SITE_KEY}
+                onResolved={this.verifiedRegisterSubmit}
+                badge={"bottomright"}
+              />
             </form>
           )}
         />
         </div>
         <div className="form-container sign-in-container">
         <Form 
-          onSubmit={this.onLoginSubmit}
+          onSubmit={this.verifyUserSubmission}
           render={({ handleSubmit }) => (
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={this.checkSubmission} action="login">
               <h1>Sign in.</h1>
               <div className="input-effect">
                 <Field type="email" component={this.emailRender} placeholder="Email" name="email" />
@@ -108,12 +130,18 @@ class LoginTemplate extends Component {
                 <span className="focus-border"><i></i></span>
               </div>
               <div className="forgot">
-                <a href="#">Forgot your password?</a>
+                <a href="/forgot">Forgot your password?</a>
               </div>
               <button className="button fancy-button">
                 Sign in
                 <span className="focus-border"><i></i></span>  
               </button>
+              <Recaptcha
+                ref={ ref => this.recaptcha = ref }
+                sitekey={process.env.REACT_APP_GOOGLE_SITE_KEY}
+                onResolved={this.verifiedLoginSubmit}
+                badge={"bottomright"}
+              />
             </form>
           )}
         />

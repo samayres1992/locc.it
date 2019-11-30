@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Recaptcha from 'react-google-invisible-recaptcha';
 import CryptoJS from 'crypto-js';
 import { parse } from 'flatted/esm';
 import { Form, Field } from 'react-final-form';
@@ -19,19 +20,14 @@ class DecryptForm extends Component {
     super(props);
     this.state = {
       ...props,
-      unlocked: false
+      unlocked: false,
+      passcode: ''
     }
   }
 
   componentDidMount() {
     const path = window.location.pathname.split('/')[2];
     this.props.checkUrl(path);
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if(prevState.unlock !== this.state.unlock) {
-      return true;
-    }
   }
 
   inputRender = (inputField) => (
@@ -55,7 +51,15 @@ class DecryptForm extends Component {
       // TODO: Didn't work, notify user
       console.log("error", e);
     }
-	}
+  }
+  
+  checkSubmit = ({ passcode }) => {
+    // We need to make sure it's not a bot.
+    this.setState({
+      passcode: passcode
+    });
+    this.recaptcha.execute();
+  }
 
   onSubmit = values => {
     this.decryptData(values);
@@ -67,7 +71,7 @@ class DecryptForm extends Component {
       <Form 
         onSubmit={this.onSubmit}
         render={({ handleSubmit }) => (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} action="decrypt">
           <div className="input-effect">
             <Field name="passcode" component={this.inputRender} />
               <label>Passcode</label>
@@ -81,6 +85,11 @@ class DecryptForm extends Component {
                 <i></i>
               </span>
           </button>
+          <Recaptcha
+            ref={ ref => this.recaptcha = ref }
+            sitekey={process.env.REACT_APP_GOOGLE_SITE_KEY}
+            onResolved={this.verifiedRegisterSubmit}
+          />
         </form>
       )} />
     );

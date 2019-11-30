@@ -2,6 +2,7 @@ body {
   background: #4b6cb7;
   color: #fff;
   font-size: 1.2em;
+  min-height: 100%;
 }
 body:focus {
   outline: none;
@@ -12,6 +13,7 @@ body:active {
 .container {
   max-width: 1080px;
   margin: 0 auto;
+  min-height: 100%;
 }
 header .logo {
   width: 100px;
@@ -64,6 +66,16 @@ header .ant-menu-item {
 .content .input-effect {
   position: relative;
   margin: 0 0 30px;
+}
+.content .input-effect .ant-input-password input {
+  background-color: transparent;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+}
+.content .input-effect .ant-input-suffix i {
+  color: #fff;
 }
 .content .expiry {
   display: none;
