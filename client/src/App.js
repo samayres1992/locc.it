@@ -35,10 +35,10 @@ class App extends Component {
             <HeaderTemplate />
             <Content className="content" style={{ padding: '50px' }}>
               <Route location={pathName} exact path="/" component={LandingTemplate} />
-              <Route exact path="/login" component={LoginTemplate} />
-              <Route path="/decrypt/:url" component={DecryptTemplate} />
-              <Route path="/dashboard" component={auth ? DashboardTemplate : LandingTemplate} />
-              <Route path="/faq" component={FaqTemplate} />
+              <Route path="/login" exact component={LoginTemplate} />
+              <Route path="/dashboard" exact component={auth ? DashboardTemplate : LandingTemplate} />
+              <Route path="/faq" exact component={FaqTemplate} />
+              <Route path="/d/:url" exact component={DecryptTemplate} />
             </Content>
             <FooterTemplate />
         </BrowserRouter>

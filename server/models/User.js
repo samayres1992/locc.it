@@ -10,7 +10,8 @@ const userSchema = new Schema({
   'password': String,
   'membership': { type: String, default: 'Regular'},
   'membershipDuration': { type: Number, default: 0},
-  'paymentDate': Date
+  'paymentDate': Date,
+  'activated': { type: Boolean, default: false }
 });
 
 mongoose.model('users', userSchema);

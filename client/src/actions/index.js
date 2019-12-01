@@ -3,7 +3,6 @@ import { stringify } from 'flatted/esm';
 import { 
   FETCH_USER,
   FETCH_LOCKS,
-  DELETE_LOCK,
   ENCRYPT,
   PASSCODE,
   CHECK_URL,
@@ -17,8 +16,14 @@ export const fetchUser = () => async dispatch => {
   dispatch({ type: FETCH_USER, payload: res.data });
 };
 
-export const fetchLocks = () => async dispatch => {
-  const res = await axios.get('/api/fetch_locks');
+export const fetchLocks = (userId) => async dispatch => {
+  const res = await axios({
+    method: 'post',
+    url: '/api/fetch_locks',
+    data: {
+      userId: userId
+    }
+  });
   dispatch({ type: FETCH_LOCKS, payload: res.data });
 };
 
@@ -28,11 +33,12 @@ export const handleStripeToken = (token) => async dispatch => {
 }
 
 export const encrypt = (data) => async dispatch => {
-  const { title, expiry, encryptedData, url } = data;
+  const { userId, title, expiry, encryptedData, url } = data;
   const res = await axios({
     method: 'post',
     url: '/api/encrypt',
     data: {
+      userId: userId,
       title: title,
       expiry: expiry,
       encryptedData: stringify(encryptedData),
@@ -61,8 +67,8 @@ export const checkUrl = (url) => async dispatch => {
   dispatch({ type: CHECK_URL, payload: res.data});
 }
 
-export const loginUser = (details) => async dispatch => {
-  const { email, password } = details;
+export const loginUser = (data) => async dispatch => {
+  const { email, password } = data;
   const res = await axios({
     method: 'post',
     url: '/auth/local/login',
@@ -74,8 +80,8 @@ export const loginUser = (details) => async dispatch => {
   dispatch({ type: LOGIN_USER, payload: res.data});
 }
 
-export const registerUser = (details) => async dispatch => {
-  const { email, password } = details;
+export const registerUser = (data) => async dispatch => {
+  const { email, password } = data;
   const res = await axios({
     method: 'post',
     url: '/auth/local/register',
@@ -87,6 +93,21 @@ export const registerUser = (details) => async dispatch => {
   dispatch({ type: REGISTER_USER , payload: res.data});
 }
 
+export const updateLockExpiry = (data) => async dispatch => {
+  const { lockId, expiry } = data;
+  const res = await axios({
+    method: 'post',
+    url: '/api/update_expiry',
+    data: {
+      lockId: lockId,
+      expiry: expiry
+    }
+  }).then(function (res) {
+    console.log(res);
+    return res.status;
+  });
+}
+
 export const deleteSelectedLock = (lockId) => async dispatch => {
   const res = await axios({
     method: 'post',
@@ -94,6 +115,8 @@ export const deleteSelectedLock = (lockId) => async dispatch => {
     data: {
       lockId: lockId
     }
-  });
-  dispatch({ type: DELETE_LOCK, payload: res.data});
+  }).then(function (res) {
+    console.log(res);
+    return res.status;
+  })
 }

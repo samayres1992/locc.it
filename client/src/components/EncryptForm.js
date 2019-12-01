@@ -8,6 +8,13 @@ import classNames from 'classnames';
 import * as actions from '../actions';
 import CryptoJS from 'crypto-js';
 
+const mapStateToProps = (state) => {
+  return {
+    state,
+    ...state
+  };
+}
+
 class EncryptForm extends Component {
 
   constructor (props) {
@@ -16,7 +23,7 @@ class EncryptForm extends Component {
       title: '',
       emailUsername: '',
       password: '',
-      expiry: '',
+      expiry: {},
       note: ''
     }
   }
@@ -73,9 +80,12 @@ class EncryptForm extends Component {
     return randomString;
 	}
 
-	encryptData (data) {
+	encryptData = () => {
+    console.log("encryptData called", this.state);
     // Deconstruct the data we wish to encrypt
     const { title, emailUsername, password, expiry, note } = this.state;
+    const { _id: userId } = this.props.auth;
+    console.log("userId", "userid:" + userId);
     // Generate a key for the user to use for decryption
     const passcode = this.stringGenerator(8);
     const url = this.stringGenerator(10, 'alphabet');
@@ -89,11 +99,14 @@ class EncryptForm extends Component {
 
     // Pass over the data to the action, if user doesn't specify, assume a week is fine.
     this.props.encrypt({ 
+      userId: userId ? userId : null,
       title: title,
       encryptedData: encryptedData,
       url: url,
       expiry: expiry ? expiry.format('YYYY-MM-DD') : Moment().add(7, 'days').format('YYYY-MM-DD')
     });
+
+    console.log("encrypt form", this.state);
 
     this.props.updatePasscode({
       'passcode': passcode
@@ -157,4 +170,4 @@ class EncryptForm extends Component {
   }
 }
 
-export default connect(null, actions)(EncryptForm);
+export default connect(mapStateToProps, actions)(EncryptForm);

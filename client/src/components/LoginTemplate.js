@@ -80,7 +80,7 @@ class LoginTemplate extends Component {
         <Form 
           onSubmit={this.verifyUserSubmission}
           render={({ handleSubmit }) => (
-            <form onSubmit={handleSubmit} action="register">
+            <form onSubmit={ handleSubmit } action="register">
               <h1>Sign up.</h1>
               <div className="input-effect">
                 <Field type="email" component={this.emailRender} placeholder="Email" name="email" />
@@ -117,7 +117,7 @@ class LoginTemplate extends Component {
         <Form 
           onSubmit={this.verifyUserSubmission}
           render={({ handleSubmit }) => (
-            <form onSubmit={this.checkSubmission} action="login">
+            <form onSubmit={ handleSubmit } action="login">
               <h1>Sign in.</h1>
               <div className="input-effect">
                 <Field type="email" component={this.emailRender} placeholder="Email" name="email" />
