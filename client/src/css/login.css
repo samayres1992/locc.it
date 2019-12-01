@@ -81,6 +81,9 @@
   margin: 0;
   padding-bottom: 20px;
 }
+.login.container .anticon {
+  color: #fff;
+}
 .login.container .overlay-container {
   background-color: #556893;
   position: absolute;
@@ -139,11 +142,14 @@
 .login.container .social-container span {
   display: inline-block;
   text-align: center;
-  color: #556893;
+  color: #4b6cb7;
   padding-right: 10px;
 }
 .login.container .social-container .oauth {
   display: inline-block;
+}
+.login.container .social-container .oauth svg {
+  color: #4b6cb7;
 }
 .login.container .social-container a {
   color: #4b6cb7;

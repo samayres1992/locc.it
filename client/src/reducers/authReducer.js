@@ -6,7 +6,7 @@ export default function (state = null, action) {
       return action.payload || false; 
     case LOGIN_USER:
       return action.payload || false; 
-    case REGISTER_USER:
+  case REGISTER_USER:
       return action.payload || false; 
     default:
       return state;

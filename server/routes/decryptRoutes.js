@@ -13,10 +13,14 @@ module.exports = app => {
       }
     });
   });
-  app.get('/api/fetch_locks', async (req, res) => {
-    // const { url } = req.body;
-    Encrypt.find({ 'active': true }).then((data) => {
+  app.post('/api/fetch_locks', async (req, res) => {
+    const { userId } = req.body;
+    Encrypt.find({ 
+      'active': true,
+      'userId': userId
+    }).then((data) => {
       if (data) {
+        console.log("data", data);
         res.send(data);
       } else {
         // Failed to find a result

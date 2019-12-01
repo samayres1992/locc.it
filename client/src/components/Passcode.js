@@ -15,7 +15,7 @@ class Passcode extends Component {
 
   render() {
     const { url, passcode, expiry } = this.props;
-    const fullUrl = process.env.REACT_APP_SITE_URL + 'decrypt/' + url;
+    const fullUrl = process.env.REACT_APP_SITE_URL + 'd/' + url;
 
     return (
       <Fragment>

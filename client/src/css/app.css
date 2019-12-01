@@ -80,6 +80,9 @@ header .ant-menu-item {
 .content .expiry {
   display: none;
 }
+.no-data {
+  color: #fff;
+}
 footer {
   height: 100px;
   border-top: 2px solid #fff;

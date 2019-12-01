@@ -50,7 +50,7 @@ a,
 .ant-calendar .ant-calendar-input-wrap .ant-calendar-footer {
   display: none;
 }
-.ant-calendar-picker {
+.landing .ant-calendar-picker {
   width: 34%;
   float: right;
   position: absolute;
@@ -58,29 +58,40 @@ a,
   right: 15px;
   cursor: pointer;
 }
-.ant-calendar-picker .ant-calendar-picker-input {
+.ant-calendar-picker-input {
   height: 40px;
   background: rgba(255,255,255,0.25);
   border: 0;
   color: #fff;
   cursor: pointer;
 }
-.ant-calendar-picker .ant-calendar-picker-clear {
+.ant-calendar-picker-clear {
   display: none;
 }
-.ant-calendar-picker ::placeholder,
-.ant-calendar-picker .anticon {
+::placeholder,
+.anticon {
   color: #fff;
 }
 .ant-layout-content .ant-row {
   margin-bottom: 15px;
 }
 .ant-layout-content .ant-row .ant-card {
-  background: rgba(255,255,255,0.25);
+  background: transparent;
   color: #fff;
+  border: 1px solid rgba(255,255,255,0.5);
 }
 .ant-layout-content .ant-row .ant-card-head,
 .ant-layout-content .ant-row .ant-card-extra {
   background: transparent;
+  color: #fff;
+}
+.ant-alert {
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+  margin-bottom: 30px;
+}
+.ant-alert i,
+.ant-alert span.ant-alert-message {
   color: #fff;
 }

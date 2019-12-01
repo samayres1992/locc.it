@@ -36,7 +36,7 @@ passport.use(
       return done(null, existingUser);
     }
     // New user, save them to the DB
-    const user = await new User({ googleId: profile.id }).save();
+    const user = await new User({ googleId: profile.id, activated: true }).save();
     done(null, user);
   })
 );
@@ -56,7 +56,7 @@ passport.use(
       return done(null, existingUser);
     }
     // New user, save them to the DB
-    const user = await new User({ githubId: profile.id }).save();
+    const user = await new User({ githubId: profile.id, activated: true }).save();
     done(null, user);
   })
 );
@@ -76,7 +76,7 @@ passport.use(
       return done(null, existingUser);
     }
     // New user, save them to the DB
-    const user = await new User({ facebookId: profile.id }).save();
+    const user = await new User({ facebookId: profile.id, activated: true }).save();
     done(null, user);
   })
 );
