@@ -1,4 +1,4 @@
-import { PASSCODE_DECRYPTED } from '../actions/types'; 
+import { DECRYPT_DATA, PASSCODE_DECRYPTED } from '../actions/types'; 
 
 export default function (state = null, action) {
   switch (action.type) {
@@ -7,6 +7,8 @@ export default function (state = null, action) {
         ...state,
         decryptedData: action.payload || false,
       };
+    case DECRYPT_DATA:
+      return action.payload || false
     default:
       return state;
   }

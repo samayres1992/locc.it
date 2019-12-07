@@ -4,13 +4,6 @@ import * as actions from '../actions';
 import EncryptForm from './EncryptForm';
 import Passcode from './Passcode';
 
-const mapStateToProps = (state) => {
-  return {
-    state,
-    ...state
-  };
-}
-
 class LandingTemplate extends Component {
 
   render() {
@@ -25,6 +18,13 @@ class LandingTemplate extends Component {
       </Fragment>
     );
   }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    state,
+    ...state
+  };
 }
 
 export default connect(mapStateToProps, actions)(LandingTemplate);

@@ -1,17 +1,25 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Icon } from 'antd';
+import { Icon, notification } from 'antd';
 import * as actions from '../actions';
 import Clipboard from 'react-clipboard.js';
 import Moment from 'moment';
 
 class Passcode extends Component {
 
-  // TODO: Implement notification feedback for users when they click copy
-
-  notifyUser = (message) => {
-    console.log("i was called");
-  }
+  openNotificationWithIcon = (type, action) => {
+    switch (action) {
+      case 'clipboard':
+          notification[type]({
+            message: 'Copied to clipboard successful.',
+            description: 'Your details have been copied to your clipboard.',
+            placement: 'bottomLeft'
+          });
+        break;
+      default:
+        break;
+    }
+  };
 
   render() {
     const { url, passcode, expiry } = this.props;
@@ -29,13 +37,13 @@ class Passcode extends Component {
         <div className="input-effect">
           <span className="fancy-input passcodeInfo url">
             { fullUrl }
-            <Clipboard className="button copy" data-clipboard-text={fullUrl}><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
+            <Clipboard className="button copy" data-clipboard-text={fullUrl} onSuccess={() => this.openNotificationWithIcon('success', 'clipboard')}><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
           </span>
         </div>
         <div className="input-effect">
           <span className="fancy-input passcodeInfo passcode">
             {passcode}
-            <Clipboard className="button copy" data-clipboard-text={passcode}><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
+            <Clipboard className="button copy" data-clipboard-text={passcode} onSuccess={() => this.openNotificationWithIcon('success', 'clipboard')}><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
           </span>    
         </div>
         <div className="expiry-info">

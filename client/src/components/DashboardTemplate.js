@@ -8,30 +8,19 @@ import EncryptForm from './EncryptForm';
 import Clipboard from 'react-clipboard.js';
 import Passcode from './Passcode';
 
-const mapStateToProps = (state) => {
-  return {
-    state,
-    ...state
-  };
-}
-
 class DashboardTemplate extends Component {
   componentDidMount() {
     this.props.fetchLocks(this.props.auth._id);
   }
 
-  deleteLock = (lockId) => {
-    let result = '';
-
+  deleteLock = ( lockId ) => {
     try {
-      let result = this.props.deleteSelectedLock(lockId);
-    } catch ( e ) {
-      console.log("Error", e);
-      return;
+      this.props.deleteSelectedLock(lockId);
+      this.openNotificationWithIcon('success', 'delete');
+    } catch ( err ) {
+      this.openFailureNotificationWithIcon('error', 'delete');
     }
 
-    // Update locks on user dashboard
-    this.openNotificationWithIcon('success', 'delete');
     this.props.fetchLocks(this.props.auth._id);
   }
 
@@ -64,6 +53,21 @@ class DashboardTemplate extends Component {
           description: 'Your encrypted credentials were deleted.',
           placement: 'bottomLeft'
         });
+        break;
+      default:
+        break;
+    }
+  };
+
+  openFailureNotificationWithIcon = (type, action) => {
+    switch (action) {
+      case 'delete':
+        notification[type]({
+          message: 'Delete failed.',
+          description: 'Something went wrong, please try again.',
+          placement: 'bottomLeft'
+        });
+        break;
       default:
         break;
     }
@@ -73,7 +77,7 @@ class DashboardTemplate extends Component {
     const { encryptForm, retrievedData, auth } = this.props;
     const landing = <Fragment><h1>Be safe.</h1><h2>Encrypt your credentials before sharing them online.</h2></Fragment>;
     const dashboard = <Fragment><h1>Dashboard.</h1><h2>Allows full control over your shared credentials.</h2></Fragment>;
-    const activationMessage = auth.activated ? null : <Alert
+    const activationMessage = <Alert
       message="Activation notice."
       description="Currently your account is not verified, please check your email. Unverified accounts are automatically
       deleted after 1 week."
@@ -83,10 +87,10 @@ class DashboardTemplate extends Component {
     const chunkedLocks = chunk(retrievedData, 2);
     const domain = process.env.REACT_APP_SITE_URL;
     let i = 0;
-    console.log("chunkedlocks", chunkedLocks);
+    console.log("auth.activated", auth.activated);
     return (
       <Row gutter={12}>
-        { activationMessage }
+        { auth.activated ? null : activationMessage }
         <Col span={24}>
         { dashboard }
         {
@@ -111,7 +115,7 @@ class DashboardTemplate extends Component {
               ))}
             </Row>
             ))
-          : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<span className='no-data'>No encrypted details, create one below.</span>} />
+          : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<span className='no-data'>No encrypted credentials, create one below.</span>} />
         }
       </Col>
         <Col span={24}>
@@ -122,6 +126,13 @@ class DashboardTemplate extends Component {
       </Row>
     );
   }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    state,
+    ...state
+  };
 }
 
 export default connect(mapStateToProps, actions)(DashboardTemplate);

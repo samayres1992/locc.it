@@ -1,18 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Recaptcha from 'react-google-invisible-recaptcha';
-import CryptoJS from 'crypto-js';
-import { parse } from 'flatted/esm';
 import { Form, Field } from 'react-final-form';
 import classNames from 'classnames';
 import * as actions from '../actions';
-
-const mapStateToProps = (state) => {
-  return {
-    ...state,
-    state
-  };
-}
 
 class DecryptForm extends Component {
 
@@ -31,27 +22,8 @@ class DecryptForm extends Component {
   }
 
   inputRender = (inputField) => (
-    <input {...inputField.input} name={inputField.name} className={classNames({"has-content": inputField.meta.dirty, "fancy-input": !inputField.dirty})} placeholder="" type="text" required />
+    <input { ...inputField.input } name={ inputField.name } className={ classNames({ "has-content": inputField.meta.dirty, "fancy-input": !inputField.dirty })} placeholder="" type="text" required />
   );
-
-  decryptData (passcode) {
-    // Let's take the value and decrypt it
-    const { encryptedData, title } = this.props.retrievedData;
-    const data = parse(encryptedData);
-
-    // Decrypt
-    try {
-      let bytes  = CryptoJS.AES.decrypt(data, passcode.passcode.toString());
-      let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-      // Merge in the title for better readability to user
-      Object.assign(decryptedData, {title});
-      this.props.passcodeDecrypted(decryptedData);
-      this.setState({ unlocked: true });
-    } catch(e) {
-      // TODO: Didn't work, notify user
-      console.log("error", e);
-    }
-  }
   
   checkSubmit = ({ passcode }) => {
     // We need to make sure it's not a bot.
@@ -63,6 +35,11 @@ class DecryptForm extends Component {
 
   onSubmit = values => {
     this.decryptData(values);
+  }
+
+  decryptData (passcode) {
+    const { lockId } = this.props.retrievedData;
+    this.props.tryUserDecrypt(lockId, passcode);
   }
 
   render() {
@@ -94,6 +71,13 @@ class DecryptForm extends Component {
       )} />
     );
   }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    ...state,
+    state
+  };
 }
 
 export default connect(mapStateToProps, actions)(DecryptForm);
