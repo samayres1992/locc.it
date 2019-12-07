@@ -1,6 +1,11 @@
 // Our requirements
 const keys = require('../config/keys');
 const passport = require('passport');
+const nodemailer = require("nodemailer");
+const path = require('path');
+// const emailTemplates = require("email-templates").EmailTemplate;
+// const send = transporter.templateSender(new EmailTemplate('email/'));
+const hbs = require("nodemailer-express-handlebars");
 const validateLogin = require("../services/validator/loginValidation");
 const validateRegistration = require("../services/validator/registerValidation");
 const jwt = require("jsonwebtoken");
@@ -9,10 +14,37 @@ const bcrypt = require("bcryptjs");
 const mongoose = require('mongoose');
 const User = mongoose.model('users');
 
+let mailer = nodemailer.createTransport({
+  host: "mail.gandi.net",
+  port: 465,
+  secure: true,
+  auth: {
+    user: keys.emailUser, 
+    pass: keys.emailPass 
+  }
+});
+
+let options = {
+  viewEngine: {
+    extname: '.hbs', // handlebars extension
+    layoutsDir: path.join(__dirname, './email'), // location of handlebars templates
+    defaultLayout: 'index',
+    viewPath: path.join(__dirname, './email'),
+    partialsDir: path.join(__dirname, './email/partials'),
+    extName: '.hbs'
+  },
+  viewPath: path.join(__dirname, './email/'),
+  extName: '.hbs'
+}
+
+mailer.use('compile', hbs(options));
+
 module.exports = app => {
   // Facebook
   app.get('/auth/facebook', 
-    passport.authenticate('facebook')
+    passport.authenticate('facebook', {
+      scope: ['profile', 'email']
+    })
   );
 
   app.get('/auth/facebook/callback',
@@ -51,7 +83,7 @@ module.exports = app => {
     })
   );
 
-  // TODO: Add Local sign in and register 
+  // Local Registration
   app.post('/auth/local/register', (req, res) => {
     const { errors, isValid } = validateRegistration(req.body);
     const { email, password } = req.body;
@@ -73,11 +105,33 @@ module.exports = app => {
           r: "pg", //Rating
           d: "mm" //Default
         });
+
+        // Generate a user verfification token
+        const verificationToken = jwt.sign({
+          data: email
+        }, keys.localSecret, { expiresIn: '7d' });
+
+        mailer.sendMail({
+          from: keys.emailUser, // sender address
+          to: email, // list of receivers
+          subject: 'Locc.it: Account verification', // Subject line
+          template: 'index',
+          context: {
+            verificationToken : "https://locc.it/auth/local/verify" + verificationToken
+          },
+          attachments:[{
+            filename : 'loccit.png',
+            path: path.join(__dirname, 'email/images/loccit.png'),
+            cid : 'logo@locc.it'
+          }],
+        });
+        
         //Create a new user from the data provided in the body (Comes from front end form)
         const newUser = new User({
           email: email,
           avatar: avatar,
-          password: password
+          password: password,
+          token: verificationToken
         });
         //Use Bcrypt to encrypt the password using Salt.
         bcrypt.genSalt(10, (error, salt) => {
@@ -92,6 +146,22 @@ module.exports = app => {
               .catch(error => console.log(error));
           });
         });
+      }
+    });
+  });
+
+  app.get("/auth/local/verify/:token", (req, res) => {
+    const token = req.originalUrl.split('/')[4];
+
+    User.updateOne(
+      { 'token': token }, // Find token
+      { 'activated': true, 'token': '' } // Update value
+    ).then((data) => {
+      if (data) {
+        res.redirect('/login?activated');
+      } else {
+        // Failed to find a result
+        res.send(false);
       }
     });
   });

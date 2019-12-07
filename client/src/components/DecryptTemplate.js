@@ -6,13 +6,6 @@ import DecryptedData from './DecryptedData';
 import unlockIcon from '../images/unlock.svg';
 import lockIcon from '../images/lock.svg';
 
-const mapStateToProps = (state) => {
-  return {
-    state,
-    ...state
-  };
-}
-
 class DecryptTemplate extends Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -37,6 +30,13 @@ class DecryptTemplate extends Component {
       </Fragment>
     );
   }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    state,
+    ...state
+  };
 }
 
 export default connect(mapStateToProps, actions)(DecryptTemplate);

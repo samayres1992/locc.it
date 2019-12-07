@@ -11,7 +11,8 @@ const userSchema = new Schema({
   'membership': { type: String, default: 'Regular'},
   'membershipDuration': { type: Number, default: 0},
   'paymentDate': Date,
-  'activated': { type: Boolean, default: false }
+  'activated': { type: Boolean, default: false },
+  'token': String
 });
 
 mongoose.model('users', userSchema);

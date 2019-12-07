@@ -15,11 +15,6 @@ import LoginTemplate from './components/LoginTemplate';
 
 const { Content } = Layout;
 
-const mapStateToProps = (state) => {
-  const { auth } = state;
-  return { auth };
-};
-
 class App extends Component {
 
   componentDidMount() {
@@ -46,5 +41,10 @@ class App extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  const { auth } = state;
+  return { auth };
+};
 
 export default connect(mapStateToProps, actions)(App);

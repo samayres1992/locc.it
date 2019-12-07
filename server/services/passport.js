@@ -36,7 +36,11 @@ passport.use(
       return done(null, existingUser);
     }
     // New user, save them to the DB
-    const user = await new User({ googleId: profile.id, activated: true }).save();
+    const user = await new User({ 
+      googleId: profile.id,
+      email: profile._json.email,
+      activated: true 
+    }).save();
     done(null, user);
   })
 );
@@ -56,7 +60,11 @@ passport.use(
       return done(null, existingUser);
     }
     // New user, save them to the DB
-    const user = await new User({ githubId: profile.id, activated: true }).save();
+    const user = await new User({
+      githubId: profile.id, 
+      email: profile._json.email,
+      activated: true 
+    }).save();
     done(null, user);
   })
 );
@@ -76,7 +84,11 @@ passport.use(
       return done(null, existingUser);
     }
     // New user, save them to the DB
-    const user = await new User({ facebookId: profile.id, activated: true }).save();
+    const user = await new User({
+      facebookId: profile.id, 
+      email: profile._json.email,
+      activated: true 
+    }).save();
     done(null, user);
   })
 );

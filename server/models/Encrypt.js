@@ -8,7 +8,9 @@ const encryptSchema = new Schema({
   url: { type: String, required: [true, 'URL must be provided.'] },
   expiry: { type: Date, required: [true, 'Expiry date must be provided.'] },
   used: { type: Boolean, default: false },
-  active: { type: Boolean, default: true }
+  active: { type: Boolean, default: true },
+  attempts: { type: Number , default: 0 },
+  locked: { type: Date, default: null }
 });
 
 mongoose.model('locks', encryptSchema);

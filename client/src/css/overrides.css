@@ -92,6 +92,7 @@ a,
   margin-bottom: 30px;
 }
 .ant-alert i,
-.ant-alert span.ant-alert-message {
+.ant-alert span.ant-alert-message,
+.ant-alert svg {
   color: #fff;
 }

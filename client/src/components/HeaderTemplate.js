@@ -6,13 +6,6 @@ import { Layout, Menu } from 'antd';
 import logo from '../images/loccit.svg';
 const { Header } = Layout;
 
-const mapStateToProps = (state) => {
-  const { auth } = state;
-  return {
-    auth: auth
-  };
-}
-
 class HeaderTemplate extends Component {
 
   renderAuthOptions() {
@@ -53,6 +46,13 @@ class HeaderTemplate extends Component {
       </Header>
     );
   }
+}
+
+const mapStateToProps = (state) => {
+  const { auth } = state;
+  return {
+    auth: auth
+  };
 }
 
 export default connect(mapStateToProps)(HeaderTemplate);

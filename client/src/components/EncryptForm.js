@@ -8,13 +8,6 @@ import classNames from 'classnames';
 import * as actions from '../actions';
 import CryptoJS from 'crypto-js';
 
-const mapStateToProps = (state) => {
-  return {
-    state,
-    ...state
-  };
-}
-
 class EncryptForm extends Component {
 
   constructor (props) {
@@ -108,7 +101,7 @@ class EncryptForm extends Component {
 
     console.log("encrypt form", this.state);
 
-    this.props.updatePasscode({
+    this.props.generatedPasscode({
       'passcode': passcode
     });
 	
@@ -168,6 +161,13 @@ class EncryptForm extends Component {
       />
     );
   }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    state,
+    ...state
+  };
 }
 
 export default connect(mapStateToProps, actions)(EncryptForm);
