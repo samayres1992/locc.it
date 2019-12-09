@@ -11,8 +11,8 @@ class DashboardTemplate extends Component {
   constructor() {
     super();
     this.state = {
-      page: 1,
-      pageSize: 5
+      minItems: 1,
+      maxItems: 5
     };
   }
 
@@ -81,16 +81,15 @@ class DashboardTemplate extends Component {
   };
 
   paginationChange = ( page, pageSize ) => {
-    console.log('page', {page, pageSize});
     this.setState({
-      page: page,
-      pageSize: pageSize
+      minItems: (page - 1) * pageSize,
+      maxItems: page * pageSize
     });
   }
 
   render() {
     const { dashboard } = this.props;
-    const { page, pageSize } = this.state;
+    const { minItems, maxItems } = this.state;
     const dashboardIntro = <Fragment><h1>Dashboard.</h1><h2>Allows full control over your shared credentials.</h2></Fragment>;
     const chunkedLocks = chunk(dashboard, 2);
     const domain = process.env.REACT_APP_SITE_URL;
@@ -105,7 +104,7 @@ class DashboardTemplate extends Component {
           { dashboardIntro }
           {
             chunkedLocks.length ? 
-              chunkedLocks.slice(page, pageSize).map(chunk => (
+              chunkedLocks.slice(minItems, maxItems).map(chunk => (
                 <Row gutter={16} key={i++}>
                 {chunk.map(lock => (
                   <Col key={lock._id} span={12} className="dashCard">
@@ -130,7 +129,7 @@ class DashboardTemplate extends Component {
           </Col>
         </Row>
         <Row gutter={ 12 } className="pagination">
-          <Pagination defaultCurrent={ 1 } total={ chunkedLocks.length } hideOnSinglePage={ true } defaultPageSize={3} onChange={() => { this.paginationChange( page, pageSize ) }} />
+          <Pagination defaultCurrent={ 1 } total={ chunkedLocks.length } hideOnSinglePage={ true } defaultPageSize={5} onChange={(page, pageSize) => { this.paginationChange( page, pageSize ) }} />
         </Row>
       </Fragment>
     );
