@@ -2,7 +2,7 @@ import { ENCRYPT, PASSCODE } from '../actions/types';
 
 export default function (state = null, action) {
   switch (action.type) {
-    case ENCRYPT:
+  case ENCRYPT:
       return {
         ...state,
         url: action.payload.url,

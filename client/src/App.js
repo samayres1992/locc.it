@@ -22,18 +22,17 @@ class App extends Component {
   }
   
   render() {
-    const { auth } = this.props;
     const pathName = window.pathName;
     return (
       <Layout>
         <BrowserRouter>
             <HeaderTemplate />
             <Content className="content" style={{ padding: '50px' }}>
-              <Route location={pathName} exact path="/" component={LandingTemplate} />
-              <Route path="/login" exact component={LoginTemplate} />
-              <Route path="/dashboard" exact component={auth ? DashboardTemplate : LandingTemplate} />
-              <Route path="/faq" exact component={FaqTemplate} />
-              <Route path="/d/:url" exact component={DecryptTemplate} />
+              <Route location={pathName} exact path="/" component={ LandingTemplate } />
+              <Route path="/login" exact component={ LoginTemplate } />
+              <Route path="/dashboard" exact component={ DashboardTemplate } />
+              <Route path="/faq" exact component={ FaqTemplate } />
+              <Route path="/d/:url" exact component={ DecryptTemplate } />
             </Content>
             <FooterTemplate />
         </BrowserRouter>
@@ -42,7 +41,7 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ( state ) => {
   const { auth } = state;
   return { auth };
 };

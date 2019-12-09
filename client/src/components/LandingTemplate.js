@@ -8,19 +8,18 @@ class LandingTemplate extends Component {
 
   render() {
     const { encryptForm } = this.props;
-    console.log("encryptForm", encryptForm);
     const landing = <Fragment><h1>Be safe.</h1><h2>Encrypt your credentials before sharing them online.</h2></Fragment>;
     return (
       <Fragment>
         { encryptForm ? 
-          <Passcode passcode={encryptForm.passcode } url={encryptForm.url} expiry={encryptForm.expiry} /> :  <div className="landing">{landing} <EncryptForm /></div> 
+          <Passcode passcode={encryptForm.passcode } /> :  <div className="landing">{landing} <EncryptForm /></div> 
         }
       </Fragment>
     );
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ( state ) => {
   return {
     state,
     ...state

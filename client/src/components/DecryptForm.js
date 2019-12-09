@@ -34,10 +34,12 @@ class DecryptForm extends Component {
   }
 
   onSubmit = values => {
+    console.log("values", values);
     this.decryptData(values);
   }
 
   decryptData (passcode) {
+    console.log("passcode", passcode);
     const { lockId } = this.props.retrievedData;
     this.props.tryUserDecrypt(lockId, passcode);
   }
@@ -73,7 +75,7 @@ class DecryptForm extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ( state ) => {
   return {
     ...state,
     state
