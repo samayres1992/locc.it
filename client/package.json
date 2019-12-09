@@ -35,7 +35,9 @@
     "redux-form": "^8.2.6",
     "redux-thunk": "^2.3.0",
     "shortid": "^2.2.15",
-    "stylus": "^0.54.7"
+    "stylus": "^0.54.7",
+    "tsutils": "^3.17.1",
+    "typescript": "^3.7.3"
   },
   "scripts": {
     "start": "react-scripts start",
