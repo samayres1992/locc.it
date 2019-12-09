@@ -22,7 +22,8 @@ class Passcode extends Component {
   };
 
   render() {
-    const { url, passcode, expiry } = this.props;
+    const { passcode } = this.props;
+    const { url, expiry } = this.props.encryptForm;
     const fullUrl = process.env.REACT_APP_SITE_URL + 'd/' + url;
 
     return (
@@ -54,4 +55,11 @@ class Passcode extends Component {
   }
 }
 
-export default connect(null, actions)(Passcode);
+const mapStateToProps = ( state ) => {
+  return {
+    ...state,
+    state
+  };
+}
+
+export default connect(mapStateToProps, actions)(Passcode);

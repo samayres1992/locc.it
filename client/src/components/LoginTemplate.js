@@ -183,7 +183,7 @@ class LoginTemplate extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ( state ) => {
   const { auth } = state;
   return { auth };
 };

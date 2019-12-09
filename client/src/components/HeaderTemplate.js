@@ -23,9 +23,10 @@ class HeaderTemplate extends Component {
       //  User is logged in
       default:
         return [
-          <Menu.Item key='1'><Link to="/faq">How it works</Link></Menu.Item>,
-          <Menu.Item key='2'><a href="https://buymeacoffee.com/aQJ2U8H" target="_blank" rel="noopener noreferrer">Support us</a></Menu.Item>,
-          <Menu.Item key='3'><a href="/api/logout">Sign out</a></Menu.Item>
+          <Menu.Item key='1'><Link to="/dashboard">Dashboard</Link></Menu.Item>,
+          <Menu.Item key='2'><Link to="/faq">How it works</Link></Menu.Item>,
+          <Menu.Item key='3'><a href="https://buymeacoffee.com/aQJ2U8H" target="_blank" rel="noopener noreferrer">Support us</a></Menu.Item>,
+          <Menu.Item key='4'><a href="/api/logout">Sign out</a></Menu.Item>
         ];
     }
   }
@@ -33,7 +34,7 @@ class HeaderTemplate extends Component {
   render() {
     return (
       <Header>
-        <Link to={this.props.auth ? '/dashboard' : '/' }>
+        <Link to='/'>
           <img className='logo' src={logo} alt='locc.it logo' />
         </Link>
         <Menu
@@ -48,7 +49,7 @@ class HeaderTemplate extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ( state ) => {
   const { auth } = state;
   return {
     auth: auth

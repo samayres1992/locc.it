@@ -90,6 +90,26 @@ header {
   }
 }
 
+.pagination {
+  text-align: center;
+  .ant-pagination-item-link, .ant-pagination-item {
+    background-color: transparent;
+    a {
+      color: #fff;
+    }
+    &:hover {
+      border: 1px solid #fff;
+    }
+  }
+  .ant-pagination-item-active {
+    background-color: #fff;
+    border: 1px solid #fff;
+    a {
+      color: #4b6cb7; 
+    }  
+  }
+}
+
 .no-data {
   color: #fff;
 }
@@ -101,5 +121,6 @@ footer {
   padding: 35px;
   .anticon-heart {
     color: red;
+    font-size: 1.5em;
   }
 }

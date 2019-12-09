@@ -80,6 +80,28 @@ header .ant-menu-item {
 .content .expiry {
   display: none;
 }
+.pagination {
+  text-align: center;
+}
+.pagination .ant-pagination-item-link,
+.pagination .ant-pagination-item {
+  background-color: transparent;
+}
+.pagination .ant-pagination-item-link a,
+.pagination .ant-pagination-item a {
+  color: #fff;
+}
+.pagination .ant-pagination-item-link:hover,
+.pagination .ant-pagination-item:hover {
+  border: 1px solid #fff;
+}
+.pagination .ant-pagination-item-active {
+  background-color: #fff;
+  border: 1px solid #fff;
+}
+.pagination .ant-pagination-item-active a {
+  color: #4b6cb7;
+}
 .no-data {
   color: #fff;
 }
@@ -91,4 +113,5 @@ footer {
 }
 footer .anticon-heart {
   color: #f00;
+  font-size: 1.5em;
 }

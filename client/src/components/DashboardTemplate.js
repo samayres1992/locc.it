@@ -3,12 +3,19 @@ import { connect } from 'react-redux';
 import { chunk } from 'lodash';
 import Moment from 'moment';
 import * as actions from '../actions';
-import { Alert, Card, Col, Row, Icon, Popconfirm, notification, DatePicker, Empty } from 'antd';
-import EncryptForm from './EncryptForm';
+import { Card, Col, Row, Icon, Pagination, Popconfirm, notification, DatePicker, Empty } from 'antd';
 import Clipboard from 'react-clipboard.js';
-import Passcode from './Passcode';
 
 class DashboardTemplate extends Component {
+
+  constructor() {
+    super();
+    this.state = {
+      page: 1,
+      pageSize: 5
+    };
+  }
+
   componentDidMount() {
     this.props.fetchLocks(this.props.auth._id);
   }
@@ -24,14 +31,14 @@ class DashboardTemplate extends Component {
     this.props.fetchLocks(this.props.auth._id);
   }
 
-  updateExpiry(date, dateString, lockId) {
+  updateExpiry( date, dateString, lockId ) {
     let expiry = Moment(date).endOf('day').format('YYYY-MM-DD H:mm:ss').toString();
     console.log("expirychange", expiry);
     this.props.updateLockExpiry({ lockId, expiry });
     this.openNotificationWithIcon('success', 'expiry_update');
   }
 
-  openNotificationWithIcon = (type, action) => {
+  openNotificationWithIcon = ( type, action ) => {
     switch (action) {
       case 'clipboard':
           notification[type]({
@@ -59,7 +66,7 @@ class DashboardTemplate extends Component {
     }
   };
 
-  openFailureNotificationWithIcon = (type, action) => {
+  openFailureNotificationWithIcon = ( type, action ) => {
     switch (action) {
       case 'delete':
         notification[type]({
@@ -73,62 +80,64 @@ class DashboardTemplate extends Component {
     }
   };
 
+  paginationChange = ( page, pageSize ) => {
+    console.log('page', {page, pageSize});
+    this.setState({
+      page: page,
+      pageSize: pageSize
+    });
+  }
+
   render() {
-    const { encryptForm, retrievedData, auth } = this.props;
-    const landing = <Fragment><h1>Be safe.</h1><h2>Encrypt your credentials before sharing them online.</h2></Fragment>;
-    const dashboard = <Fragment><h1>Dashboard.</h1><h2>Allows full control over your shared credentials.</h2></Fragment>;
-    const activationMessage = <Alert
-      message="Activation notice."
-      description="Currently your account is not verified, please check your email. Unverified accounts are automatically
-      deleted after 1 week."
-      type="info"
-      showIcon
-    />;
-    const chunkedLocks = chunk(retrievedData, 2);
+    const { dashboard } = this.props;
+    const { page, pageSize } = this.state;
+    const dashboardIntro = <Fragment><h1>Dashboard.</h1><h2>Allows full control over your shared credentials.</h2></Fragment>;
+    const chunkedLocks = chunk(dashboard, 2);
     const domain = process.env.REACT_APP_SITE_URL;
     let i = 0;
-    console.log("auth.activated", auth.activated);
+
+    console.log('chunkedlocks', chunkedLocks);
+
     return (
-      <Row gutter={12}>
-        { auth.activated ? null : activationMessage }
-        <Col span={24}>
-        { dashboard }
-        {
-          chunkedLocks.length ? 
-            chunkedLocks.map(chunk => (
-              <Row gutter={16} key={i++}>
-              {chunk.map(lock => (
-                <Col key={lock._id} span={12} className="dashCard">
-                  <Card title={lock.title} bordered={false} extra={
-                    <Popconfirm placement="top" title={"Are you sure you want to delete?"} onConfirm={() => this.deleteLock(lock._id)} okText="Yes" cancelText="No">
-                      <Icon type="close-circle" />
-                    </Popconfirm>}>
-                    <div className="input-effect">
-                      <span className="fancy-input passcodeInfo url">
-                        {domain + lock.url}
-                        <Clipboard className="button copy" data-clipboard-text={domain + lock.url} onSuccess={() => this.openNotificationWithIcon('success', 'clipboard')}><Icon type="copy" /></Clipboard>
-                      </span>    
-                    </div>
-                    <DatePicker style={{"width": "100%"}} onChange={(date, dateString) => this.updateExpiry(date, dateString, lock._id)} defaultValue={Moment(lock.expiry)} format={"[Expires on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required />
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-            ))
-          : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<span className='no-data'>No encrypted credentials, create one below.</span>} />
-        }
-      </Col>
-        <Col span={24}>
-          { encryptForm ? 
-            <Passcode passcode={encryptForm.passcode } url={encryptForm.url} /> : <div className="landing">{landing} <EncryptForm /></div> 
-          }
-        </Col>
-      </Row>
+      <Fragment>
+        <Row gutter={ 12 }>
+          <Col span={ 24 }>
+          { dashboardIntro }
+          {
+            chunkedLocks.length ? 
+              chunkedLocks.slice(page, pageSize).map(chunk => (
+                <Row gutter={16} key={i++}>
+                {chunk.map(lock => (
+                  <Col key={lock._id} span={12} className="dashCard">
+                    <Card title={lock.title} bordered={false} extra={
+                      <Popconfirm placement="top" title={"Are you sure you want to delete?"} onConfirm={() => this.deleteLock(lock._id)} okText="Yes" cancelText="No">
+                        <Icon type="close-circle" />
+                      </Popconfirm>}>
+                      <div className="input-effect">
+                        <span className="fancy-input passcodeInfo url">
+                          {domain + lock.url}
+                          <Clipboard className="button copy" data-clipboard-text={domain + lock.url} onSuccess={() => this.openNotificationWithIcon('success', 'clipboard')}><Icon type="copy" /></Clipboard>
+                        </span>    
+                      </div>
+                      <DatePicker style={{"width": "100%"}} onChange={(date, dateString) => this.updateExpiry(date, dateString, lock._id)} defaultValue={Moment(lock.expiry)} format={"[Expires on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required />
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+              ))
+            : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<span className='no-data'>No encrypted credentials, create one below.</span>} />
+          } 
+          </Col>
+        </Row>
+        <Row gutter={ 12 } className="pagination">
+          <Pagination defaultCurrent={ 1 } total={ chunkedLocks.length } hideOnSinglePage={ true } defaultPageSize={3} onChange={() => { this.paginationChange( page, pageSize ) }} />
+        </Row>
+      </Fragment>
     );
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ( state ) => {
   return {
     state,
     ...state

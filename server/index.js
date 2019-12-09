@@ -39,7 +39,7 @@ require('./routes/authRoutes')(app);
 require('./routes/paymentRoutes')(app);
 require('./routes/encryptRoutes')(app);
 require('./routes/decryptRoutes')(app);
-require('./routes/lockRoutes')(app);
+require('./routes/dashboardRoutes')(app);
 
 // Production
 if(process.env.NODE_ENV === 'production') {

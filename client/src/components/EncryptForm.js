@@ -7,6 +7,7 @@ import Moment from 'moment';
 import classNames from 'classnames';
 import * as actions from '../actions';
 import CryptoJS from 'crypto-js';
+import randomString from 'shortid';
 
 class EncryptForm extends Component {
 
@@ -16,8 +17,8 @@ class EncryptForm extends Component {
       title: '',
       emailUsername: '',
       password: '',
-      expiry: {},
-      note: ''
+      note: '',
+      expiry: {}
     }
   }
 
@@ -53,59 +54,31 @@ class EncryptForm extends Component {
     this.encryptData();
   }
 
-  // Generate the decryption key for user
-	stringGenerator (len, charSet) {
-    if (charSet === 'alphabet') {
-      // For URL string
-      charSet = 'abcdefghijklmnopqrstuvwxyz';
-    }
-    else {
-      // AlphaNumeric - for passcode - only uppercase
-      charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    }
-
-    let randomString = '';
-    for (let i = 0; i < len; i++) {
-        let randomPoz = Math.floor(Math.random() * charSet.length);
-        randomString += charSet.substring(randomPoz,randomPoz+1);
-    }
-    
-    return randomString;
-	}
-
 	encryptData = () => {
-    console.log("encryptData called", this.state);
     // Deconstruct the data we wish to encrypt
     const { title, emailUsername, password, expiry, note } = this.state;
     const { _id: userId } = this.props.auth;
-    console.log("userId", "userid:" + userId);
-    // Generate a key for the user to use for decryption
-    const passcode = this.stringGenerator(8);
-    const url = this.stringGenerator(10, 'alphabet');
 
     // Let's take the value and encrypt it with
+    // Generate a key for the user to use for decryption
+    let passcode = randomString.generate();
     const encryptedData = CryptoJS.AES.encrypt(JSON.stringify({ 
       emailUsername: emailUsername, 
       password: password, 
       note: note
     }), passcode);
 
-    // Pass over the data to the action, if user doesn't specify, assume a week is fine.
+    // Pass over the data to the action, if user doesn't specify a date, default to a week.
     this.props.encrypt({ 
       userId: userId ? userId : null,
       title: title,
       encryptedData: encryptedData,
-      url: url,
       expiry: expiry ? expiry.format('YYYY-MM-DD') : Moment().add(7, 'days').format('YYYY-MM-DD')
     });
-
-    console.log("encrypt form", this.state);
 
     this.props.generatedPasscode({
       'passcode': passcode
     });
-	
-    return { passcode, url, expiry };
 	}
 
   render() {
@@ -163,7 +136,7 @@ class EncryptForm extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ( state ) => {
   return {
     state,
     ...state

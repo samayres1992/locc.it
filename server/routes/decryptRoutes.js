@@ -7,6 +7,7 @@ const { parse } = require('flatted/cjs');
 module.exports = app => {
   app.post('/api/check_url', async (req, res) => {
     const { url } = req.body;
+    console.log('url', url);
     Encrypt.findOne({ 
       url: url
     }, (err, { _id, active, locked }) => {
@@ -24,22 +25,6 @@ module.exports = app => {
         res.redirect("/404");
       }
     });
-  });
-
-  app.post('/api/fetch_locks', async (req, res) => {
-    const { userId } = req.body;
-    Encrypt.find({ 
-      'active': true,
-      'userId': userId
-    }), (err, data) => {
-      if (data) {
-        res.send(data);
-      } else {
-        // Failed to find a result
-        console.log("error", err);
-        res.send(false);
-      }
-    }
   });
 
   app.post('/api/decrypt_attempt', async (req, res) => {

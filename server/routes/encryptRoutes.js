@@ -6,13 +6,20 @@ module.exports = app => {
   app.post('/api/encrypt', async (req, res) => {
     // Deconstruct the request
     const { userId, title, expiry, encryptedData, url } = req.body;
-    const encrypted = await new Encrypt({
+    await new Encrypt({
       userId: userId,
       title: title,
       encryptedData: encryptedData,
       url: url,
       expiry: Moment(expiry).format()
-    }).save();
-    res.send(encrypted);
+    }).save(( err, { url, expiry }) => {
+      console.log("encryptroute", { url, expiry });
+      if (err) {
+        return res.status(400).send({
+          message: 'Encryption failed.'
+        });
+      }
+      return res.send({ url, expiry });
+    });
   });
 };
