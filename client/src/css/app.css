@@ -102,6 +102,17 @@ header .ant-menu-item {
 .pagination .ant-pagination-item-active a {
   color: #4b6cb7;
 }
+.settings h1,
+.settings h2 {
+  margin-bottom: 0.5em;
+}
+.settings .delete,
+.settings .logout,
+.settings .update {
+  padding: 15px;
+  border: 1px solid #fff;
+  border-radius: 3px;
+}
 .no-data {
   color: #fff;
 }

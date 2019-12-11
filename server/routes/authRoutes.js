@@ -9,7 +9,6 @@ const hbs = require("nodemailer-express-handlebars");
 const validateLogin = require("../services/validator/loginValidation");
 const validateRegistration = require("../services/validator/registerValidation");
 const jwt = require("jsonwebtoken");
-const gravatar = require("gravatar");
 const bcrypt = require("bcryptjs");
 const mongoose = require('mongoose');
 const User = mongoose.model('users');
@@ -42,17 +41,14 @@ mailer.use('compile', hbs(options));
 module.exports = app => {
   // Facebook
   app.get('/auth/facebook', 
-    passport.authenticate('facebook', {
-      scope: ['profile', 'email']
-      
-    })
-  );
+    passport.authenticate('facebook', { scope : ['email'] }
+  ));
 
   app.get('/auth/facebook/callback',
     passport.authenticate('facebook', { failureRedirect: '/login' }),
     function(req, res) {
       // Use manual redirect due to facebook bug that appends "#_=_" to URL
-      res.redirect('/dashboard');
+      res.redirect('/');
     }
   );
 
@@ -68,7 +64,7 @@ module.exports = app => {
     '/auth/google/callback', 
     passport.authenticate('google', { 
       failureRedirect: '/login', 
-      successRedirect: '/dashboard'
+      successRedirect: '/'
     })
   );
 
@@ -80,7 +76,7 @@ module.exports = app => {
   app.get('/auth/github/callback', 
     passport.authenticate('github', { 
       failureRedirect: '/login', 
-      successRedirect: '/dashboard'
+      successRedirect: '/'
     })
   );
 
@@ -100,13 +96,6 @@ module.exports = app => {
         res.status(400).json(errors);
       } 
       else {
-        //Create an avatar from gravatar TODO: Change This.
-        const avatar = gravatar.url(email, {
-          s: "200", //Size
-          r: "pg", //Rating
-          d: "mm" //Default
-        });
-
         // Generate a user verfification token
         const verificationToken = jwt.sign({
           data: email
@@ -130,14 +119,13 @@ module.exports = app => {
         //Create a new user from the data provided in the body (Comes from front end form)
         const newUser = new User({
           email: email,
-          avatar: avatar,
           password: password,
           token: verificationToken
         });
         //Use Bcrypt to encrypt the password using Salt.
-        bcrypt.genSalt(10, (error, salt) => {
-          bcrypt.hash(newUser.password, salt, (error, hash) => {
-            if (error) {
+        bcrypt.genSalt( 10, ( error, salt ) => {
+          bcrypt.hash( newUser.password, salt, ( error, hash ) => {
+            if ( error ) {
               throw error;
             }
             newUser.password = hash;
@@ -157,8 +145,8 @@ module.exports = app => {
     User.updateOne(
       { 'token': token }, // Find token
       { 'activated': true, 'token': '' } // Update value
-    ).then((data) => {
-      if (data) {
+    ).then(data => {
+      if ( data ) {
         res.redirect('/login?activated');
       } else {
         // Failed to find a result
@@ -168,23 +156,25 @@ module.exports = app => {
   });
 
   app.post("/auth/local/login", (req, res) => {
+    // console.log('res', res);
+    console.log('req', req.body);
     const { errors, isValid } = validateLogin(req.body);
     const { email, password } = req.body;
   
     //Check validation
-    if (!isValid) {
+    if ( !isValid ) {
       return res.status(400).json(errors);
     }
   
     //Find the user by email to see if they are in the database
     User.findOne({ email }).then(user => {
-      if (!user) {
+      if ( !user ) {
         errors.email = "Users email was not found";
         return res.status(404).json(errors);
       }
       //Check password
-      bcrypt.compare(password, user.password).then(isMatch => {
-        if (isMatch) {
+      bcrypt.compare( password, user.password ).then(isMatch => {
+        if ( isMatch ) {
           //user password matched the one that was in the database
           const payload = {
             id: user.id,
@@ -195,7 +185,7 @@ module.exports = app => {
             payload,
             keys.localSecret,
             { expiresIn: 3600 },
-            (error, token) => {
+            ( error, token ) => {
               res.json({
                 success: true,
                 token: "Bearer " + token
@@ -211,11 +201,53 @@ module.exports = app => {
     });
   });
 
-  app.get('/api/current_user', (req, res) => {
-      res.send(req.user);
+  app.post("/auth/delete_user", (req, res) => {
+    const { authId } = req.body.data;
+
+    User.deleteOne(
+      { '_id': authId }
+    ).then(user => {
+      if ( user ) {
+        res.sendStatus(200);
+      }
+      else {
+        return res.sendStatus(500);
+      }
+    });
+    // Delete successful, log them out
+    req.logout();
+  }); 
+
+  app.post("/auth/update_password", (req, res) => {
+    const { authId, password } = req.body.data;
+
+    bcrypt.genSalt(10, (error, salt) => {
+      bcrypt.hash(password, salt, (error, hash) => {
+        if ( error ) {
+          console.log('err', error );
+          throw error;
+        }
+        User.updateOne(
+          { '_id': authId }, 
+          { 'password': hash } 
+        ).then(user => {
+          if ( user ) {
+            res.sendStatus(200);
+          } 
+          else {
+            // Failed to find a result
+            return res.sendStatus(500);
+          }
+        });
+      });
+    });
   });
 
-  app.get('/api/logout', (req, res) => {
+  app.get('/auth/current_user', (req, res) => {
+    res.send(req.user);
+  });
+
+  app.get('/auth/logout', (req, res) => {
     req.logout();
     res.redirect('/');
   });

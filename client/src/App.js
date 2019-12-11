@@ -12,6 +12,7 @@ import DashboardTemplate from './components/DashboardTemplate';
 import FaqTemplate from './components/FaqTemplate';
 import FooterTemplate from './components/FooterTemplate';
 import LoginTemplate from './components/LoginTemplate';
+import SettingsTemplate from './components/SettingsTemplate';
 
 const { Content } = Layout;
 
@@ -32,6 +33,7 @@ class App extends Component {
               <Route path="/login" exact component={ LoginTemplate } />
               <Route path="/dashboard" exact component={ DashboardTemplate } />
               <Route path="/faq" exact component={ FaqTemplate } />
+              <Route path="/settings" exact component={ SettingsTemplate } />
               <Route path="/d/:url" exact component={ DecryptTemplate } />
             </Content>
             <FooterTemplate />

@@ -6,12 +6,8 @@ const userSchema = new Schema({
   'facebookId': String,
   'githubId': String,
   'googleId': String,
-  'avatar': String,
   'email': { type: String, unique: true },
   'password': String,
-  'membership': { type: String, default: 'Regular'},
-  'membershipDuration': { type: Number, default: 0},
-  'paymentDate': Date,
   'activated': { type: Boolean, default: false },
   'token': String
 });

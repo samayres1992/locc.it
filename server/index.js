@@ -36,7 +36,6 @@ app.use(passport.session());
 
 // Get our routes
 require('./routes/authRoutes')(app);
-require('./routes/paymentRoutes')(app);
 require('./routes/encryptRoutes')(app);
 require('./routes/decryptRoutes')(app);
 require('./routes/dashboardRoutes')(app);

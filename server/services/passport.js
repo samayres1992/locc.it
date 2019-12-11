@@ -74,10 +74,11 @@ passport.use(
   new FacebookStrategy({
     clientID: keys.facebookClientId,
     clientSecret: keys.facebookSecretKey,
-    callbackURL: "/auth/facebook/callback"
+    callbackURL: "/auth/facebook/callback",
+    profileFields: ['id', 'emails', 'name']
   },
   async (accessToken, refreshToken, profile, done) => {
-    const existingUser = await User.findOne({ facebookId: profile.id });
+    const existingUser = await User.findOne({ email: profile.emails[0].value, facebookId: profile.id });
 
     if(existingUser) {
       // User already exists 
