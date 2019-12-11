@@ -117,7 +117,8 @@
 .fancy-input.passcodeInfo.note:before {
   content: "Note";
 }
-button.button {
+button.button,
+a.button {
   display: inline-block;
   position: relative;
   background: rgba(255,255,255,0.25);
@@ -129,6 +130,17 @@ button.button {
   left: 25%;
   padding: 15px;
   border-radius: 3px;
+}
+.settings .update h2 {
+  margin-bottom: 0.75em;
+}
+.settings .button {
+  width: 100%;
+  left: 0;
+  text-align: center;
+  height: 55px;
+  color: #fff;
+  background-color: rgba(255,255,255,0.25);
 }
 button.button.copy {
   position: absolute;
@@ -153,14 +165,14 @@ button.button.copy svg {
   float: left;
   margin-right: 15px;
 }
-button.button span {
+.button span {
   display: block;
 }
-button.button.copy span {
+.copy span {
   display: inline-block;
 }
-button.button::before,
-button.button::after {
+.button::before,
+.button::after {
   content: "";
   width: 0;
   height: 2px;
@@ -168,8 +180,8 @@ button.button::after {
   transition: all 0.2s linear;
   background: #fff;
 }
-button.button span::before,
-button.button span::after {
+.button span::before,
+.button span::after {
   content: "";
   width: 2px;
   height: 0;
@@ -177,12 +189,12 @@ button.button span::after {
   transition: all 0.2s linear;
   background: #fff;
 }
-button.button:hover::before,
-button.button:hover::after {
+.button:hover::before,
+.button:hover::after {
   width: 100%;
 }
-button.button:hover span::before,
-button.button:hover span::after {
+.button:hover span::before,
+.button:hover span::after {
   height: 100%;
 }
 .button::before,

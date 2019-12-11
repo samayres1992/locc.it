@@ -48,7 +48,7 @@ class Passcode extends Component {
           </span>    
         </div>
         <div className="expiry-info">
-          <span className="expiry-details">They will expire on {Moment(expiry).format("MMMM Do, YYYY" )}.</span>
+          <span className="expiry-details">Credentials will expire on {Moment(expiry).format("MMMM Do, YYYY" )}.</span>
         </div>
       </Fragment>
     );

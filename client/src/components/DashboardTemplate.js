@@ -11,7 +11,7 @@ class DashboardTemplate extends Component {
   constructor() {
     super();
     this.state = {
-      minItems: 1,
+      minItems: 0,
       maxItems: 5
     };
   }

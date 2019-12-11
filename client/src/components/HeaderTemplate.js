@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-// import Payments from './Payments'; // For the future
 import { Layout, Menu } from 'antd';
 import logo from '../images/loccit.svg';
 const { Header } = Layout;
@@ -26,7 +25,7 @@ class HeaderTemplate extends Component {
           <Menu.Item key='1'><Link to="/dashboard">Dashboard</Link></Menu.Item>,
           <Menu.Item key='2'><Link to="/faq">How it works</Link></Menu.Item>,
           <Menu.Item key='3'><a href="https://buymeacoffee.com/aQJ2U8H" target="_blank" rel="noopener noreferrer">Support us</a></Menu.Item>,
-          <Menu.Item key='4'><a href="/api/logout">Sign out</a></Menu.Item>
+          <Menu.Item key='4'><Link to="/settings">Settings</Link></Menu.Item>
         ];
     }
   }
