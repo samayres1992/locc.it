@@ -23,21 +23,6 @@ let mailer = nodemailer.createTransport({
   }
 });
 
-let options = {
-  viewEngine: {
-    extname: '.hbs', // handlebars extension
-    layoutsDir: path.join(__dirname, './email'), // location of handlebars templates
-    defaultLayout: 'index',
-    viewPath: path.join(__dirname, './email'),
-    partialsDir: path.join(__dirname, './email/partials'),
-    extName: '.hbs'
-  },
-  viewPath: path.join(__dirname, './email/'),
-  extName: '.hbs'
-}
-
-mailer.use('compile', hbs(options));
-
 module.exports = app => {
   // Facebook
   app.get('/auth/facebook', 
@@ -96,6 +81,21 @@ module.exports = app => {
         res.status(400).json(errors);
       } 
       else {
+        // Set our mailer params
+        let options = {
+          viewEngine: {
+            extname: '.html', // handlebars extension
+            layoutsDir: path.join(__dirname, './email/activation'), // location of handlebars templates
+            defaultLayout: 'index',
+            viewPath: path.join(__dirname, './email/activation'),
+            partialsDir: path.join(__dirname, './email/activation')
+          },
+          viewPath: path.join(__dirname, './email/activation'),
+          extName: '.html'
+        }
+        
+        mailer.use('compile', hbs(options));
+
         // Generate a user verfification token
         const verificationToken = jwt.sign({
           data: email
@@ -107,7 +107,7 @@ module.exports = app => {
           subject: 'Locc.it: Account verification', // Subject line
           template: 'index',
           context: {
-            verificationToken : "https://locc.it/auth/local/verify" + verificationToken
+            verificationToken : "https://locc.it/auth/local/verify/" + verificationToken
           },
           attachments:[{
             filename : 'loccit.png',
@@ -119,8 +119,7 @@ module.exports = app => {
         //Create a new user from the data provided in the body (Comes from front end form)
         const newUser = new User({
           email: email,
-          password: password,
-          token: verificationToken
+          password: password
         });
         //Use Bcrypt to encrypt the password using Salt.
         bcrypt.genSalt( 10, ( error, salt ) => {
@@ -142,21 +141,28 @@ module.exports = app => {
   app.get("/auth/local/verify/:token", (req, res) => {
     const token = req.originalUrl.split('/')[4];
 
-    User.updateOne(
-      { 'token': token }, // Find token
-      { 'activated': true, 'token': '' } // Update value
-    ).then(data => {
-      if ( data ) {
-        res.redirect('/login?activated');
-      } else {
-        // Failed to find a result
-        res.send(false);
+    jwt.verify(token, keys.localSecret, (err, decodedToken) => {
+      if ( err ) {
+        res.sendStatus(500);
+        return res.send("Error: Invalid verification token.");
+      }
+      else {
+        User.updateOne(
+          { 'email': decodedToken.email }, // Find token
+          { 'activated': true } // Update value
+        ).then(data => {
+          if ( data ) {
+            res.redirect('/login?activated');
+          } else {
+            // Failed to find a result
+            res.send(false);
+          }
+        });
       }
     });
   });
 
   app.post("/auth/local/login", (req, res) => {
-    // console.log('res', res);
     console.log('req', req.body);
     const { errors, isValid } = validateLogin(req.body);
     const { email, password } = req.body;
@@ -192,6 +198,7 @@ module.exports = app => {
               });
             }
           );
+          res.send(user);
         } else {
           // No match
           errors.password = "Password is incorrect";
@@ -218,8 +225,76 @@ module.exports = app => {
     req.logout();
   }); 
 
+  app.post("/auth/update_email", (req, res) => {
+    const { authId, email } = req.body.data;
+
+    // When the user updates their email, they must re-verify the address
+    User.findOneAndUpdate(
+      { '_id': authId }, 
+      { 'email': email, activated: false } 
+    ).then(user => {
+      if ( user ) {
+        
+        // Set our mailer params
+        let options = {
+          viewEngine: {
+            extname: '.html', // handlebars extension
+            layoutsDir: path.join(__dirname, './email/update-email'), // location of handlebars templates
+            defaultLayout: 'index',
+            viewPath: path.join(__dirname, './email/update-email'),
+            partialsDir: path.join(__dirname, './email/update-email')
+          },
+          viewPath: path.join(__dirname, './email/update-email'),
+          extName: '.html'
+        }
+        
+        mailer.use('compile', hbs(options));
+
+        // Generate a user verfification token
+        const verificationToken = jwt.sign({
+          data: email
+        }, keys.localSecret, { expiresIn: '7d' });
+
+        mailer.sendMail({
+          from: keys.emailUser, // sender address
+          to: email, // list of receivers
+          subject: 'Locc.it: Email update', // Subject line
+          template: 'index',
+          context: {
+            verificationToken : "https://locc.it/auth/local/verify/" + verificationToken
+          },
+          attachments:[{
+            filename : 'loccit.png',
+            path: path.join(__dirname, 'email/images/loccit.png'),
+            cid : 'logo@locc.it'
+          }],
+        });
+        res.sendStatus(200);
+      } 
+      else {
+        // Failed to find a result
+        return res.sendStatus(500);
+      }
+    });
+  });
+
   app.post("/auth/update_password", (req, res) => {
     const { authId, password } = req.body.data;
+
+    // Set our mailer params
+    let options = {
+      viewEngine: {
+        extname: '.html', // handlebars extension
+        layoutsDir: path.join(__dirname, './email/password-change'), // location of handlebars templates
+        defaultLayout: 'index',
+        viewPath: path.join(__dirname, './email/password-change'),
+        partialsDir: path.join(__dirname, './email/password-change')
+      },
+      viewPath: path.join(__dirname, './email/password-change'),
+      extName: '.html'
+    }
+    
+    mailer.use('compile', hbs(options));
 
     bcrypt.genSalt(10, (error, salt) => {
       bcrypt.hash(password, salt, (error, hash) => {
@@ -227,11 +302,23 @@ module.exports = app => {
           console.log('err', error );
           throw error;
         }
-        User.updateOne(
+        User.findOneAndUpdate(
           { '_id': authId }, 
           { 'password': hash } 
         ).then(user => {
           if ( user ) {
+            console.log('user', user)
+            mailer.sendMail({
+              from: keys.emailUser, // sender address
+              to: user.email, // list of receivers
+              subject: 'Locc.it: Password change', // Subject line
+              template: 'index',
+              attachments:[{
+                filename : 'loccit.png',
+                path: path.join(__dirname, 'email/images/loccit.png'),
+                cid : 'logo@locc.it'
+              }],
+            });
             res.sendStatus(200);
           } 
           else {

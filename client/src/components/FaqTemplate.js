@@ -13,13 +13,13 @@ class FaqTemplate extends Component {
         </Panel>
         <Panel header="How does it work?" key="2">
           <p>
-            After providing credentials to Locc.it they are encrypted with a secret passcode that is generated in user's browser. You can share
-            them with a link that is generated for you along with a secret passcode is exclusive to you and whomever you share it with. 
-            All encryptions are one time use and will be deleted immediately after use, they also have an expiration date that will result 
-            in automatic deletion if not redeemed in time.
+            After providing credentials to Locc.it they are encrypted with a secret passcode that is generated automatically in your browser. This
+            passcode is provided to you along with a link that you can use to share your credentials. 
           </p>
           <p>
-            Not only are all encryptions single-use, there is a time-sensitive expiration. Whether or not the passcode was used, it will be deleted in a user-set amount of time automatically.
+            All encryptions are one time use and will be deleted immediately, they also have an expiration date that will result 
+            in automatic deletion if not redeemed in time. The passcode is not stored on Locc.it servers, only you and 
+            the person you choose to share it with will be able to decrypt the credentials.
           </p>
         </Panel>
         <Panel header="Where is my information stored?" key="3">

@@ -94,9 +94,7 @@ class DashboardTemplate extends Component {
     const chunkedLocks = chunk(dashboard, 2);
     const domain = process.env.REACT_APP_SITE_URL;
     let i = 0;
-
-    console.log('chunkedlocks', chunkedLocks);
-
+    
     return (
       <Fragment>
         <Row gutter={ 12 }>

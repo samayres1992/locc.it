@@ -72,7 +72,7 @@ class LoginTemplate extends Component {
     />;
 
     if (auth) {
-      return <Redirect to='/dashboard'/>;
+      return <Redirect to='/'/>;
     }
 
     return (

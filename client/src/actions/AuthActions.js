@@ -12,26 +12,37 @@ export const fetchUser = () => async dispatch => {
 
 export const loginUser = ( data ) => async dispatch => {
   const { email, password } = data;
-  const res = await axios({
+  await axios({
     method: 'post',
     url: '/auth/local/login',
     data: {
       email: email,
       password: password
     }
+  }).then(res => {
+    console.log('res', res);
+    if (res.data.error) {
+      return dispatch({ type: LOGIN_USER, payload: { error: res.error }});
+    }
+    const { _id, activated } = res.data;
+    dispatch({ type: LOGIN_USER, payload: { _id, activated }});
   });
-  dispatch({ type: LOGIN_USER, payload: res.data});
 }
 
 export const registerUser = ( data ) => async dispatch => {
   const { email, password } = data;
-  const res = await axios({
+  await axios({
     method: 'post',
     url: '/auth/local/register',
     data: {
       email: email,
       password: password
     }
+  }).then(res => {
+    if (res.data.error) {
+      return dispatch({ type: REGISTER_USER, payload: { error: res.data.error }});
+    }
+    const { _id, activated } = res.data;
+    dispatch({ type: REGISTER_USER, payload: { _id, activated }});
   });
-  dispatch({ type: REGISTER_USER , payload: res.data});
 }

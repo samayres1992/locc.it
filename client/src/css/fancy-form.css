@@ -134,6 +134,9 @@ a.button {
 .settings .update h2 {
   margin-bottom: 0.75em;
 }
+.settings p {
+  min-height: 60px;
+}
 .settings .button {
   width: 100%;
   left: 0;

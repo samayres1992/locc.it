@@ -5,6 +5,7 @@ import Async from 'async';
 import {
   ENCRYPT,
   PASSCODE,
+  CREATE_ANOTHER
 } from './types';
 
 export const encrypt = ( data ) => async dispatch => {
@@ -41,6 +42,11 @@ export const encrypt = ( data ) => async dispatch => {
   );
 }
 
-export const generatedPasscode =  ( data ) => async dispatch => {
+export const createAnother = () => async dispatch => {
+  // Reset redux state for encryption 
+  dispatch({ type: CREATE_ANOTHER, payload: null });
+}
+
+export const generatedPasscode = ( data ) => async dispatch => {
   dispatch({ type: PASSCODE, payload: data });
 }

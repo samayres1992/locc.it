@@ -13,7 +13,8 @@ require('./services/passport');
 // Let's connect to our DB
 mongoose.connect(keys.mongoURI, { 
   useNewUrlParser: true,
-  useUnifiedTopology: true 
+  useUnifiedTopology: true ,
+  useFindAndModify: false
 });
 
 // Init express
@@ -39,6 +40,9 @@ require('./routes/authRoutes')(app);
 require('./routes/encryptRoutes')(app);
 require('./routes/decryptRoutes')(app);
 require('./routes/dashboardRoutes')(app);
+
+// Cron processes
+require('./services/cron');
 
 // Production
 if(process.env.NODE_ENV === 'production') {
