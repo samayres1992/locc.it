@@ -78,7 +78,8 @@ a,
 .ant-layout-content .ant-row .ant-card {
   background: transparent;
   color: #fff;
-  border: 1px solid rgba(255,255,255,0.5);
+  border: 1px solid #fff;
+  border-radius: 3px;
 }
 .ant-layout-content .ant-row .ant-card-head,
 .ant-layout-content .ant-row .ant-card-extra {

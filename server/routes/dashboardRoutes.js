@@ -17,7 +17,7 @@ module.exports = app => {
 
   app.post('/api/fetch_locks', async (req, res) => {
     const { userId } = req.body;
-    console.log('fetchlocks api called');
+    
     Encrypt.find({ 
       'active': true,
       'userId': userId

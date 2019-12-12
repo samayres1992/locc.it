@@ -14,21 +14,21 @@ import FooterTemplate from './components/FooterTemplate';
 import LoginTemplate from './components/LoginTemplate';
 import SettingsTemplate from './components/SettingsTemplate';
 
-const { Content } = Layout;
-
 class App extends Component {
 
   componentDidMount() {
     this.props.fetchUser();
   }
-  
+
   render() {
+    const { Content } = Layout;
     const pathName = window.pathName;
+
     return (
       <Layout>
         <BrowserRouter>
             <HeaderTemplate />
-            <Content className="content" style={{ padding: '50px' }}>
+            <Content className="content" style={{ padding: '50px' }}>      
               <Route location={pathName} exact path="/" component={ LandingTemplate } />
               <Route path="/login" exact component={ LoginTemplate } />
               <Route path="/dashboard" exact component={ DashboardTemplate } />

@@ -56,24 +56,23 @@ module.exports = app => {
               lockId,
               { $inc: { attempts: 1 }},
               { "new": true }
-            ).then(( data ) => {
-              const { attempts, locked } = data;
-              if ( attempts >= 3 ) {
+            ).then(( attemptResult ) => {
+              if ( attemptResult.attempts >= 3 ) {
                 // If the user fails 3 attempts, lock them out
                 Encrypt.findByIdAndUpdate(
                   lockId,
                   { active: false, locked: Moment().add(1, 'hour') },
                   { "new": true },
-                  (err, result) => {
+                  (err, lockResult) => {
                     if (err) {
                       console.log('Error', err);
                       return;
                     }
-                    res.send({ locked: locked });
+                    res.send({ lockId: lockResult._id, locked: lockResult.locked });
                   }
                 );
               } else {
-                res.send({ attempts: attempts });
+                res.send({ lockId: attemptResult._id, attempts: attemptResult.attempts });
               }
             });
           }

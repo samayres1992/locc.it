@@ -34,43 +34,45 @@ class DecryptForm extends Component {
   }
 
   onSubmit = values => {
-    console.log("values", values);
     this.decryptData(values);
   }
 
   decryptData (passcode) {
-    console.log("passcode", passcode);
-    const { lockId } = this.props.retrievedData;
+    const { lockId } = this.props.decryptForm;
     this.props.tryUserDecrypt(lockId, passcode);
   }
 
   render() {
-    const { pristine, submitting} = this.props;
+    const { decryptForm } = this.props;
+    const displayForm = decryptForm && decryptForm.locked ? false : true;
     return (
-      <Form 
-        onSubmit={this.onSubmit}
-        render={({ handleSubmit }) => (
-        <form onSubmit={handleSubmit} action="decrypt">
-          <div className="input-effect">
-            <Field name="passcode" component={this.inputRender} />
-              <label>Passcode</label>
-              <span className="focus-border">
-                <i></i>
-              </span>
-          </div>
-          <button className="submit button fancy-button" disabled={pristine || submitting}>
-              Decrypt
-              <span className="focus-border">
-                <i></i>
-              </span>
-          </button>
-          <Recaptcha
-            ref={ ref => this.recaptcha = ref }
-            sitekey={process.env.REACT_APP_GOOGLE_SITE_KEY}
-            onResolved={this.verifiedRegisterSubmit}
-          />
-        </form>
-      )} />
+      displayForm ? 
+        <Form 
+          onSubmit={this.onSubmit}
+          render={({ handleSubmit }) => (
+            <form onSubmit={handleSubmit} action="decrypt">
+              <div className="input-effect">
+                <Field name="passcode" component={this.inputRender} />
+                  <label>Passcode</label>
+                  <span className="focus-border">
+                    <i></i>
+                  </span>
+              </div>
+              <button className="submit button fancy-button">
+                  Decrypt
+                  <span className="focus-border">
+                    <i></i>
+                  </span>
+              </button>
+              <Recaptcha
+                ref={ ref => this.recaptcha = ref }
+                sitekey={process.env.REACT_APP_GOOGLE_SITE_KEY}
+                onResolved={this.verifiedRegisterSubmit}
+              />
+            </form>
+          )} 
+        />
+      : null
     );
   }
 }

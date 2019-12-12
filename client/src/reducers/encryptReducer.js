@@ -1,4 +1,4 @@
-import { ENCRYPT, PASSCODE } from '../actions/types'; 
+import { CREATE_ANOTHER, ENCRYPT, PASSCODE } from '../actions/types'; 
 
 export default function (state = null, action) {
   switch (action.type) {
@@ -13,6 +13,8 @@ export default function (state = null, action) {
         ...state,
         passcode: action.payload.passcode
       };
+    case CREATE_ANOTHER:
+      return action.payload
     default:
       return state;
   }

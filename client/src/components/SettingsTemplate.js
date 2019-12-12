@@ -26,8 +26,12 @@ class SettingsTemplate extends Component {
     });
   };
 
-  inputRender = (inputField) => (
-    <input {...inputField.input} name={inputField.name} className={classNames({"has-content": inputField.meta.dirty, "fancy-input": !inputField.dirty})} placeholder="" type="text" required />
+  emailRender = (emailInput) => (
+    <input {...emailInput.input} name={emailInput.name} className={classNames({"has-content": emailInput.meta.dirty, "fancy-input": !emailInput.dirty})} placeholder="" type="text" required />
+  );
+
+  passwordRender = (passwordField) => (
+    <input {...passwordField.input} name={passwordField.name} className={classNames({"has-content": passwordField.meta.dirty, "fancy-input": !passwordField.dirty})}  placeholder="" type="password" required />
   );
 
   deleteWarning = () => {
@@ -70,6 +74,24 @@ class SettingsTemplate extends Component {
       console.log('res.status', res.data);
       if(res.data === 'OK') {
         this.openNotificationWithIcon('success', 'update_password');
+      }
+      else {
+        this.openFailureNotificationWithIcon('error', 'update_failed');
+      }
+    });
+  }
+
+  updateEmail = ({ email }) => {
+    const { _id } = this.props.auth;
+    Axios.post('/auth/update_email', {
+      data: {
+        authId: _id,
+        email: email
+      }
+    }).then(res => {
+      console.log('res.status', res.data);
+      if(res.data === 'OK') {
+        this.openNotificationWithIcon('success', 'update_email');
       }
       else {
         this.openFailureNotificationWithIcon('error', 'update_failed');
@@ -126,22 +148,45 @@ class SettingsTemplate extends Component {
       <div className="settings">
         { auth ? null : <Redirect to='/' /> }
         <Row gutter={16}>
-          <Col span={24}>
-            <h1>Manage your account.</h1>
+          <h1>Manage your account.</h1>
+          <Col span={12}>
+            <div className="update">
+              <h2>Update Email.</h2>
+              <Form 
+                onSubmit={this.updateEmail}
+                render={({ handleSubmit }) => (
+                  <form onSubmit={handleSubmit} action="updateEmail">
+                    <div className="input-effect">
+                      <Field name="email" component={ this.emailRender } />
+                        <label><Icon type="user" /> Email</label>
+                        <span className="focus-border">
+                          <i></i>
+                        </span>
+                    </div>
+                    <button className="submit button fancy-button" onClick={ this.handleSubmit }>
+                      Update
+                      <span className="focus-border"><i></i></span>
+                    </button>
+                  </form>
+                )}
+              />
+            </div>
+          </Col>
+          <Col span={12}>
             <div className="update">
               <h2>Update password.</h2>
               <Form 
                 onSubmit={this.updatePassword}
                 render={({ handleSubmit }) => (
-                  <form onSubmit={handleSubmit} action="deleteAccount">
+                  <form onSubmit={handleSubmit} action="updatePassword">
                     <div className="input-effect">
-                      <Field name="password" component={this.inputRender} />
+                      <Field name="password" component={ this.passwordRender } />
                         <label><Icon type="lock" /> Password</label>
                         <span className="focus-border">
                           <i></i>
                         </span>
                     </div>
-                    <button className="submit button fancy-button" onClick={ this.deleteWarning }>
+                    <button className="submit button fancy-button" onClick={ this.handleSubmit }>
                       Update
                       <span className="focus-border"><i></i></span>
                     </button>
@@ -154,10 +199,10 @@ class SettingsTemplate extends Component {
         <Row gutter={16}>
           <Col span={12}>
             <div className="logout">
-              <h2>User logout.</h2>
-              <p>Logout of your account on your current browser.</p>
+              <h2>Sign out.</h2>
+              <p>Sign out of your account on your current browser.</p>
               <a className="button fancy-button" href="/auth/logout">
-                Logout
+                Sign out
                 <span className="focus-border"><i></i></span>
               </a>
             </div>
@@ -166,7 +211,7 @@ class SettingsTemplate extends Component {
             <div className="delete">
               <h2>Account deletion.</h2>
               <p>Delete your account and all credentials you have encrypted.</p>
-              <button className="button fancy-button" onClick={this.deleteWarning}>
+              <button className="button fancy-button" onClick={ this.deleteWarning }>
                 Delete my account
                 <span className="focus-border"><i></i></span>
               </button>
