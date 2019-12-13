@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import Recaptcha from 'react-google-invisible-recaptcha';
 import { Form, Field } from 'react-final-form';
 import classNames from 'classnames';
@@ -47,9 +48,11 @@ class DecryptForm extends Component {
     const displayForm = decryptForm && decryptForm.locked ? false : true;
     return (
       displayForm ? 
-        <Form 
-          onSubmit={this.onSubmit}
-          render={({ handleSubmit }) => (
+        <Fragment> 
+          { decryptForm === false ? <Redirect to='/404' /> : null }
+          <Form 
+            onSubmit={this.onSubmit}
+            render={({ handleSubmit }) => (
             <form onSubmit={handleSubmit} action="decrypt">
               <div className="input-effect">
                 <Field name="passcode" component={this.inputRender} />
@@ -70,8 +73,9 @@ class DecryptForm extends Component {
                 onResolved={this.verifiedRegisterSubmit}
               />
             </form>
-          )} 
-        />
+            )} 
+          />
+        </Fragment>
       : null
     );
   }

@@ -4,7 +4,7 @@ const User = mongoose.model('users');
 const { every } = require('bella-scheduler');
 const Moment = require('moment');
 
-every('10s', () => {
+every('1h', () => {
   // Find all locked credentials and remove lock if 
   // current time has passed locked data
   Encrypt.updateMany({ 
