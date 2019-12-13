@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from './actions';
 import { Layout } from 'antd';
@@ -13,6 +13,7 @@ import FaqTemplate from './components/FaqTemplate';
 import FooterTemplate from './components/FooterTemplate';
 import LoginTemplate from './components/LoginTemplate';
 import SettingsTemplate from './components/SettingsTemplate';
+import NotFound from './components/NotFound';
 
 class App extends Component {
 
@@ -28,13 +29,16 @@ class App extends Component {
       <Layout>
         <BrowserRouter>
             <HeaderTemplate />
-            <Content className="content" style={{ padding: '50px' }}>      
-              <Route location={pathName} exact path="/" component={ LandingTemplate } />
-              <Route path="/login" exact component={ LoginTemplate } />
-              <Route path="/dashboard" exact component={ DashboardTemplate } />
-              <Route path="/faq" exact component={ FaqTemplate } />
-              <Route path="/settings" exact component={ SettingsTemplate } />
-              <Route path="/d/:url" exact component={ DecryptTemplate } />
+            <Content className="content" style={{ padding: '50px' }}>   
+              <Switch>   
+                <Route location={pathName} exact path="/" component={ LandingTemplate } />
+                <Route path="/login" exact component={ LoginTemplate } />
+                <Route path="/dashboard" exact component={ DashboardTemplate } />
+                <Route path="/faq" exact component={ FaqTemplate } />
+                <Route path="/settings" exact component={ SettingsTemplate } />
+                <Route path="/d/:url" exact component={ DecryptTemplate } />
+                <Route path="*" component={ NotFound } />
+              </Switch>
             </Content>
             <FooterTemplate />
         </BrowserRouter>

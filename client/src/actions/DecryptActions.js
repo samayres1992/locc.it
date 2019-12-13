@@ -5,7 +5,7 @@ import {
 } from './types';
 
 export const tryUserDecrypt = ( lockId, passcode ) => async dispatch => {
-  const res = await axios({
+  await axios({
     method: 'post',
     url: '/api/decrypt_attempt',
     data: {
@@ -13,9 +13,8 @@ export const tryUserDecrypt = ( lockId, passcode ) => async dispatch => {
       passcode: passcode
     }
   }).then(res => {
-    const { lockId, attempts, locked } = res.data;
-    console.log('tryUserDecrypt', res.data);
-    dispatch({ type: DECRYPT_DATA , payload: { lockId, attempts, locked }});
+    console.log('tryUserDecrypt action', res.data);
+    dispatch({ type: DECRYPT_DATA , payload: res.data });
   });
 }
 
