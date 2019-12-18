@@ -3,3 +3,4 @@ export * from './EncryptActions';
 export * from './DecryptActions';
 export * from './DashboardActions';
 export * from './RetrievedActions';
+export * from './ErrorsActions';

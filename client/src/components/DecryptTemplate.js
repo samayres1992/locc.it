@@ -13,7 +13,7 @@ class DecryptTemplate extends Component {
     if(prevProps.decryptForm !== this.props.decryptForm) {
       this.setState({
         decryptForm: this.props.decryptForm
-      })
+      });
     }
   }
 
@@ -23,14 +23,14 @@ class DecryptTemplate extends Component {
     var whichMessage = decryptForm && !decryptForm.attempts && !decryptForm.locked && decryptForm.decryptedData ? "Thank you for using our service, your decrypted details are below." : "Please enter the passcode you were provided.";
     var attemptsMessage = '';
 
-    if ( decryptForm && decryptForm.attempts ) {
+    if (decryptForm && decryptForm.attempts) {
       let attemptPhrasing = "attempt";
-      if ( decryptForm.attempts === 1 ) {
+      if (decryptForm.attempts === 1) {
         attemptPhrasing = "attempts";
       }
       attemptsMessage = 'Wrong passcode, ' +  (3 - decryptForm.attempts) + ' ' + attemptPhrasing + ' remaining.';
     }
-    else if ( decryptForm && decryptForm.locked ) {
+    else if (decryptForm && decryptForm.locked) {
       var currentTime = Moment();
       var lockTime = Moment(decryptForm.locked);
       var lockDuration = lockTime.diff(currentTime, 'minutes');
@@ -45,11 +45,11 @@ class DecryptTemplate extends Component {
         </div>
         { decryptForm && !decryptForm.attempts && !decryptForm.locked && decryptForm.decryptedData ? <DecryptedData /> : <DecryptForm /> }
       </Fragment>
-    );
+  );
   }
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = (state) => {
   return {
     state,
     ...state

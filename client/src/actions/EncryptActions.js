@@ -5,10 +5,11 @@ import Async from 'async';
 import {
   ENCRYPT,
   PASSCODE,
-  CREATE_ANOTHER
+  CREATE_ANOTHER,
+  SET_ERRORS
 } from './types';
 
-export const encrypt = ( data ) => async dispatch => {
+export const encrypt = (data) => async dispatch => {
   const { userId, title, expiry, encryptedData } = data;
 
   Async.retry(
@@ -26,20 +27,18 @@ export const encrypt = ( data ) => async dispatch => {
           encryptedData: stringify(encryptedData),
           url: url
         }
-      }).then(( res ) => {
+      }).then((res) => {
         dispatch({ type: ENCRYPT, payload: res.data });
       });
     },
-    ( err, res ) => {
+    (errors, res) => {
       console.log('encrypt res', res);
-      if ( err ) {
+      if (errors) {
         // console.log('Error', err);
-        return res.status(400).send({
-          message: 'Failure to create url: Something went wrong, please contact us.'
-        });
+        dispatch({ type: SET_ERRORS, payload: { encrypt: "Missing all required credentials." }});
       }
     }
-  );
+ );
 }
 
 export const createAnother = () => async dispatch => {
@@ -47,6 +46,6 @@ export const createAnother = () => async dispatch => {
   dispatch({ type: CREATE_ANOTHER, payload: null });
 }
 
-export const generatedPasscode = ( data ) => async dispatch => {
+export const generatedPasscode = (data) => async dispatch => {
   dispatch({ type: PASSCODE, payload: data });
 }

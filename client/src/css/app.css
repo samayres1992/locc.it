@@ -67,6 +67,9 @@ header .ant-menu-item {
   position: relative;
   margin: 0 0 30px;
 }
+.content .input-effect:last-of-type {
+  margin: 0px 0 10px;
+}
 .content .input-effect .ant-input-password input {
   background-color: transparent;
   border: 0;
@@ -109,8 +112,8 @@ header .ant-menu-item {
 .settings .delete,
 .settings .logout,
 .settings .update {
-  padding: 15px;
-  border: 1px solid #fff;
+  padding: 30px 15px;
+  border: 2px solid #fff;
   border-radius: 3px;
 }
 .settings .delete .button {
