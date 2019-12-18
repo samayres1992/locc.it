@@ -31,11 +31,15 @@ class EncryptForm extends Component {
   );
 
   textareaRender = (text) => (
-    <textarea {...text.input} name={text.name} className={classNames({"has-content": text.meta.dirty, "fancy-input": !text.dirty})} placeholder="" type="text" required />
+    <textarea {...text.input} name={text.name} className={classNames({"has-content": text.meta.dirty, "fancy-input": !text.dirty})} placeholder="" type="text" />
   );
 
   datePickerRender = ({ input, ...rest }) => {
-    return <DatePicker {...input} {...rest} style={{ width: '34%' }} defaultValue={Moment()} value={input.value !== '' ? input.value : Moment().add(7, 'days')} placeholder="Set expiry date for password" format={"[Expires on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required />
+    const { disableInputs } = this.state;
+    console.log("state", this.state);
+    console.log("datepicker", input);
+    console.log("datepicker rest", rest);
+    return <DatePicker disabled={disableInputs} {...input} {...rest} style={{ width: '34%' }} defaultValue={Moment()} value={input.value !== '' ? input.value : Moment().add(7, 'days')} placeholder="Set expiry date for password" format={"[Expires on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required />
   };
 
   checkSubmit = ({ title, emailUsername, password, expiry, note }) => {
@@ -45,9 +49,9 @@ class EncryptForm extends Component {
       emailUsername: emailUsername,
       password: password,
       expiry: expiry,
-      note: note
+      note: note,
     });
-    this.recaptcha.execute();
+    this.recaptcha.execute('encrypt');
   }
 
   onSubmit = () => {
@@ -91,21 +95,21 @@ class EncryptForm extends Component {
           <form onSubmit={handleSubmit} action="encrypt">
             <div className="input-effect">
               <Field name="title" component={this.inputRender} />
-                <label><Icon type="pushpin" /> Title</label>
+                <label><Icon type="pushpin" /> Title *</label>
                 <span className="focus-border">
                   <i></i>
                 </span>
             </div>
             <div className="input-effect">
               <Field name="emailUsername" component={this.inputRender} />
-                <label><Icon type="user" /> Email/Username</label>
+                <label><Icon type="user" /> Email/Username *</label>
                 <span className="focus-border">
                   <i></i>
                 </span>
             </div>
             <div className="input-effect">
               <Field name="password" component={this.passwordRender} />
-              <label><Icon type="lock" /> Password</label>
+              <label><Icon type="lock" /> Password *</label>
               <span className="focus-border">
                 <i></i>
               </span>
@@ -118,6 +122,7 @@ class EncryptForm extends Component {
                   <i></i>
                 </span>
             </div>
+            <p>* Indicates a required field.</p>
             <button className="submit button fancy-button" disabled={pristine || submitting}>
               Encrypt
               <span className="focus-border">
@@ -136,7 +141,7 @@ class EncryptForm extends Component {
   }
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = (state) => {
   return {
     state,
     ...state

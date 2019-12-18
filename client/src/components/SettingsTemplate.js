@@ -99,7 +99,7 @@ class SettingsTemplate extends Component {
     });
   }
 
-  openNotificationWithIcon = ( type, action ) => {
+  openNotificationWithIcon = (type, action) => {
     switch (action) {
       case 'delete_user':
           notification[type]({
@@ -120,7 +120,7 @@ class SettingsTemplate extends Component {
     }
   };
 
-  openFailureNotificationWithIcon = ( type, action ) => {
+  openFailureNotificationWithIcon = (type, action) => {
     switch (action) {
       case 'update_failed':
         notification[type]({
@@ -152,6 +152,7 @@ class SettingsTemplate extends Component {
           <Col span={12}>
             <div className="update">
               <h2>Update Email.</h2>
+              <p>You will be emailed an activation link to confirm your account.</p>
               <Form 
                 onSubmit={this.updateEmail}
                 render={({ handleSubmit }) => (
@@ -175,6 +176,7 @@ class SettingsTemplate extends Component {
           <Col span={12}>
             <div className="update">
               <h2>Update password.</h2>
+              <p>Password must be 8 characters, 1 special character, 1 number and 1 uppercase letter.</p>
               <Form 
                 onSubmit={this.updatePassword}
                 render={({ handleSubmit }) => (
@@ -223,7 +225,7 @@ class SettingsTemplate extends Component {
   }
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = (state) => {
   return {
     state,
     ...state

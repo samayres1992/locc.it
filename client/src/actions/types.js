@@ -10,3 +10,6 @@ export const LOGIN_USER = 'login_user';
 export const REGISTER_USER = 'register_user';
 export const DECRYPT_DATA = 'decrypt_data';
 export const CREATE_ANOTHER = 'create_another';
+export const RESET_USER = 'reset_user';
+export const SET_ERRORS = 'set_errors';
+export const CLEAR_ERRORS = 'clear_errors';

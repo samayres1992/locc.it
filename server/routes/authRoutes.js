@@ -2,16 +2,23 @@
 const keys = require('../config/keys');
 const passport = require('passport');
 const nodemailer = require("nodemailer");
+const _ = require("lodash");
 const path = require('path');
-// const emailTemplates = require("email-templates").EmailTemplate;
-// const send = transporter.templateSender(new EmailTemplate('email/'));
-const hbs = require("nodemailer-express-handlebars");
-const validateLogin = require("../services/validator/loginValidation");
-const validateRegistration = require("../services/validator/registerValidation");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const hbs = require("nodemailer-express-handlebars");
+const bcrypt = require("bcrypt");
 const mongoose = require('mongoose');
 const User = mongoose.model('users');
+const EmailValidator = require('email-validator');
+const passwordValidator = require('password-validator');
+var passwordSchema = new passwordValidator(); 
+passwordSchema
+.is().min(8)          // Minimum length 8
+.is().max(100)        // Maximum length 100
+.has().uppercase()    // Must have uppercase char
+.has().lowercase()    // Must have lowercase char
+.has().digits()       // Must have digit
+.has().symbols()      // Must have special char
 
 let mailer = nodemailer.createTransport({
   host: "mail.gandi.net",
@@ -31,7 +38,7 @@ module.exports = app => {
 
   app.get('/auth/facebook/callback',
     passport.authenticate('facebook', { failureRedirect: '/login' }),
-    function(req, res) {
+    (req, res) => {
       // Use manual redirect due to facebook bug that appends "#_=_" to URL
       res.redirect('/');
     }
@@ -64,94 +71,21 @@ module.exports = app => {
       successRedirect: '/'
     })
   );
-
-  // Local Registration
-  app.post('/auth/local/register', (req, res) => {
-    const { errors, isValid } = validateRegistration(req.body);
-    const { email, password } = req.body;
-
-    //Check validation
-    if (!isValid) {
-      return res.status(400).json(errors);
-    }
-    //First find out if the user exists in the database already.
-    User.findOne({ email: email }).then(user => {
-      if (user) {
-        errors.email = "email already exists";
-        res.status(400).json(errors);
-      } 
-      else {
-        // Set our mailer params
-        let options = {
-          viewEngine: {
-            extname: '.html', // handlebars extension
-            layoutsDir: path.join(__dirname, './email/activation'), // location of handlebars templates
-            defaultLayout: 'index',
-            viewPath: path.join(__dirname, './email/activation'),
-            partialsDir: path.join(__dirname, './email/activation')
-          },
-          viewPath: path.join(__dirname, './email/activation'),
-          extName: '.html'
-        }
-        
-        mailer.use('compile', hbs(options));
-
-        // Generate a user verfification token
-        const verificationToken = jwt.sign({
-          data: email
-        }, keys.localSecret, { expiresIn: '7d' });
-
-        mailer.sendMail({
-          from: keys.emailUser, // sender address
-          to: email, // list of receivers
-          subject: 'Locc.it: Account verification', // Subject line
-          template: 'index',
-          context: {
-            verificationToken : "https://locc.it/auth/local/verify/" + verificationToken
-          },
-          attachments:[{
-            filename : 'loccit.png',
-            path: path.join(__dirname, 'email/images/loccit.png'),
-            cid : 'logo@locc.it'
-          }],
-        });
-        
-        //Create a new user from the data provided in the body (Comes from front end form)
-        const newUser = new User({
-          email: email,
-          password: password
-        });
-        //Use Bcrypt to encrypt the password using Salt.
-        bcrypt.genSalt( 10, ( error, salt ) => {
-          bcrypt.hash( newUser.password, salt, ( error, hash ) => {
-            if ( error ) {
-              throw error;
-            }
-            newUser.password = hash;
-            newUser
-              .save()
-              .then(user => res.json(user))
-              .catch(error => console.log(error));
-          });
-        });
-      }
-    });
-  });
-
+  
   app.get("/auth/local/verify/:token", (req, res) => {
     const token = req.originalUrl.split('/')[4];
 
     jwt.verify(token, keys.localSecret, (err, decodedToken) => {
-      if ( err ) {
+      if (err) {
         res.sendStatus(500);
-        return res.send("Error: Invalid verification token.");
       }
       else {
         User.updateOne(
-          { 'email': decodedToken.email }, // Find token
+          { 'email': decodedToken.data }, // Find token
           { 'activated': true } // Update value
-        ).then(data => {
-          if ( data ) {
+      ).then((data) => {
+          console.log("data", data);
+          if (data) {
             res.redirect('/login?activated');
           } else {
             // Failed to find a result
@@ -162,50 +96,173 @@ module.exports = app => {
     });
   });
 
-  app.post("/auth/local/login", (req, res) => {
-    console.log('req', req.body);
-    const { errors, isValid } = validateLogin(req.body);
+  app.post('/auth/local/register', (req, res) => {
     const { email, password } = req.body;
-  
-    //Check validation
-    if ( !isValid ) {
-      return res.status(400).json(errors);
-    }
-  
-    //Find the user by email to see if they are in the database
-    User.findOne({ email }).then(user => {
-      if ( !user ) {
-        errors.email = "Users email was not found";
-        return res.status(404).json(errors);
+    let registerErrors = {};
+    console.log('email and password', { email, password});
+
+    if ( email && password) {
+      if (!EmailValidator.validate(email)) {
+        registerErrors.email = 'Please provide a valid email';
       }
-      //Check password
-      bcrypt.compare( password, user.password ).then(isMatch => {
-        if ( isMatch ) {
-          //user password matched the one that was in the database
-          const payload = {
-            id: user.id,
-            email: user.email
-          };
-          //Sign in token, expires in is in seconds
-          jwt.sign(
-            payload,
-            keys.localSecret,
-            { expiresIn: 3600 },
-            ( error, token ) => {
-              res.json({
-                success: true,
-                token: "Bearer " + token
+  
+      if (!passwordSchema.validate(password)) {
+        registerErrors.password = 'Password does not forfil all requirements';
+      }
+    }
+    else {
+      registerErrors.email = 'Please provide an email';
+      registerErrors.email = 'Please provide a password';
+    }
+
+    if (!_.isEmpty(registerErrors)) {
+      return res.send({ errors: registerErrors });
+    }
+
+    console.log('registerErrors', registerErrors);
+
+    // If no errors, we can create the user
+    User.findOne({ email: email }).then((user) => {
+      if (user) {
+        registerErrors.email = 'Email already exists';
+        return res.send({ errors: registerErrors });
+      } else {
+        bcrypt.genSalt(10, (err, salt) => {
+          bcrypt.hash(password, salt, (err, hash) => {
+            if (err) throw err;
+            
+            const newUser = new User({ email, hash });
+            
+            if (newUser) {
+              let options = {
+                viewEngine: {
+                  extname: '.html', // handlebars extension
+                  layoutsDir: path.join(__dirname, './email/activation'), // location of handlebars templates
+                  defaultLayout: 'index',
+                  viewPath: path.join(__dirname, './email/activation'),
+                  partialsDir: path.join(__dirname, './email/activation')
+                },
+                viewPath: path.join(__dirname, './email/activation'),
+                extName: '.html'
+              }
+              
+              mailer.use('compile', hbs(options));
+          
+              // Generate a user verfification token
+              const verificationToken = jwt.sign({
+                data: email
+              }, keys.localSecret, { expiresIn: '7d' });
+          
+              mailer.sendMail({
+                from: keys.emailUser, // sender address
+                to: email, // list of receivers
+                subject: 'Locc.it: Account verification', // Subject line
+                template: 'index',
+                context: {
+                  verificationToken : "https://locc.it/auth/local/verify/" + verificationToken
+                },
+                attachments:[{
+                  filename : 'loccit.png',
+                  path: path.join(__dirname, 'email/images/loccit.png'),
+                  cid : 'logo@locc.it'
+                }],
               });
+              res.send(newUser);
             }
-          );
-          res.send(user);
-        } else {
-          // No match
-          errors.password = "Password is incorrect";
-          return res.status(400).json(errors);
-        }
-      });
+          });
+        });
+      }
     });
+  });
+
+  app.post('/auth/local/login', 
+    passport.authenticate('local', 
+      { 
+        successRedirect: '/',
+        failureRedirect: '/login',
+        session: true
+      }
+  ));
+
+  app.post('/auth/local/send_reset',  (req, res) => {
+    const { email } = req.body.data;
+    let options = {
+      viewEngine: {
+        extname: '.html', // handlebars extension
+        layoutsDir: path.join(__dirname, './email/reset'), // location of handlebars templates
+        defaultLayout: 'index',
+        viewPath: path.join(__dirname, './email/reset'),
+        partialsDir: path.join(__dirname, './email/reset')
+      },
+      viewPath: path.join(__dirname, './email/reset'),
+      extName: '.html'
+    }
+    
+    mailer.use('compile', hbs(options));
+
+    try {
+      // Generate a user verfification token
+      const verificationToken = jwt.sign({
+        data: email
+      }, keys.localSecret, { expiresIn: '1d' });
+
+      mailer.sendMail({
+        from: keys.emailUser, // sender address
+        to: email, // list of receivers
+        subject: 'Locc.it: Reset password', // Subject line
+        template: 'index',
+        context: {
+          verificationToken : "https://locc.it/reset/" + verificationToken
+        },
+        attachments:[{
+          filename : 'loccit.png',
+          path: path.join(__dirname, 'email/images/loccit.png'),
+          cid : 'logo@locc.it'
+        }],
+      });
+      res.sendStatus(200);
+      console.log("Sent reset link");
+    }
+    catch {
+      res.sendStatus(500);
+    }
+  });
+  
+
+  app.post('/auth/local/reset',  (req, res) => {
+    console.log("req.body", req.body)
+    const { token, password } = req.body;
+    jwt.verify(token, keys.localSecret, (err, decodedToken) => {
+      if (err) {
+        res.sendStatus(500);
+      }
+      else {
+        bcrypt.genSalt(10, (error, salt) => {
+          bcrypt.hash(password, salt, (error, hash) => {
+            console.log("init reset", { decodedToken, hash });
+            if (error) {
+              console.log('err', error);
+              throw error;
+            }
+            User.findOneAndUpdate(
+              { 'email': decodedToken.data }, 
+              { 'password': hash } 
+          ).then(user => {
+              console.log("user result", user);
+              if (user) {
+                console.log('user find one update one reset', user)
+                res.send(user);
+              } 
+              else {
+                console.log("No user found");
+                // Failed to find a result
+                return res.sendStatus(500);
+              }
+            });
+          });
+        });
+      }
+    });   
   });
 
   app.post("/auth/delete_user", (req, res) => {
@@ -213,8 +270,8 @@ module.exports = app => {
 
     User.deleteOne(
       { '_id': authId }
-    ).then(user => {
-      if ( user ) {
+  ).then(user => {
+      if (user) {
         res.sendStatus(200);
       }
       else {
@@ -232,19 +289,19 @@ module.exports = app => {
     User.findOneAndUpdate(
       { '_id': authId }, 
       { 'email': email, activated: false } 
-    ).then(user => {
-      if ( user ) {
+  ).then(user => {
+      if (user) {
         
         // Set our mailer params
         let options = {
           viewEngine: {
             extname: '.html', // handlebars extension
-            layoutsDir: path.join(__dirname, './email/update-email'), // location of handlebars templates
+            layoutsDir: path.join(__dirname, './email/update'), // location of handlebars templates
             defaultLayout: 'index',
-            viewPath: path.join(__dirname, './email/update-email'),
-            partialsDir: path.join(__dirname, './email/update-email')
+            viewPath: path.join(__dirname, './email/update'),
+            partialsDir: path.join(__dirname, './email/update')
           },
-          viewPath: path.join(__dirname, './email/update-email'),
+          viewPath: path.join(__dirname, './email/update'),
           extName: '.html'
         }
         
@@ -298,15 +355,15 @@ module.exports = app => {
 
     bcrypt.genSalt(10, (error, salt) => {
       bcrypt.hash(password, salt, (error, hash) => {
-        if ( error ) {
-          console.log('err', error );
+        if (error) {
+          console.log('err', error);
           throw error;
         }
         User.findOneAndUpdate(
           { '_id': authId }, 
           { 'password': hash } 
-        ).then(user => {
-          if ( user ) {
+      ).then(user => {
+          if (user) {
             console.log('user', user)
             mailer.sendMail({
               from: keys.emailUser, // sender address

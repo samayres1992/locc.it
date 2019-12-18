@@ -8,14 +8,14 @@ import * as actions from '../actions';
 
 class DecryptForm extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...props,
-      unlocked: false,
-      passcode: ''
-    }
-  }
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     ...props,
+  //     unlocked: false,
+  //     passcode: ''
+  //   }
+  // }
 
   componentDidMount() {
     const path = window.location.pathname.split('/')[2];
@@ -31,7 +31,7 @@ class DecryptForm extends Component {
     this.setState({
       passcode: passcode
     });
-    this.recaptcha.execute();
+    this.recaptcha.execute('decrypt');
   }
 
   onSubmit = values => {
@@ -81,7 +81,7 @@ class DecryptForm extends Component {
   }
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = (state) => {
   return {
     ...state,
     state

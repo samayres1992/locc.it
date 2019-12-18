@@ -16,29 +16,36 @@ class DashboardTemplate extends Component {
     };
   }
 
+  // TODO: this can be done in a cleaner way?
   componentDidMount() {
-    this.props.fetchLocks(this.props.auth._id);
+    if(this.props.auth) {
+      this.props.fetchLocks(this.props.auth._id);
+    }
   }
 
-  deleteLock = ( lockId ) => {
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.auth !== this.props.auth) {
+      this.props.fetchLocks(this.props.auth._id);
+    }
+  }
+
+  deleteLock = (lockId) => {
     try {
       this.props.deleteSelectedLock(lockId);
       this.openNotificationWithIcon('success', 'delete');
-    } catch ( err ) {
+    } catch (error) {
       this.openFailureNotificationWithIcon('error', 'delete');
     }
-
     this.props.fetchLocks(this.props.auth._id);
   }
 
-  updateExpiry( date, dateString, lockId ) {
+  updateExpiry(date, dateString, lockId) {
     let expiry = Moment(date).endOf('day').format('YYYY-MM-DD H:mm:ss').toString();
-    console.log("expirychange", expiry);
     this.props.updateLockExpiry({ lockId, expiry });
     this.openNotificationWithIcon('success', 'expiry_update');
   }
 
-  openNotificationWithIcon = ( type, action ) => {
+  openNotificationWithIcon = (type, action) => {
     switch (action) {
       case 'clipboard':
           notification[type]({
@@ -66,7 +73,7 @@ class DashboardTemplate extends Component {
     }
   };
 
-  openFailureNotificationWithIcon = ( type, action ) => {
+  openFailureNotificationWithIcon = (type, action) => {
     switch (action) {
       case 'delete':
         notification[type]({
@@ -80,7 +87,7 @@ class DashboardTemplate extends Component {
     }
   };
 
-  paginationChange = ( page, pageSize ) => {
+  paginationChange = (page, pageSize) => {
     this.setState({
       minItems: (page - 1) * pageSize,
       maxItems: page * pageSize
@@ -119,22 +126,22 @@ class DashboardTemplate extends Component {
                       <DatePicker style={{"width": "100%"}} onChange={(date, dateString) => this.updateExpiry(date, dateString, lock._id)} defaultValue={Moment(lock.expiry)} format={"[Expires on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required />
                     </Card>
                   </Col>
-                ))}
+               ))}
               </Row>
-              ))
+             ))
             : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<span className='no-data'>No encrypted credentials, create one below.</span>} />
           } 
           </Col>
         </Row>
         <Row gutter={ 12 } className="pagination">
-          <Pagination defaultCurrent={ 1 } total={ chunkedLocks.length } hideOnSinglePage={ true } defaultPageSize={5} onChange={(page, pageSize) => { this.paginationChange( page, pageSize ) }} />
+          <Pagination defaultCurrent={ 1 } total={ chunkedLocks.length } hideOnSinglePage={ true } defaultPageSize={5} onChange={(page, pageSize) => { this.paginationChange(page, pageSize) }} />
         </Row>
       </Fragment>
-    );
+   );
   }
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = (state) => {
   return {
     state,
     ...state

@@ -53,7 +53,7 @@ class DecryptedData extends Component {
   }
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = (state) => {
   return {
     ...state,
     state

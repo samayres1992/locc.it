@@ -9,22 +9,21 @@ module.exports = app => {
     const { url } = req.body;
     Encrypt.findOne({ 
       url: url
-    }).then(( data ) => {
-      console.log("check_url", data);
-      if ( data ) {
+    }).then((data) => {
+      if (data) {
         const { _id, active, locked } = data;
-        if ( _id && active && !locked ) {
+        if (_id && active && !locked) {
           // We got everything, send them the info
           res.send({ lockId: _id });
         }
-        else if ( locked ) {
+        else if (locked) {
           // Inform the user how long they are locked out for
           res.send({ locked: locked });
         }
       }
       else { 
         // If no results
-        res.send( false );
+        res.send(false);
       }
     });
   });
@@ -35,8 +34,8 @@ module.exports = app => {
     // Let's take the value and decrypt it
     Encrypt.findOne({ 
       '_id': lockId
-    }).then(( data ) => {
-      if ( data ) {
+    }).then((data) => {
+      if (data) {
         console.log('data', data);
         const { _id, title, encryptedData, active, locked } = data;
         // TODO: REFACTOR
@@ -45,15 +44,12 @@ module.exports = app => {
           const parsedData = parse(encryptedData);
           let bytes = CryptoJS.AES.decrypt(parsedData, passcode.passcode.toString());
           let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-          console.log("_id", _id);
-          try {
-            console.log("delet try")
-            let resencr = Encrypt.findByIdAndDelete( ObjectId(_id) );
-            console.log('resencr', resencr);
-          }
-          catch (err) {
-            console.log("error", err)
-          }
+
+          // The details are correct, so delete the data from the db
+          Encrypt.findByIdAndDelete({ _id }, (result => {
+            console.log('result', result);
+          }));
+
           // Add in the title for simplicity elsewhere
           Object.assign(decryptedData, { title });
           res.send({title, decryptedData, active, locked});
@@ -63,8 +59,8 @@ module.exports = app => {
             lockId,
             { $inc: { attempts: 1 }},
             { "new": true }
-          ).then(( attemptResult ) => {
-            if ( attemptResult.attempts >= 3 ) {
+         ).then((attemptResult) => {
+            if (attemptResult.attempts >= 3) {
               // If the user fails 3 attempts, lock them out
               Encrypt.findByIdAndUpdate(
                 lockId,
@@ -77,7 +73,7 @@ module.exports = app => {
                   }
                   res.send({ lockId: lockResult._id, locked: lockResult.locked, decryptedData: false });
                 }
-              );
+             );
             } else {
               res.send({ lockId: attemptResult._id, attempts: attemptResult.attempts, decryptedData: false });
             }

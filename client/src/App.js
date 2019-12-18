@@ -13,6 +13,8 @@ import FaqTemplate from './components/FaqTemplate';
 import FooterTemplate from './components/FooterTemplate';
 import LoginTemplate from './components/LoginTemplate';
 import SettingsTemplate from './components/SettingsTemplate';
+import RequestResetTemplate from './components/RequestResetTemplate';
+import NewPasswordTemplate from './components/NewPasswordTemplate';
 import NotFound from './components/NotFound';
 
 class App extends Component {
@@ -37,6 +39,8 @@ class App extends Component {
                 <Route path="/faq" exact component={ FaqTemplate } />
                 <Route path="/settings" exact component={ SettingsTemplate } />
                 <Route path="/d/:url" exact component={ DecryptTemplate } />
+                <Route path="/reset" exact component={ RequestResetTemplate } />
+                <Route path="/reset/:token" exact component={ NewPasswordTemplate } />
                 <Route path="*" component={ NotFound } />
               </Switch>
             </Content>
@@ -47,7 +51,7 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = (state) => {
   const { auth } = state;
   return { auth };
 };
