@@ -42,9 +42,10 @@ module.exports = app => {
     ).then((data) => {
       if (data) {
         res.send(data);
-      } else {
+      } 
+      else {
         // Failed to find a result
-        res.send(false);
+        res.send("Failed to update expiry date");
       }
     });
   });

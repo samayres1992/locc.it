@@ -8,15 +8,6 @@ import * as actions from '../actions';
 
 class DecryptForm extends Component {
 
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     ...props,
-  //     unlocked: false,
-  //     passcode: ''
-  //   }
-  // }
-
   componentDidMount() {
     const path = window.location.pathname.split('/')[2];
     this.props.checkUrl(path);
@@ -82,10 +73,8 @@ class DecryptForm extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    ...state,
-    state
-  };
+  const { decryptForm } = state;
+  return { decryptForm: decryptForm };
 }
 
 export default connect(mapStateToProps, actions)(DecryptForm);

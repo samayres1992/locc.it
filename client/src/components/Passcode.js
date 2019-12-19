@@ -66,10 +66,8 @@ class Passcode extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    ...state,
-    state
-  };
+  const { passcode } = state;
+  return { passcode: passcode };
 }
 
 export default connect(mapStateToProps, actions)(Passcode);
