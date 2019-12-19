@@ -186,83 +186,96 @@ module.exports = app => {
 
   app.post('/auth/local/send_reset',  (req, res) => {
     const { email } = req.body.data;
-    let options = {
-      viewEngine: {
-        extname: '.html', // handlebars extension
-        layoutsDir: path.join(__dirname, './email/reset'), // location of handlebars templates
-        defaultLayout: 'index',
-        viewPath: path.join(__dirname, './email/reset'),
-        partialsDir: path.join(__dirname, './email/reset')
-      },
-      viewPath: path.join(__dirname, './email/reset'),
-      extName: '.html'
+    var resetErrors = {};
+
+    if (!EmailValidator.validate(email)) {
+      resetErrors.email = 'Please provide a valid email';
     }
+
+    if (!_.isEmpty(resetErrors)) {
+      return res.send({ errors: resetErrors });
+    }
+
+    User.findOne({ email: email }).then((user) => {
+      if (user) {
+        try {
+          // Generate a user verfification token
+          const verificationToken = jwt.sign({
+            data: email
+          }, keys.localSecret, { expiresIn: '1d' });
     
-    mailer.use('compile', hbs(options));
-
-    try {
-      // Generate a user verfification token
-      const verificationToken = jwt.sign({
-        data: email
-      }, keys.localSecret, { expiresIn: '1d' });
-
-      mailer.sendMail({
-        from: keys.emailUser, // sender address
-        to: email, // list of receivers
-        subject: 'Locc.it: Reset password', // Subject line
-        template: 'index',
-        context: {
-          verificationToken : "https://locc.it/reset/" + verificationToken
-        },
-        attachments:[{
-          filename : 'loccit.png',
-          path: path.join(__dirname, 'email/images/loccit.png'),
-          cid : 'logo@locc.it'
-        }],
-      });
-      res.sendStatus(200);
-      console.log("Sent reset link");
-    }
-    catch {
-      res.sendStatus(500);
-    }
+          let options = {
+            viewEngine: {
+              extname: '.html', // handlebars extension
+              layoutsDir: path.join(__dirname, './email/reset'), // location of handlebars templates
+              defaultLayout: 'index',
+              viewPath: path.join(__dirname, './email/reset'),
+              partialsDir: path.join(__dirname, './email/reset')
+            },
+            viewPath: path.join(__dirname, './email/reset'),
+            extName: '.html'
+          }
+          
+          mailer.use('compile', hbs(options));
+    
+          mailer.sendMail({
+            from: keys.emailUser, // sender address
+            to: email, // list of receivers
+            subject: 'Locc.it: Reset password', // Subject line
+            template: 'index',
+            context: {
+              verificationToken : "https://locc.it/reset/" + verificationToken
+            },
+            attachments:[{
+              filename : 'loccit.png',
+              path: path.join(__dirname, 'email/images/loccit.png'),
+              cid : 'logo@locc.it'
+            }],
+          });
+          return res.send("OK");
+        }
+        catch {
+          resetErrors.email = "Unable to reset password, please contact us directly.";
+          return res.send({ errors: resetErrors });
+        }
+      }
+      else {
+        resetErrors.email = "Unable to find an account with the email provided.";
+        return res.send({ errors: resetErrors });
+      }
+    });
   });
   
 
   app.post('/auth/local/reset',  (req, res) => {
-    console.log("req.body", req.body)
     const { token, password } = req.body;
+    var resetErrors = {};
     jwt.verify(token, keys.localSecret, (err, decodedToken) => {
       if (err) {
-        res.sendStatus(500);
+        resetErrors.verification = "Invalid verification token";
       }
       else {
         bcrypt.genSalt(10, (error, salt) => {
           bcrypt.hash(password, salt, (error, hash) => {
-            console.log("init reset", { decodedToken, hash });
             if (error) {
-              console.log('err', error);
-              throw error;
+              resetErrors.password = "Unable to set user password";
             }
             User.findOneAndUpdate(
               { 'email': decodedToken.data }, 
               { 'password': hash } 
-          ).then(user => {
-              console.log("user result", user);
+            ).then(user => {
               if (user) {
-                console.log('user find one update one reset', user)
-                res.send(user);
+                return res.send(user);
               } 
               else {
-                console.log("No user found");
-                // Failed to find a result
-                return res.sendStatus(500);
+                resetErrors.email = "User with supplied email address does not exist"
               }
             });
           });
         });
       }
-    });   
+    });
+    return res.send({ errors: resetErrors });   
   });
 
   app.post("/auth/delete_user", (req, res) => {
@@ -270,7 +283,7 @@ module.exports = app => {
 
     User.deleteOne(
       { '_id': authId }
-  ).then(user => {
+    ).then(user => {
       if (user) {
         res.sendStatus(200);
       }
@@ -284,14 +297,22 @@ module.exports = app => {
 
   app.post("/auth/update_email", (req, res) => {
     const { authId, email } = req.body.data;
+    var emailErrors = {};
+
+    if (!EmailValidator.validate(email)) {
+      emailErrors.email = 'Please provide a valid email';
+    }
+
+    if (!_.isEmpty(emailErrors)) {
+      return res.send({ errors: emailErrors });
+    }
 
     // When the user updates their email, they must re-verify the address
     User.findOneAndUpdate(
       { '_id': authId }, 
       { 'email': email, activated: false } 
-  ).then(user => {
+    ).then(user => {
       if (user) {
-        
         // Set our mailer params
         let options = {
           viewEngine: {
@@ -326,17 +347,27 @@ module.exports = app => {
             cid : 'logo@locc.it'
           }],
         });
-        res.sendStatus(200);
+        return res.send("OK");
       } 
       else {
         // Failed to find a result
-        return res.sendStatus(500);
+        emailErrors.email = "Account not found.";
+        return res.send({ errors: emailErrors });
       }
     });
   });
 
   app.post("/auth/update_password", (req, res) => {
     const { authId, password } = req.body.data;
+    var updateErrors = {};
+
+    if (!passwordSchema.validate(password)) {
+      updateErrors.password = 'Password does not forfil all requirements';
+    }
+
+    if (!_.isEmpty(updateErrors)) {
+      return res.send({ errors: updateErrors });
+    }
 
     // Set our mailer params
     let options = {
@@ -362,9 +393,8 @@ module.exports = app => {
         User.findOneAndUpdate(
           { '_id': authId }, 
           { 'password': hash } 
-      ).then(user => {
+        ).then(user => {
           if (user) {
-            console.log('user', user)
             mailer.sendMail({
               from: keys.emailUser, // sender address
               to: user.email, // list of receivers

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Axios from 'axios';
-import { Col, Row, Icon } from 'antd';
+import { Col, Row, Icon, notification } from 'antd';
 import classNames from 'classnames';
 import Recaptcha from 'react-google-invisible-recaptcha';
 import { Form, Field } from 'react-final-form';
@@ -17,7 +17,7 @@ class RequestResetTemplate extends Component {
   }
 
   emailRender = (emailInput) => (
-    <input {...emailInput.input} name={emailInput.name} className={classNames({"has-content": emailInput.meta.dirty, "fancy-input": !emailInput.dirty})} placeholder="" type="text" required />
+    <input {...emailInput.input} name={emailInput.name} className={classNames({"has-content": emailInput.meta.dirty, "fancy-input": !emailInput.dirty})} placeholder="" type="email" required />
   );
 
   verifyRequestNewPasswordSubmission = ({ email }) => {
@@ -35,17 +35,31 @@ class RequestResetTemplate extends Component {
         email: email
       }
     }).then(res => {
-      console.log('res.status', res.data);
-      if(res.data === 'OK') {
+      console.log('verified new password', res);
+      if(res.data.errors && res.data.errors.email) {
+        this.openFailureNotificationWithIcon("error", "invalid_email", res.data.errors.email);
+      }
+      else {
         this.setState({
           sent: true
         });
       }
-      else {
-        console.log("failed");
-      }
     });
   }
+
+  openFailureNotificationWithIcon = (type, action, description) => {
+    switch (action) {
+      case 'invalid_email':
+        notification[type]({
+          message: 'Request failed',
+          description: description,
+          placement: 'bottomLeft'
+        });
+        break;
+      default:
+        break;
+    }
+  };
 
   render() {
     const { sent } = this.state;

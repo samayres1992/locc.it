@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import * as actions from '../actions';
-import { Col, Row, Icon, Input } from 'antd';
+import { Col, Row, Icon, Input, Popover } from 'antd';
 import classNames from 'classnames';
 import Recaptcha from 'react-google-invisible-recaptcha';
 import { Form, Field } from 'react-final-form';
@@ -34,14 +34,14 @@ class NewPasswordTemplate extends Component {
 
   verifiedPasswordSubmit = () => {
     const { token, password } = this.state;
-    console.log("verifiedPasswordSubmit called", {token, password});
-    let res = this.props.anonResetNewPassword({ token, password });
-    console.log("res newpassword template", res);
+    this.props.anonResetNewPassword({ token, password });
   }
 
   render() {
     const { auth, errors } = this.props;
-    if  (auth && !errors ) {
+    const requirement = "Password requires 8 or more characters, which include a symbol, uppercase letter, and number.";
+
+    if (auth && !errors ) {
       return <Redirect to='/'/>;
     }
     return (
@@ -55,16 +55,16 @@ class NewPasswordTemplate extends Component {
                 render={({ handleSubmit }) => (
                   <form onSubmit={ handleSubmit } action="new-password">
                     <div className="input-effect">
+                      <Popover width={"300px"} content={requirement} title="Password requirements" trigger="hover">
+                        <Icon type="info-circle" />
+                      </Popover>
                       <Field type="password" component={this.passwordRender} placeholder="Password" name="password" />
                       <label><Icon type="user" /> Password</label>
                       <span className="focus-border">
                         <i></i>
                       </span>
                     </div>
-                    { errors && errors.password ? 
-                      <span>{ errors.password }</span>
-                      : <span>Password must be 8 characters, 1 special character, 1 number and 1 uppercase letter.</span>           
-                    }
+                    { errors && errors.password ? <span className="error-form">{ errors.password }</span> : null }
                     <button className="button fancy-button">
                       Confirm new password
                       <span className="focus-border"><i></i></span>
@@ -87,10 +87,8 @@ class NewPasswordTemplate extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    state,
-    ...state
-  };
+  const { auth, errors  } = state;
+  return { auth: auth, errors: errors  };
 }
 
 export default connect(mapStateToProps, actions)(NewPasswordTemplate);

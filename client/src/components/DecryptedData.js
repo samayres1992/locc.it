@@ -54,10 +54,8 @@ class DecryptedData extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    ...state,
-    state
-  };
+  const { decryptForm } = state;
+  return { decryptForm: decryptForm };
 }
 
 export default connect(mapStateToProps, actions)(DecryptedData);

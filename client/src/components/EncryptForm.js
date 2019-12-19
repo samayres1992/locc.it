@@ -86,8 +86,6 @@ class EncryptForm extends Component {
 	}
 
   render() {
-    const { pristine, submitting} = this.props;
-
     return (
       <Form 
         onSubmit={this.checkSubmit}
@@ -123,7 +121,7 @@ class EncryptForm extends Component {
                 </span>
             </div>
             <p>* Indicates a required field.</p>
-            <button className="submit button fancy-button" disabled={pristine || submitting}>
+            <button className="submit button fancy-button">
               Encrypt
               <span className="focus-border">
                 <i></i>
@@ -141,11 +139,4 @@ class EncryptForm extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    state,
-    ...state
-  };
-}
-
-export default connect(mapStateToProps, actions)(EncryptForm);
+export default connect(null, actions)(EncryptForm);

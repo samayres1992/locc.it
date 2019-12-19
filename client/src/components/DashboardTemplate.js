@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import axios from 'axios';
 import { chunk } from 'lodash';
 import Moment from 'moment';
 import * as actions from '../actions';
@@ -30,19 +31,41 @@ class DashboardTemplate extends Component {
   }
 
   deleteLock = (lockId) => {
-    try {
-      this.props.deleteSelectedLock(lockId);
-      this.openNotificationWithIcon('success', 'delete');
-    } catch (error) {
-      this.openFailureNotificationWithIcon('error', 'delete');
-    }
-    this.props.fetchLocks(this.props.auth._id);
+    axios({
+      method: 'post',
+      url: '/api/delete_lock',
+      data: {
+        lockId: lockId
+      }
+    }).then((res) => {
+      if (res.data.errors) {
+        this.openFailureNotificationWithIcon("errors", "updated_expiry_failed", res.data.errors);
+      }
+      else {
+        this.openNotificationWithIcon('success', 'expiry_update');
+        // Reload lock list
+        this.props.fetchLocks(this.props.auth._id);
+      }
+    });
   }
 
   updateExpiry(date, dateString, lockId) {
     let expiry = Moment(date).endOf('day').format('YYYY-MM-DD H:mm:ss').toString();
-    this.props.updateLockExpiry({ lockId, expiry });
-    this.openNotificationWithIcon('success', 'expiry_update');
+    axios({
+      method: 'post',
+      url: '/api/update_expiry',
+      data: {
+        lockId: lockId,
+        expiry: expiry
+      }
+    }).then((res) => {
+      if (res.data.errors) {
+        this.openFailureNotificationWithIcon("errors", "updated_expiry_failed", res.data.errors);
+      }
+      else {
+        this.openNotificationWithIcon('success', 'expiry_update');
+      }
+    });
   }
 
   openNotificationWithIcon = (type, action) => {
@@ -73,7 +96,7 @@ class DashboardTemplate extends Component {
     }
   };
 
-  openFailureNotificationWithIcon = (type, action) => {
+  openFailureNotificationWithIcon = (type, action, description=null) => {
     switch (action) {
       case 'delete':
         notification[type]({
@@ -82,6 +105,12 @@ class DashboardTemplate extends Component {
           placement: 'bottomLeft'
         });
         break;
+      case 'updated_expiry_failed':
+        notification[type]({
+          message: 'Expiry update failed',
+          description: description,
+          placement: 'bottomLeft'
+        });
       default:
         break;
     }
@@ -142,10 +171,8 @@ class DashboardTemplate extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    state,
-    ...state
-  };
+  const { dashboard } = state;
+  return { dashboard: dashboard };
 }
 
 export default connect(mapStateToProps, actions)(DashboardTemplate);

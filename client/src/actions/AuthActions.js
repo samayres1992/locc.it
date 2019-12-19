@@ -8,6 +8,7 @@ import {
 } from './types';
 
 export const fetchUser = () => async dispatch => {
+  var userErrors = {};
   try {
     const res = await axios.get('/auth/current_user');
     if (res.data.errors) {
@@ -22,11 +23,13 @@ export const fetchUser = () => async dispatch => {
     }
   }
   catch (errors) { 
-    dispatch({ type: SET_ERRORS, payload: "Unable to fetch user data" });
+    userErrors.user = "Unable to fetch user data";
+    dispatch({ type: SET_ERRORS, payload: { errors: userErrors }});
   }
 };
 
 export const loginUser = ({ email, password }) => async dispatch => {
+  var loginErrors = {};
   try {
     await axios({
       method: 'post',
@@ -36,17 +39,21 @@ export const loginUser = ({ email, password }) => async dispatch => {
         password: password
       }
     }).then(res => {
+      if (res.data.errors) {
+        return dispatch({ type: SET_ERRORS, payload: res.data.errors });
+      }
       const { _id, activated } = res.data;
       dispatch({ type: LOGIN_USER, payload: { _id, activated }});
     });
   }
   catch(errors) {
-    dispatch({ type: SET_ERRORS, payload: { password: "Invalid email or password." }});
-    console.log("error", errors);
+    loginErrors.password = "Invalid email or password.";
+    dispatch({ type: SET_ERRORS, payload: { errors: loginErrors }});
   }
 }
 
 export const registerUser = ({ email, password }) => async dispatch => {
+  var registerErrors = {};
   try {
     await axios({
       method: 'post',
@@ -64,11 +71,13 @@ export const registerUser = ({ email, password }) => async dispatch => {
     });
   }
   catch(errors) {
-    dispatch({ type: SET_ERRORS, payload: { email: "Account already exists with this email." }});
+    registerErrors.email = "Account already exists with this email.";
+    dispatch({ type: SET_ERRORS, payload: registerErrors });
   }
 }
 
 export const anonResetNewPassword = ({ token, password }) => async dispatch => {
+  var resetErrors = {};
   try {
     await axios({
       method: 'post',
@@ -78,12 +87,15 @@ export const anonResetNewPassword = ({ token, password }) => async dispatch => {
         password: password
       }
     }).then(res => {
+      if (res.data.errors) {
+        return dispatch({ type: SET_ERRORS, payload: res.data.errors });
+      }
       const { _id, activated } = res.data;
       dispatch({ type: RESET_USER, payload: { _id, activated }});
     });
   }
   catch (errors) {
-    dispatch({ type: SET_ERRORS, payload: { password: "New password could not be set." }});
-    console.log("error", errors);
+    resetErrors.password = "New password could not be set.";
+    dispatch({ type: SET_ERRORS, payload: { errors: resetErrors }});
   }
 }

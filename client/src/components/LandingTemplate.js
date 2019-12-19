@@ -35,10 +35,8 @@ class LandingTemplate extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    state,
-    ...state
-  };
+  const { auth, encryptForm } = state;
+  return { auth: auth, encryptForm: encryptForm };
 }
 
 export default connect(mapStateToProps, actions)(LandingTemplate);

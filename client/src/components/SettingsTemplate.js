@@ -27,7 +27,7 @@ class SettingsTemplate extends Component {
   };
 
   emailRender = (emailInput) => (
-    <input {...emailInput.input} name={emailInput.name} className={classNames({"has-content": emailInput.meta.dirty, "fancy-input": !emailInput.dirty})} placeholder="" type="text" required />
+    <input {...emailInput.input} name={emailInput.name} className={classNames({"has-content": emailInput.meta.dirty, "fancy-input": !emailInput.dirty})} placeholder="" type="email" required />
   );
 
   passwordRender = (passwordField) => (
@@ -54,11 +54,12 @@ class SettingsTemplate extends Component {
       }
     }).then(res => {
       if(res.data === 'OK') {
+        this.openNotificationWithIcon('success', 'delete_user');
         // Update props to reflect user logout
         this.props.fetchUser();
       }
       else {
-        this.openFailureNotificationWithIcon('error', 'delete_failed');
+        this.openFailureNotificationWithIcon('error', 'delete_user_failed');
       }
     });
   }
@@ -72,11 +73,11 @@ class SettingsTemplate extends Component {
       }
     }).then(res => {
       console.log('res.status', res.data);
-      if(res.data === 'OK') {
-        this.openNotificationWithIcon('success', 'update_password');
+      if(res.data.errors) {
+        this.openFailureNotificationWithIcon('error', 'password_update_failed');
       }
       else {
-        this.openFailureNotificationWithIcon('error', 'update_failed');
+        this.openNotificationWithIcon('success', 'update_password');
       }
     });
   }
@@ -90,11 +91,12 @@ class SettingsTemplate extends Component {
       }
     }).then(res => {
       console.log('res.status', res.data);
-      if(res.data === 'OK') {
-        this.openNotificationWithIcon('success', 'update_email');
+      if(res.data.errors) {
+        this.openFailureNotificationWithIcon('error', 'update_email_failed');
       }
       else {
-        this.openFailureNotificationWithIcon('error', 'update_failed');
+        console.log('i was called', res.data);
+        this.openNotificationWithIcon('success', 'update_email');
       }
     });
   }
@@ -115,6 +117,13 @@ class SettingsTemplate extends Component {
             placement: 'bottomLeft'
           });
         break;
+      case 'update_email':
+          notification[type]({
+            message: 'Email update successful.',
+            description: 'Your account details have been updated.',
+            placement: 'bottomLeft'
+          });
+        break;
       default:
         break;
     }
@@ -122,16 +131,23 @@ class SettingsTemplate extends Component {
 
   openFailureNotificationWithIcon = (type, action) => {
     switch (action) {
-      case 'update_failed':
+      case 'password_update_failed':
+          notification[type]({
+            message: 'Update failed.',
+            description: 'Password requirements not met.',
+            placement: 'bottomLeft'
+          });
+          break;
+      case 'update_email_failed':
         notification[type]({
-          message: 'Update failed.',
+          message: 'Update email failed.',
           description: 'Something went wrong, please try again.',
           placement: 'bottomLeft'
         });
         break;
-      case 'delete_failed':
+      case 'delete_user_failed':
           notification[type]({
-            message: 'Delete failed.',
+            message: 'Delete user failed.',
             description: 'Something went wrong, please try again.',
             placement: 'bottomLeft'
           });
@@ -142,7 +158,7 @@ class SettingsTemplate extends Component {
   };
 
   render() {
-    const { auth } = this.props;
+    const { auth, errors } = this.props;
 
     return (
       <div className="settings">
@@ -176,7 +192,7 @@ class SettingsTemplate extends Component {
           <Col span={12}>
             <div className="update">
               <h2>Update password.</h2>
-              <p>Password must be 8 characters, 1 special character, 1 number and 1 uppercase letter.</p>
+              <p>Password requires 8 or more characters, which include a symbol, uppercase letter, and number.</p>
               <Form 
                 onSubmit={this.updatePassword}
                 render={({ handleSubmit }) => (
@@ -188,6 +204,7 @@ class SettingsTemplate extends Component {
                           <i></i>
                         </span>
                     </div>
+                    { errors && errors.password ? <span className="error-form">{ errors.password }</span> : null }
                     <button className="submit button fancy-button" onClick={ this.handleSubmit }>
                       Update
                       <span className="focus-border"><i></i></span>
@@ -226,10 +243,8 @@ class SettingsTemplate extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    state,
-    ...state
-  };
+  const { auth, errors } = state;
+  return { auth: auth, errors: errors };
 }
 
 export default connect(mapStateToProps, actions)(SettingsTemplate);

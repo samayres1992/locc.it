@@ -74,9 +74,7 @@ class LoginTemplate extends Component {
       type="success"
       showIcon
     />;
-    const requirement = "Password requires 8 or more characters, that includes a symbol, uppercase letter and number";
-
-    console.log("errors", { errors })
+    const requirement = "Password requires 8 or more characters, which include a symbol, uppercase letter, and number.";
 
     if (auth) {
       return <Redirect to='/'/>;
@@ -101,7 +99,7 @@ class LoginTemplate extends Component {
                   </div>
                   { errors && errors.email ? <span className="error-form">{ errors.email }</span> : null }
                   <div className="input-effect">
-                    <Popover width={"300px"} content={requirement} title="Requirements" trigger="hover">
+                    <Popover width={"300px"} content={requirement} title="Password requirements" trigger="hover">
                       <Icon type="info-circle" />
                     </Popover>
                     <Field type="password" component={this.passwordRender} placeholder="Password" name="password" />
@@ -140,7 +138,7 @@ class LoginTemplate extends Component {
                   </div>
                   { errors && errors.email ? <span className="error-form">{ errors.email }</span> : null }
                   <div className="input-effect">
-                    <Popover width={"300px"} content={requirement} title="Requirements" trigger="hover">
+                    <Popover width={"300px"} content={requirement} title="Password requirements" trigger="hover">
                       <Icon type="info-circle" />
                     </Popover>
                     <Field type="password" component={this.passwordRender} placeholder="Password" name="password" />
@@ -201,7 +199,7 @@ class LoginTemplate extends Component {
 
 const mapStateToProps = (state) => {
   const { auth, errors } = state;
-  return { auth, errors };
+  return { auth: auth, errors: errors };
 };
 
 export default connect(mapStateToProps, actions)(LoginTemplate);
