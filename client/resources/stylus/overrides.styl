@@ -4,6 +4,7 @@
 
 .ant-layout-header {
   height: 100px;
+  padding: 0 50px;
   border-bottom: 2px solid white;
 }
 
@@ -55,8 +56,11 @@ a, .ant-menu-horizontal > .ant-menu-item > a:hover {
 }
 
 .landing {
+  h1 {
+    margin-top: 0;
+  }
   .ant-calendar-picker {
-    width: 34%;
+    width: 45%;
     float: right;
     position: absolute;
     top: 8px;
@@ -77,6 +81,10 @@ a, .ant-menu-horizontal > .ant-menu-item > a:hover {
 }
 ::placeholder, .anticon {
   color: #fff;
+}
+
+.ant-calendar-picker {
+  width: 34%;  
 }
 
 .ant-layout-content {
@@ -103,6 +111,14 @@ a, .ant-menu-horizontal > .ant-menu-item > a:hover {
   i, span.ant-alert-message, svg {
     color: #fff;
   }
+}
+
+.ant-dropdown-menu { 
+  padding: 0;
+}
+
+.ant-dropdown-menu-item:hover {
+  background-color: #4b6cb7;
 }
 
 .ant-popover {

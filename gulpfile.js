@@ -9,7 +9,8 @@ gulp.task('css', function () {
       './client/resources/stylus/fancy-form.styl',
       './client/resources/stylus/passcode.styl',
       './client/resources/stylus/login.styl',
-      './client/resources/stylus/overrides.styl'
+      './client/resources/stylus/overrides.styl',
+      './client/resources/stylus/mobile.styl'
     ])
     .pipe(stylus())
     .pipe(gulp.dest('./client/src/css/'));

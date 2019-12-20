@@ -11,10 +11,38 @@ body {
 	}
 }
 
+@media only screen and (min-width:880px) {
+  .mobile {
+    display: none;
+  }
+  .desktop {
+    display: block;
+  }
+  button.button.copy {
+    position: absolute;
+    display: inline-block;
+    left: auto;
+    right: 14px;
+    top: 10px;
+    padding: 4px;
+    width: 6em;
+  }
+}
+
+@media only screen and (max-width:879px) {
+  .mobile {
+    display: block;
+  }
+  .desktop {
+    display: none;
+  }
+}
+
 .container {
 	max-width: 1080px;
 	margin: 0 auto;
   min-height: 100%;
+  padding: 0 50px;
 }
 
 header {
@@ -32,7 +60,7 @@ header {
 }
 
 .content {
-  padding: 3em 0;  
+  padding: 50px;
   
   h1, h2 {
     color: #fff;
@@ -72,7 +100,7 @@ header {
 	
 	.input-effect {
     position: relative;
-    margin: 0 0 30px;
+    margin: 30px 0 30px;
     &:last-of-type {
       margin: 0px 0 10px;
     }
@@ -122,6 +150,11 @@ header {
     border: 2px solid #fff;
     border-radius: 3px;
   }
+
+  .settings-block {
+    margin-bottom: 30px;
+  }
+
   .delete {
     .button {
       background-color: rgba(255, 0, 0, 0.25);
@@ -129,9 +162,24 @@ header {
   }
 }
 
+@media only screen and (min-width:880px) {
+  .settings {
+    .settings-block {
+      flex-wrap: wrap;
+      flex: 1;
+    }
+  }
+}
 
 .no-data {
   color: #fff;
+}
+
+.password-expiry-container {
+  position: relative;
+  .input-effect {
+    margin-bottom: 30px  
+  }  
 }
 
 footer {

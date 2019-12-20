@@ -31,7 +31,7 @@ class App extends Component {
       <Layout>
         <BrowserRouter>
             <HeaderTemplate />
-            <Content className="content" style={{ padding: '50px' }}>   
+            <Content className="content">   
               <Switch>   
                 <Route location={pathName} exact path="/" component={ LandingTemplate } />
                 <Route path="/login" exact component={ LoginTemplate } />
@@ -53,7 +53,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
   const { auth } = state;
-  return { auth: auth };
+return { auth: auth };
 };
 
 export default connect(mapStateToProps, actions)(App);

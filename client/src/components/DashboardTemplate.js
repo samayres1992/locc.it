@@ -20,13 +20,13 @@ class DashboardTemplate extends Component {
   // TODO: this can be done in a cleaner way?
   componentDidMount() {
     if(this.props.auth) {
-      this.props.fetchLocks(this.props.auth._id);
+      // this.props.fetchLocks(this.props.auth._id);
     }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.auth !== this.props.auth) {
-      this.props.fetchLocks(this.props.auth._id);
+      // this.props.fetchLocks(this.props.auth._id);
     }
   }
 
@@ -111,6 +111,7 @@ class DashboardTemplate extends Component {
           description: description,
           placement: 'bottomLeft'
         });
+        break;
       default:
         break;
     }
@@ -141,7 +142,7 @@ class DashboardTemplate extends Component {
               chunkedLocks.slice(minItems, maxItems).map(chunk => (
                 <Row gutter={16} key={i++}>
                 {chunk.map(lock => (
-                  <Col key={lock._id} span={12} className="dashCard">
+                  <Col key={lock._id} xs={24} sm={24} md={12} xl={12} xxl={12} className="dashCard">
                     <Card title={lock.title} bordered={false} extra={
                       <Popconfirm placement="top" title={"Are you sure you want to delete?"} onConfirm={() => this.deleteLock(lock._id)} okText="Yes" cancelText="No">
                         <Icon type="close-circle" />

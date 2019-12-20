@@ -163,60 +163,68 @@ class SettingsTemplate extends Component {
     return (
       <div className="settings">
         { auth ? null : <Redirect to='/' /> }
-        <Row gutter={16}>
-          <h1>Manage your account.</h1>
-          <Col span={12}>
+        <h1>Manage your account.</h1>
+        <Row type="flex" gutter={16}>
+          <Col className="settings-block" xs={24} sm={24} md={12} xl={12} xxl={12}>
             <div className="update">
               <h2>Update Email.</h2>
               <p>You will be emailed an activation link to confirm your account.</p>
-              <Form 
-                onSubmit={this.updateEmail}
-                render={({ handleSubmit }) => (
-                  <form onSubmit={handleSubmit} action="updateEmail">
-                    <div className="input-effect">
-                      <Field name="email" component={ this.emailRender } />
-                        <label><Icon type="user" /> Email</label>
-                        <span className="focus-border">
-                          <i></i>
-                        </span>
-                    </div>
-                    <button className="submit button fancy-button" onClick={ this.handleSubmit }>
-                      Update
-                      <span className="focus-border"><i></i></span>
-                    </button>
-                  </form>
-                )}
-              />
+              <Row type="flex" align="bottom">
+                <Col span={24}>
+                  <Form 
+                    onSubmit={this.updateEmail}
+                    render={({ handleSubmit }) => (
+                      <form onSubmit={handleSubmit} action="updateEmail">
+                        <div className="input-effect">
+                          <Field name="email" component={ this.emailRender } />
+                            <label><Icon type="user" /> Email</label>
+                            <span className="focus-border">
+                              <i></i>
+                            </span>
+                        </div>
+                        <button className="submit button fancy-button" onClick={ this.handleSubmit }>
+                          Update
+                          <span className="focus-border"><i></i></span>
+                        </button>
+                      </form>
+                    )}
+                  />
+                </Col>
+              </Row>
             </div>
           </Col>
-          <Col span={12}>
+          <Col className="settings-block" xs={24} sm={24} md={12} xl={12} xxl={12} style={{ flexWrap: 'wrap', flex: 1 }}>
             <div className="update">
               <h2>Update password.</h2>
               <p>Password requires 8 or more characters, which include a symbol, uppercase letter, and number.</p>
-              <Form 
-                onSubmit={this.updatePassword}
-                render={({ handleSubmit }) => (
-                  <form onSubmit={handleSubmit} action="updatePassword">
-                    <div className="input-effect">
-                      <Field name="password" component={ this.passwordRender } />
-                        <label><Icon type="lock" /> Password</label>
-                        <span className="focus-border">
-                          <i></i>
-                        </span>
-                    </div>
-                    { errors && errors.password ? <span className="error-form">{ errors.password }</span> : null }
-                    <button className="submit button fancy-button" onClick={ this.handleSubmit }>
-                      Update
-                      <span className="focus-border"><i></i></span>
-                    </button>
-                  </form>
-                )}
-              />
+              <Row type="flex" align="bottom">
+                <Col span={24}>
+                  <Form 
+                    onSubmit={this.updatePassword}
+                    render={({ handleSubmit }) => (
+                      <form onSubmit={handleSubmit} action="updatePassword">
+                        <div className="input-effect">
+                          <Field name="password" component={ this.passwordRender } />
+                            <label><Icon type="lock" /> Password</label>
+                            <span className="focus-border">
+                              <i></i>
+                            </span>
+                        </div>
+                        { errors && errors.password ? <span className="error-form">{ errors.password }</span> : null }
+                        <button className="submit button fancy-button" onClick={ this.handleSubmit }>
+                          Update
+                          <span className="focus-border"><i></i></span>
+                        </button>
+                      </form>
+                    )}
+                  />
+                </Col>
+              </Row>
             </div>
           </Col>
         </Row>
         <Row gutter={16}>
-          <Col span={12}>
+          <Col className="settings-block" xs={24} sm={24} md={12} xl={12} xxl={12}>
             <div className="logout">
               <h2>Sign out.</h2>
               <p>Sign out of your account on your current browser.</p>
@@ -226,7 +234,7 @@ class SettingsTemplate extends Component {
               </a>
             </div>
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={24} md={12} xl={12} xxl={12}>
             <div className="delete">
               <h2>Account deletion.</h2>
               <p>Delete your account and all credentials you have encrypted.</p>

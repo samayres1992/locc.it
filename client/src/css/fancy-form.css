@@ -82,6 +82,12 @@
   right: -30px;
   cursor: pointer;
 }
+.update .input-effect .anticon-info-circle {
+  position: absolute;
+  top: 20px;
+  right: 15px;
+  z-index: 999;
+}
 .fancy-input.passcodeInfo:before {
   background-color: rgba(255,255,255,0.1);
   height: 100%;
@@ -153,15 +159,6 @@ a.button {
   height: 55px;
   color: #fff;
   background-color: rgba(255,255,255,0.25);
-}
-button.button.copy {
-  position: absolute;
-  display: inline-block;
-  left: auto;
-  right: 14px;
-  top: 10px;
-  padding: 4px;
-  width: 6em;
 }
 .dashCard button.button.copy {
   top: 7px;

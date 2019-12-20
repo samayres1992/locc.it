@@ -15,22 +15,24 @@ module.exports = app => {
     });
   });
 
-  app.post('/api/fetch_locks', async (req, res) => {
-    const { userId } = req.body;
-    
-    Encrypt.find({ 
-      'active': true,
-      'userId': userId
-    }).then(( data ) => {
-      console.log("fetchlocks route", data);
-      if (data) {
-        res.send(data);
-      } else {
-        // Failed to find a result
-        // console.log("error", err);
-        res.send(false);
-      }
-    });
+  app.get('/api/fetch_locks', async (req, res) => {
+    const { user } = req;
+    console.log('user_id', req.user);
+    if (user) {
+      Encrypt.find({ 
+        'active': true,
+        'userId': user._id
+      }).then(( data ) => {
+        console.log("fetchlocks route", data);
+        if (data) {
+          res.send(data);
+        } else {
+          // Failed to find a result
+          // console.log("error", err);
+          res.send(false);
+        }
+      });
+    }
   });
 
   app.post('/api/update_expiry', async (req, res) => {

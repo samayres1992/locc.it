@@ -7,7 +7,6 @@ import { Form, Field } from 'react-final-form';
 import { Alert, Input, Icon, Popover } from 'antd';
 import classNames from 'classnames';
 import * as actions from '../actions';
-import '../css/login.css';
 
 class LoginTemplate extends Component {
 
@@ -41,26 +40,17 @@ class LoginTemplate extends Component {
       email: email,
       password: password
     });
-    this.recaptcha.execute('register');   
-  }
-
-  verifyUserLoginSubmission = ({ email, password }) => {
-    this.setState({
-      email: email,
-      password: password
-    });
-    this.recaptcha.execute('login');  
-  }
-
-  verifiedLoginSubmit = () => {
-    const { email, password } = this.state;
     this.props.clearErrors();
+    this.recaptcha.execute('register');  
+  }
+
+  loginSubmit = () => {
+    const { email, password } = this.state;
     this.props.loginUser({ email, password });
   }
 
   verifiedRegisterSubmit = () => {
     const { email, password } = this.state;
-    this.props.clearErrors();
     this.props.registerUser({ email, password });
   }
 
@@ -115,19 +105,13 @@ class LoginTemplate extends Component {
                     Sign up
                     <span className="focus-border"><i></i></span>
                   </button>
-                  <Recaptcha
-                    ref={ ref => this.recaptcha = ref }
-                    sitekey={process.env.REACT_APP_GOOGLE_SITE_KEY}
-                    onResolved={this.verifiedRegisterSubmit}
-                    badge={"bottomright"}
-                  />
                 </form>
               )}
             />
           </div>
           <div className="form-container sign-in-container">
             <Form 
-              onSubmit={this.verifyUserLoginSubmission}
+              onSubmit={this.loginSubmit}
               render={({ handleSubmit }) => (
                 <form onSubmit={ handleSubmit } action="login">
                   <h1>Sign in.</h1>
@@ -153,12 +137,6 @@ class LoginTemplate extends Component {
                     Sign in
                     <span className="focus-border"><i></i></span>  
                   </button>
-                  <Recaptcha
-                    ref={ ref => this.recaptcha = ref }
-                    sitekey={process.env.REACT_APP_GOOGLE_SITE_KEY}
-                    onResolved={this.verifiedRegisterSubmit}
-                    badge={"bottomright"}
-                  />
                 </form>
               )}
             />
@@ -192,6 +170,12 @@ class LoginTemplate extends Component {
             </div>
           </div>
         </div>
+        <Recaptcha
+          ref={ ref => this.recaptcha = ref }
+          sitekey={process.env.REACT_APP_GOOGLE_SITE_KEY}
+          onResolved={this.verifiedRegisterSubmit}
+          badge={"bottomright"}
+        />
       </Fragment>
     );
   }

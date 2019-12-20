@@ -85,7 +85,7 @@
   color: #fff;
 }
 .login.container .overlay-container {
-  background-color: #556893;
+  background-color: #26375a;
   position: absolute;
   top: 0;
   left: 50%;
@@ -133,6 +133,7 @@
 .login.container .social-container {
   position: absolute;
   bottom: 0;
+  left: 0;
   height: 70px;
   width: 100%;
   background-color: #fff;

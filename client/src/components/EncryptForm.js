@@ -18,7 +18,7 @@ class EncryptForm extends Component {
       emailUsername: '',
       password: '',
       note: '',
-      expiry: {}
+      expiry: Moment().add(7, 'days')
     }
   }
 
@@ -34,28 +34,15 @@ class EncryptForm extends Component {
     <textarea {...text.input} name={text.name} className={classNames({"has-content": text.meta.dirty, "fancy-input": !text.dirty})} placeholder="" type="text" />
   );
 
-  datePickerRender = ({ input, ...rest }) => {
-    const { disableInputs } = this.state;
-    console.log("state", this.state);
-    console.log("datepicker", input);
-    console.log("datepicker rest", rest);
-    return <DatePicker disabled={disableInputs} {...input} {...rest} style={{ width: '34%' }} defaultValue={Moment()} value={input.value !== '' ? input.value : Moment().add(7, 'days')} placeholder="Set expiry date for password" format={"[Expires on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required />
-  };
-
-  checkSubmit = ({ title, emailUsername, password, expiry, note }) => {
+  checkSubmit = ({ title, emailUsername, password, note }) => {
     // We need to make sure it's not a bot.
     this.setState({
       title: title,
       emailUsername: emailUsername,
       password: password,
-      expiry: expiry,
       note: note,
     });
     this.recaptcha.execute('encrypt');
-  }
-
-  onSubmit = () => {
-    this.encryptData();
   }
 
 	encryptData = () => {
@@ -63,29 +50,39 @@ class EncryptForm extends Component {
     const { title, emailUsername, password, expiry, note } = this.state;
     const { _id: userId } = this.props.auth;
 
-    // Let's take the value and encrypt it with
-    // Generate a key for the user to use for decryption
-    let passcode = randomString.generate();
-    const encryptedData = CryptoJS.AES.encrypt(JSON.stringify({ 
-      emailUsername: emailUsername, 
-      password: password, 
-      note: note
-    }), passcode);
+    console.log('encrypt data ', expiry);
+    try {
 
-    // Pass over the data to the action, if user doesn't specify a date, default to a week.
-    this.props.encrypt({ 
-      userId: userId ? userId : null,
-      title: title,
-      encryptedData: encryptedData,
-      expiry: expiry ? expiry.format('YYYY-MM-DD') : Moment().add(7, 'days').format('YYYY-MM-DD')
-    });
+      // Let's take the value and encrypt it with
+      // Generate a key for the user to use for decryption
+      let passcode = randomString.generate();
+      const encryptedData = CryptoJS.AES.encrypt(JSON.stringify({ 
+        emailUsername: emailUsername, 
+        password: password, 
+        note: note
+      }), passcode);
 
-    this.props.generatedPasscode({
-      'passcode': passcode
-    });
+      console.log("passcode", passcode);
+
+      // Pass over the data to the action, if user doesn't specify a date, default to a week.
+      this.props.encrypt({ 
+        userId: userId ? userId : null,
+        title: title,
+        encryptedData: encryptedData,
+        expiry: expiry.format('YYYY-MM-DD')
+      });
+
+      this.props.generatedPasscode({
+        'passcode': passcode
+      });
+
+    } catch(error) {
+      console.log('error', error);
+    }
 	}
 
   render() {
+    const { expiry } = this.state;
     return (
       <Form 
         onSubmit={this.checkSubmit}
@@ -105,13 +102,23 @@ class EncryptForm extends Component {
                   <i></i>
                 </span>
             </div>
-            <div className="input-effect">
-              <Field name="password" component={this.passwordRender} />
-              <label><Icon type="lock" /> Password *</label>
-              <span className="focus-border">
-                <i></i>
-              </span>
-              <Field name="expiry" component={this.datePickerRender} required />
+          <div className="password-expiry-container">
+              <div className="input-effect">
+                <Field name="password" component={this.passwordRender} />
+                <label><Icon type="lock" /> Password *</label>
+                <span className="focus-border">
+                  <i></i>
+                </span>
+              </div>
+              <DatePicker 
+                onChange={(date, dateString) => { 
+                  this.setState({ expiry: date }); 
+                }} 
+                defaultValue={expiry} 
+                placeholder="Set expiry date for password" 
+                format={"[Expires on] MMMM Do, YYYY"} 
+                disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required 
+              />
             </div>
             <div className="input-effect">
               <Field name="note" component={this.textareaRender} />
@@ -130,7 +137,7 @@ class EncryptForm extends Component {
             <Recaptcha
               ref={ ref => this.recaptcha = ref }
               sitekey={process.env.REACT_APP_GOOGLE_SITE_KEY}
-              onResolved={this.onSubmit}
+              onResolved={this.encryptData}
             />
           </form>
         )}
@@ -139,4 +146,9 @@ class EncryptForm extends Component {
   }
 }
 
-export default connect(null, actions)(EncryptForm);
+const mapStateToProps = (state) => {
+  const { auth, encryptForm } = state;
+  return { auth: auth, encryptForm: encryptForm };
+}
+
+export default connect(mapStateToProps, actions)(EncryptForm);

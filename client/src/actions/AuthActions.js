@@ -48,7 +48,7 @@ export const loginUser = ({ email, password }) => async dispatch => {
   }
   catch(errors) {
     loginErrors.password = "Invalid email or password.";
-    dispatch({ type: SET_ERRORS, payload: { errors: loginErrors }});
+    dispatch({ type: SET_ERRORS, payload: loginErrors });
   }
 }
 

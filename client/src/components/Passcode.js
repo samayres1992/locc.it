@@ -26,8 +26,7 @@ class Passcode extends Component {
   }
 
   render() {
-    const { passcode } = this.props;
-    const { url, expiry } = this.props.encryptForm;
+    const { url, expiry, passcode } = this.props.encryptForm;
     const fullUrl = process.env.REACT_APP_SITE_URL + 'd/' + url;
 
     return (
@@ -41,13 +40,13 @@ class Passcode extends Component {
         </div>
         <div className="input-effect">
           <span className="fancy-input passcodeInfo url">
-            { fullUrl }
+            <span className="data-to-copy">{ fullUrl }</span>
             <Clipboard className="button copy" data-clipboard-text={fullUrl} onSuccess={() => this.openNotificationWithIcon('success', 'clipboard')}><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
           </span>
         </div>
         <div className="input-effect">
           <span className="fancy-input passcodeInfo passcode">
-            {passcode}
+            <span className="data-to-copy">{passcode}</span>
             <Clipboard className="button copy" data-clipboard-text={passcode} onSuccess={() => this.openNotificationWithIcon('success', 'clipboard')}><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
           </span>    
         </div>
@@ -66,8 +65,8 @@ class Passcode extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const { passcode } = state;
-  return { passcode: passcode };
+  const { passcode, encryptForm } = state;
+  return { passcode: passcode, encryptForm: encryptForm };
 }
 
 export default connect(mapStateToProps, actions)(Passcode);

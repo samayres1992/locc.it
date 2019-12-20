@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Icon, notification } from 'antd';
 import * as actions from '../actions';
@@ -9,11 +9,11 @@ class DecryptedData extends Component {
   openNotificationWithIcon = (type, action) => {
     switch (action) {
       case 'clipboard':
-          notification[type]({
-            message: 'Copied to clipboard successful.',
-            description: 'Your details have been copied to your clipboard.',
-            placement: 'bottomLeft'
-          });
+        notification[type]({
+          message: 'Copied to clipboard successful.',
+          description: 'Your details have been copied to your clipboard.',
+          placement: 'bottomLeft'
+        });
         break;
       default:
         break;
@@ -23,32 +23,32 @@ class DecryptedData extends Component {
   render() {
     const { title, emailUsername, password, note } = this.props.decryptForm.decryptedData;
     return (
-      <Fragment>
+      <div className="decrypted-data">
         <div className="input-effect">
           <span className="fancy-input passcodeInfo title">
-            { title }
+            <span className="data-to-copy">{ title }</span>
             <Clipboard className="button copy" data-clipboard-text={title} onSuccess={() => this.openNotificationWithIcon('success', 'clipboard') }><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
           </span>
         </div>
         <div className="input-effect">
           <span className="fancy-input passcodeInfo username">
-            { emailUsername }
+          <span className="data-to-copy">{ emailUsername }</span>
             <Clipboard className="button copy" data-clipboard-text={emailUsername} onSuccess={() => this.openNotificationWithIcon('success', 'clipboard') }><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
           </span>
         </div>
         <div className="input-effect">
           <span className="fancy-input passcodeInfo password">
-            {password}
+            <span className="data-to-copy">{password}</span>
             <Clipboard className="button copy" data-clipboard-text={password} onSuccess={() => this.openNotificationWithIcon('success', 'clipboard')} ><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
           </span>    
         </div>
         <div className="input-effect">
           <span className="fancy-input passcodeInfo note">
-            {note}
+            <span className="data-to-copy"> {note} </span>
             <Clipboard className="button copy" data-clipboard-text={note} onSuccess={() => this.openNotificationWithIcon('success', 'clipboard')}><Icon type="copy" /><span className="copy-to-clipboard">Copy</span></Clipboard>
           </span>    
         </div>
-      </Fragment>
+      </div>
     );
   }
 }
