@@ -10,9 +10,8 @@ export default function (state = null, action) {
       };
     case PASSCODE:
       return {
-        ...state,
         passcode: action.payload.passcode
-      };
+      }
     case CREATE_ANOTHER:
       return action.payload
     default:
