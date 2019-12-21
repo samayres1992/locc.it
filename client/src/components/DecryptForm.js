@@ -40,7 +40,7 @@ class DecryptForm extends Component {
     console.log("decryptform", decryptForm);
     return (
       <Fragment>
-        
+        { decryptForm && decryptForm.lockId ? null : <Redirect to='/404' /> }
         <Form 
           onSubmit={this.onSubmit}
           render={({ handleSubmit }) => (

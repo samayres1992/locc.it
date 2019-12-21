@@ -9,6 +9,7 @@ const hbs = require("nodemailer-express-handlebars");
 const bcrypt = require("bcrypt");
 const mongoose = require('mongoose');
 const User = mongoose.model('users');
+const requireLogin = require('../middlewares/requireLogin');
 const EmailValidator = require('email-validator');
 const passwordValidator = require('password-validator');
 var passwordSchema = new passwordValidator(); 
@@ -119,8 +120,6 @@ module.exports = app => {
       return res.send({ errors: registerErrors });
     }
 
-    console.log('registerErrors', registerErrors);
-
     // If no errors, we can create the user
     User.findOne({ email: email }).then((user) => {
       if (user) {
@@ -134,6 +133,7 @@ module.exports = app => {
             const newUser = new User({ email, hash });
             
             if (newUser) {
+              const { _id, activated } = newUser;
               let options = {
                 viewEngine: {
                   extname: '.html', // handlebars extension
@@ -167,7 +167,7 @@ module.exports = app => {
                   cid : 'logo@locc.it'
                 }],
               });
-              res.send(newUser);
+              res.send({ _id, activated });
             }
           });
         });
@@ -266,9 +266,9 @@ module.exports = app => {
             User.findOneAndUpdate(
               { 'email': decodedToken.data }, 
               { 'password': hash } 
-            ).then(user => {
+            ).then(({ _id, activated }) => {
               if (user) {
-                return res.send(user);
+                return res.send({ _id, activated });
               } 
               else {
                 resetErrors.email = "User with supplied email address does not exist"
@@ -283,7 +283,7 @@ module.exports = app => {
     } 
   });
 
-  app.post("/auth/delete_user", (req, res) => {
+  app.post("/auth/delete_user", requireLogin, (req, res) => {
     const { authId } = req.body.data;
 
     User.deleteOne(
@@ -300,7 +300,7 @@ module.exports = app => {
     req.logout();
   }); 
 
-  app.post("/auth/update_email", (req, res) => {
+  app.post("/auth/update_email", requireLogin, (req, res) => {
     const { authId, email } = req.body.data;
     var emailErrors = {};
 
@@ -362,7 +362,7 @@ module.exports = app => {
     });
   });
 
-  app.post("/auth/update_password", (req, res) => {
+  app.post("/auth/update_password", requireLogin, (req, res) => {
     const { authId, password } = req.body.data;
     var updateErrors = {};
 
@@ -426,7 +426,7 @@ module.exports = app => {
     res.send(req.user);
   });
 
-  app.get('/auth/logout', (req, res) => {
+  app.get('/auth/logout', requireLogin, (req, res) => {
     req.logout();
     res.redirect('/');
   });

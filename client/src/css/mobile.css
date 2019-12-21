@@ -37,9 +37,12 @@
     margin-bottom: 30px;
   }
   .content .dashboard .input-effect .fancy-input {
-    padding: 15px 17px 6em 17px;
+    width: 6em;
+    padding-left: 7em;
+    padding-right: 7em;
+    padding-top: 16px;
   }
-  .content .dashboard:before {
+  .content .dashboard .input-effect .fancy-input:before {
     padding: 18px;
     text-align: center;
     width: 5em;

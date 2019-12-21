@@ -83,9 +83,9 @@ class HeaderTemplate extends Component {
             }
             rightContent={
               <Dropdown overlay={mobileMenu} trigger={['click']} placement="bottomRight">
-                <a className="ant-dropdown-link" href="#">
+                <button className="ant-dropdown-link burger-menu">
                   <Icon type="menu" />
-                </a>
+                </button>
               </Dropdown>
             }
           >
