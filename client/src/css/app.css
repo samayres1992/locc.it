@@ -59,6 +59,11 @@ header .ant-menu-item {
   color: #fff;
   font-size: 1.2em;
 }
+.burger-menu {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
 .content {
   padding: 50px;
 }

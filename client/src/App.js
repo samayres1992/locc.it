@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from './actions';
 import { Layout } from 'antd';
+import { Redirect } from 'react-router-dom';
 
 // Templating
 import HeaderTemplate from './components/HeaderTemplate';
@@ -24,8 +25,23 @@ class App extends Component {
   }
 
   render() {
+    const { auth } = this.props;
     const { Content } = Layout;
     const pathName = window.pathName;
+
+    const PrivateRoute = ({ component: Component, ...props }) => {
+      return (
+        <Route
+          {...props}
+          render={innerProps =>
+            auth && auth._id ? 
+              <Component {...innerProps} />
+              :
+              <Redirect to="/" />
+          }
+        />
+      );
+    };
 
     return (
       <Layout>
@@ -35,9 +51,9 @@ class App extends Component {
               <Switch>   
                 <Route location={pathName} exact path="/" component={ LandingTemplate } />
                 <Route path="/login" exact component={ LoginTemplate } />
-                <Route path="/dashboard" exact component={ DashboardTemplate } />
+                <PrivateRoute path="/dashboard" exact component={ DashboardTemplate } />
                 <Route path="/faq" exact component={ FaqTemplate } />
-                <Route path="/settings" exact component={ SettingsTemplate } />
+                <PrivateRoute path="/settings" exact component={ SettingsTemplate } />
                 <Route path="/d/:url" exact component={ DecryptTemplate } />
                 <Route path="/reset" exact component={ RequestResetTemplate } />
                 <Route path="/reset/:token" exact component={ NewPasswordTemplate } />
@@ -53,7 +69,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
   const { auth } = state;
-return { auth: auth };
+  return { auth: auth };
 };
 
 export default connect(mapStateToProps, actions)(App);
