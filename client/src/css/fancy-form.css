@@ -160,6 +160,16 @@ a.button {
   color: #fff;
   background-color: rgba(255,255,255,0.25);
 }
+.new-password .update .anticon-info-circle {
+  position: relative;
+  right: 0;
+  float: right;
+  top: 22jpx;
+}
+.new-password .update .input-effect {
+  width: 93%;
+  width: calc(100% - 30px);
+}
 .dashCard button.button.copy {
   top: 7px;
   width: 40px;

@@ -8,8 +8,6 @@ const encryptSchema = new Schema({
   encryptedData: { type: Object, required: [true, 'Sensitive data must be provided.'] },
   url: { type: String, required: [true, 'URL must be provided.'], unique: true },
   expiry: { type: Date, required: [true, 'Expiry date must be provided.'] },
-  used: { type: Boolean, default: false },
-  active: { type: Boolean, default: true },
   attempts: { type: Number , default: 0 },
   locked: { type: Date, default: null }
 });

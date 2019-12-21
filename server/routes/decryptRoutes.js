@@ -7,23 +7,26 @@ const { parse } = require('flatted/cjs');
 module.exports = app => {
   app.post('/api/check_url', async (req, res) => {
     const { url } = req.body;
+    console.log("url", url);
     Encrypt.findOne({ 
       url: url
     }).then((data) => {
+      console.log("checkurl", data);
       if (data) {
-        const { _id, active, locked } = data;
-        if (_id && active && !locked) {
+        console.log("checkurl", data);
+        const { _id, locked } = data;
+        if (_id && !locked) {
           // We got everything, send them the info
-          res.send({ lockId: _id });
+          return res.send({ lockId: _id });
         }
         else if (locked) {
           // Inform the user how long they are locked out for
-          res.send({ locked: locked });
+          return res.send({ locked: locked });
         }
       }
       else { 
         // If no results
-        res.send(false);
+        return res.send(false);
       }
     });
   });

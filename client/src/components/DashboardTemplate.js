@@ -19,14 +19,15 @@ class DashboardTemplate extends Component {
 
   // TODO: this can be done in a cleaner way?
   componentDidMount() {
+    console.log('this.props.auth', this.props.auth);
     if(this.props.auth) {
-      // this.props.fetchLocks(this.props.auth._id);
+      this.props.fetchLocks();
     }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.auth !== this.props.auth) {
-      // this.props.fetchLocks(this.props.auth._id);
+      this.props.fetchLocks();
     }
   }
 
@@ -134,23 +135,22 @@ class DashboardTemplate extends Component {
     
     return (
       <Fragment>
-        <Row gutter={ 12 }>
-          <Col span={ 24 }>
+        <Row gutter={ 12 } className="dashboard">
           { dashboardIntro }
           {
             chunkedLocks.length ? 
               chunkedLocks.slice(minItems, maxItems).map(chunk => (
                 <Row gutter={16} key={i++}>
                 {chunk.map(lock => (
-                  <Col key={lock._id} xs={24} sm={24} md={12} xl={12} xxl={12} className="dashCard">
+                  <Col key={lock._id} xs={24} sm={24} md={12} xl={12} xxl={12} className="dash-card">
                     <Card title={lock.title} bordered={false} extra={
                       <Popconfirm placement="top" title={"Are you sure you want to delete?"} onConfirm={() => this.deleteLock(lock._id)} okText="Yes" cancelText="No">
                         <Icon type="close-circle" />
                       </Popconfirm>}>
                       <div className="input-effect">
                         <span className="fancy-input passcodeInfo url">
-                          {domain + lock.url}
-                          <Clipboard className="button copy" data-clipboard-text={domain + lock.url} onSuccess={() => this.openNotificationWithIcon('success', 'clipboard')}><Icon type="copy" /></Clipboard>
+                          <span className="data-to-copy">{domain + lock.url}</span>
+                          <Clipboard className="button copy" data-clipboard-text={domain + lock.url} onSuccess={() => this.openNotificationWithIcon('success', 'clipboard')}><Icon type="copy" /> Copy</Clipboard>
                         </span>    
                       </div>
                       <DatePicker style={{"width": "100%"}} onChange={(date, dateString) => this.updateExpiry(date, dateString, lock._id)} defaultValue={Moment(lock.expiry)} format={"[Expires on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required />
@@ -161,7 +161,6 @@ class DashboardTemplate extends Component {
              ))
             : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<span className='no-data'>No encrypted credentials, create one below.</span>} />
           } 
-          </Col>
         </Row>
         <Row gutter={ 12 } className="pagination">
           <Pagination defaultCurrent={ 1 } total={ chunkedLocks.length } hideOnSinglePage={ true } defaultPageSize={5} onChange={(page, pageSize) => { this.paginationChange(page, pageSize) }} />
@@ -172,8 +171,8 @@ class DashboardTemplate extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const { dashboard } = state;
-  return { dashboard: dashboard };
+  const { auth, dashboard } = state;
+  return { auth: auth, dashboard: dashboard };
 }
 
 export default connect(mapStateToProps, actions)(DashboardTemplate);

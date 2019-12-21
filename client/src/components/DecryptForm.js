@@ -10,6 +10,7 @@ class DecryptForm extends Component {
 
   componentDidMount() {
     const path = window.location.pathname.split('/')[2];
+    console.log('path', path);
     this.props.checkUrl(path);
   }
 
@@ -36,38 +37,36 @@ class DecryptForm extends Component {
 
   render() {
     const { decryptForm } = this.props;
-    const displayForm = decryptForm && decryptForm.locked ? false : true;
+    console.log("decryptform", decryptForm);
     return (
-      displayForm ? 
-        <Fragment> 
-          { decryptForm === false ? <Redirect to='/404' /> : null }
-          <Form 
-            onSubmit={this.onSubmit}
-            render={({ handleSubmit }) => (
-            <form onSubmit={handleSubmit} action="decrypt">
-              <div className="input-effect">
-                <Field name="passcode" component={this.inputRender} />
-                  <label>Passcode</label>
-                  <span className="focus-border">
-                    <i></i>
-                  </span>
-              </div>
-              <button className="submit button fancy-button">
-                  Decrypt
-                  <span className="focus-border">
-                    <i></i>
-                  </span>
-              </button>
-              <Recaptcha
-                ref={ ref => this.recaptcha = ref }
-                sitekey={process.env.REACT_APP_GOOGLE_SITE_KEY}
-                onResolved={this.verifiedRegisterSubmit}
-              />
+      <Fragment>
+        
+        <Form 
+          onSubmit={this.onSubmit}
+          render={({ handleSubmit }) => (
+          <form onSubmit={handleSubmit} action="decrypt">
+            <div className="input-effect">
+              <Field name="passcode" component={this.inputRender} />
+                <label>Passcode</label>
+                <span className="focus-border">
+                  <i></i>
+                </span>
+            </div>
+            <button className="submit button fancy-button">
+                Decrypt
+                <span className="focus-border">
+                  <i></i>
+                </span>
+            </button>
+            <Recaptcha
+              ref={ ref => this.recaptcha = ref }
+              sitekey={process.env.REACT_APP_GOOGLE_SITE_KEY}
+              onResolved={this.verifiedRegisterSubmit}
+            />
             </form>
-            )} 
-          />
-        </Fragment>
-      : null
+          )} 
+        />
+      </Fragment>
     );
   }
 }

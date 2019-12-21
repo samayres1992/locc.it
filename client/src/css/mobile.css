@@ -28,9 +28,21 @@
     text-align: center;
   }
   .content .passcode .input-effect span.fancy-input,
-  .content .decrypted-data .input-effect span.fancy-input {
+  .content .decrypted-data .input-effect span.fancy-input,
+  .content .dashboard .input-effect span.fancy-input {
     padding-left: 0 !important;
     padding-right: 0 !important;
+  }
+  .content .dashboard .ant-card {
+    margin-bottom: 30px;
+  }
+  .content .dashboard .input-effect .fancy-input {
+    padding: 15px 17px 6em 17px;
+  }
+  .content .dashboard:before {
+    padding: 18px;
+    text-align: center;
+    width: 5em;
   }
   .anticon-menu {
     font-size: 2em;
