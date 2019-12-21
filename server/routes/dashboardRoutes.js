@@ -17,18 +17,18 @@ module.exports = app => {
 
   app.get('/api/fetch_locks', async (req, res) => {
     const { user } = req;
-    console.log('user_id', req.user);
-    if (user) {
+
+    if (user._id) {
+      console.log("user_id", user._id);
       Encrypt.find({ 
-        'active': true,
-        'userId': user._id
+        'userId': String(user._id)
       }).then(( data ) => {
         console.log("fetchlocks route", data);
         if (data) {
-          res.send(data);
-        } else {
+          return res.send(data);
+        }
+        else {
           // Failed to find a result
-          // console.log("error", err);
           res.send(false);
         }
       });

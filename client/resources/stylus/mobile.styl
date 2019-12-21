@@ -30,13 +30,28 @@
         }
       }
     }
-    .passcode, .decrypted-data { 
+    .passcode, .decrypted-data, .dashboard { 
       .input-effect {
         span.fancy-input {
           padding-left: 0!important;
           padding-right: 0!important;
         }
       }
+    }
+    .dashboard {
+      .ant-card {
+        margin-bottom: 30px;
+      }
+      .input-effect {
+        .fancy-input {
+          padding: 15px 17px 6em 17px;
+        }
+      }
+      &:before {
+        padding: 18px;
+        text-align: center;
+        width: 5em;  
+      }  
     }
   }
 

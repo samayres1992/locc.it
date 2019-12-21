@@ -95,7 +95,8 @@ export const anonResetNewPassword = ({ token, password }) => async dispatch => {
     });
   }
   catch (errors) {
+    console.log("errors", errors)
     resetErrors.password = "New password could not be set.";
-    dispatch({ type: SET_ERRORS, payload: { errors: resetErrors }});
+    dispatch({ type: SET_ERRORS, payload: resetErrors });
   }
 }

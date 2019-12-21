@@ -34,6 +34,7 @@ class NewPasswordTemplate extends Component {
 
   verifiedPasswordSubmit = () => {
     const { token, password } = this.state;
+    this.props.clearErrors();
     this.props.anonResetNewPassword({ token, password });
   }
 
@@ -45,7 +46,7 @@ class NewPasswordTemplate extends Component {
       return <Redirect to='/'/>;
     }
     return (
-      <div className="settings">
+      <div className="settings new-password">
         <Row gutter={16} type="flex" justify="center">
           <Col span={18}>
             <h1>Set your new password</h1>
@@ -54,10 +55,10 @@ class NewPasswordTemplate extends Component {
                 onSubmit={this.verifyPasswordSubmission}
                 render={({ handleSubmit }) => (
                   <form onSubmit={ handleSubmit } action="new-password">
+                    <Popover width={"300px"} content={requirement} title="Password requirements" trigger="hover">
+                      <Icon type="info-circle" />
+                    </Popover>
                     <div className="input-effect">
-                      <Popover width={"300px"} content={requirement} title="Password requirements" trigger="hover">
-                        <Icon type="info-circle" />
-                      </Popover>
                       <Field type="password" component={this.passwordRender} placeholder="Password" name="password" />
                       <label><Icon type="user" /> Password</label>
                       <span className="focus-border">

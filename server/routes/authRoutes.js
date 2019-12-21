@@ -254,6 +254,9 @@ module.exports = app => {
       if (err) {
         resetErrors.verification = "Invalid verification token";
       }
+      else if (!passwordSchema.validate(password)) {
+        resetErrors.password = 'Password does not forfil all requirements';
+      }
       else {
         bcrypt.genSalt(10, (error, salt) => {
           bcrypt.hash(password, salt, (error, hash) => {
@@ -275,7 +278,9 @@ module.exports = app => {
         });
       }
     });
-    return res.send({ errors: resetErrors });   
+    if (!_.isEmpty(resetErrors)) {
+      return res.send({ errors: resetErrors });  
+    } 
   });
 
   app.post("/auth/delete_user", (req, res) => {

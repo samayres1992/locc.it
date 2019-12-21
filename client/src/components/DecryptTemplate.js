@@ -45,7 +45,7 @@ class DecryptTemplate extends Component {
         </div>
         { decryptForm && !decryptForm.attempts && !decryptForm.locked && decryptForm.decryptedData ? <DecryptedData /> : <DecryptForm /> }
       </Fragment>
-  );
+    );
   }
 }
 

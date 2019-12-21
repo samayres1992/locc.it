@@ -89,7 +89,7 @@ class LoginTemplate extends Component {
                   </div>
                   { errors && errors.email ? <span className="error-form">{ errors.email }</span> : null }
                   <div className="input-effect">
-                    <Popover width={"300px"} content={requirement} title="Password requirements" trigger="hover">
+                    <Popover width={"300px"} content={requirement} title="Password requirements" placement="left" trigger="hover">
                       <Icon type="info-circle" />
                     </Popover>
                     <Field type="password" component={this.passwordRender} placeholder="Password" name="password" />
@@ -122,7 +122,7 @@ class LoginTemplate extends Component {
                   </div>
                   { errors && errors.email ? <span className="error-form">{ errors.email }</span> : null }
                   <div className="input-effect">
-                    <Popover width={"300px"} content={requirement} title="Password requirements" trigger="hover">
+                    <Popover width={"300px"} content={requirement} title="Password requirements" trigger="hover" placement="left">
                       <Icon type="info-circle" />
                     </Popover>
                     <Field type="password" component={this.passwordRender} placeholder="Password" name="password" />

@@ -1,9 +1,28 @@
 import axios from 'axios';
-import { 
+import {
+  CHECK_URL,
   PASSCODE_DECRYPTED,
   DECRYPT_DATA,
   SET_ERRORS
 } from './types';
+
+export const checkUrl = (data) => async dispatch => {
+  console.log('url action', data);
+  try {
+    const res = await axios({
+      method: 'post',
+      url: '/api/check_url',
+      data: {
+        url: data
+      }
+    });
+    dispatch({ type: CHECK_URL, payload: res.data });
+  }
+  catch (errors) {
+    dispatch({ type: SET_ERRORS, payload: { user: "Unable to verify if credentials exist." }});
+    console.log("error", errors);
+  }
+}
 
 export const tryUserDecrypt = (lockId, passcode) => async dispatch => {
   try {
@@ -24,8 +43,6 @@ export const tryUserDecrypt = (lockId, passcode) => async dispatch => {
     console.log("error", errors);
   }
 }
-
-
 
 export const passcodeDecrypted = (data) => async dispatch => {
   try {
