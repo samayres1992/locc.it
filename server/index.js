@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
 const bodyParser = require('body-parser');
+const path = require('path');
 // Our secret keys
 const keys = require('./config/keys');
 require('./models/User');
@@ -47,7 +48,7 @@ require('./services/cron');
 // Production
 if(process.env.NODE_ENV === 'production') {
   // If the server route doesn't exist, assume react route
-  app.use(express.static('client/build'));
+  app.use(express.static('../client/build'));
   const path = app.get('*', (req, res) => {
     res.sendfile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
