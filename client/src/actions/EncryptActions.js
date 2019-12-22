@@ -28,12 +28,10 @@ export const encrypt = (data) => async dispatch => {
           url: url
         }
       }).then((res) => {
-        console.log('encrypt data', res.data)
         dispatch({ type: ENCRYPT, payload: res.data });
       });
     },
     (errors, res) => {
-      console.log('encrypt res', res);
       if (errors) {
         encryptErrors.encrypt = "Unable to generate, please check all credentials have been added";
         dispatch({ type: SET_ERRORS, payload: encryptErrors });
@@ -48,7 +46,5 @@ export const createAnother = () => async dispatch => {
 }
 
 export const generatedPasscode = (data) => async dispatch => {
-  console.log("generated passcode");
-  console.log("generated passcode", data );
   dispatch({ type: PASSCODE, payload: data });
 }

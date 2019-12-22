@@ -19,7 +19,6 @@ class DashboardTemplate extends Component {
 
   // TODO: this can be done in a cleaner way?
   componentDidMount() {
-    console.log('this.props.auth', this.props.auth);
     if(this.props.auth) {
       this.props.fetchLocks();
     }

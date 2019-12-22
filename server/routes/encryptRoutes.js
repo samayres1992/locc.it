@@ -13,7 +13,6 @@ module.exports = app => {
       url: url,
       expiry: Moment(expiry).format()
     }).save(( err, { url, expiry }) => {
-      console.log("encryptroute", { url, expiry });
       if (err) {
         return res.status(400).send({
           message: 'Encryption failed.'

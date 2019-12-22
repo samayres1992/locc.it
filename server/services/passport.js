@@ -32,7 +32,6 @@ passport.use(
     profileFields: ['id', 'emails']
   }, 
   async (accessToken, refreshToken, profile, done) => {
-    console.log("profile", profile);
     // Check if user already exists through ID
     const existingUserID = await User.findOne({ facebookId: profile._json.id });
 
@@ -130,7 +129,6 @@ passport.use(new localStrategy({
     User.findOne(
       { email: email }
     ).then(user => {
-      console.log("user", user);
       if (!user) {
         // No user found
         return done(null, null);

@@ -50,7 +50,6 @@ class EncryptForm extends Component {
     const { title, emailUsername, password, expiry, note } = this.state;
     const { _id: userId } = this.props.auth;
 
-    console.log('encrypt data ', expiry);
     try {
 
       // Let's take the value and encrypt it with
@@ -61,8 +60,6 @@ class EncryptForm extends Component {
         password: password, 
         note: note
       }), passcode);
-
-      console.log("passcode", passcode);
 
       // Pass over the data to the action, if user doesn't specify a date, default to a week.
       this.props.encrypt({ 
@@ -77,7 +74,7 @@ class EncryptForm extends Component {
       });
 
     } catch(error) {
-      console.log('error', error);
+      // TODO: Handle
     }
 	}
 

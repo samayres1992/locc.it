@@ -85,7 +85,6 @@ module.exports = app => {
           { 'email': decodedToken.data }, // Find token
           { 'activated': true } // Update value
       ).then((data) => {
-          console.log("data", data);
           if (data) {
             res.redirect('/login?activated');
           } else {
@@ -100,7 +99,6 @@ module.exports = app => {
   app.post('/auth/local/register', (req, res) => {
     const { email, password } = req.body;
     let registerErrors = {};
-    console.log('email and password', { email, password});
 
     if ( email && password) {
       if (!EmailValidator.validate(email)) {
@@ -392,7 +390,6 @@ module.exports = app => {
     bcrypt.genSalt(10, (error, salt) => {
       bcrypt.hash(password, salt, (error, hash) => {
         if (error) {
-          console.log('err', error);
           throw error;
         }
         User.findOneAndUpdate(
