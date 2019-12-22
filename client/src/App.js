@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from './actions';
 import { Layout } from 'antd';
 import { Redirect } from 'react-router-dom';
+import { Helmet } from "react-helmet";
 
 // Templating
 import HeaderTemplate from './components/HeaderTemplate';
@@ -44,25 +45,33 @@ class App extends Component {
     };
 
     return (
-      <Layout>
-        <BrowserRouter>
-            <HeaderTemplate />
-            <Content className="content">   
-              <Switch>   
-                <Route location={pathName} exact path="/" component={ LandingTemplate } />
-                <Route path="/login" exact component={ LoginTemplate } />
-                <PrivateRoute path="/dashboard" exact component={ DashboardTemplate } />
-                <Route path="/faq" exact component={ FaqTemplate } />
-                <PrivateRoute path="/settings" exact component={ SettingsTemplate } />
-                <Route path="/d/:url" exact component={ DecryptTemplate } />
-                <Route path="/reset" exact component={ RequestResetTemplate } />
-                <Route path="/reset/:token" exact component={ NewPasswordTemplate } />
-                <Route path="*" component={ NotFound } />
-              </Switch>
-            </Content>
-            <FooterTemplate />
-        </BrowserRouter>
-      </Layout>
+      <Fragment>
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>Locc.it</title>
+          <meta name="Locc.it" content="Share passwords safely online." />
+          <meta theme-color="#4b6cb7" />
+        </Helmet>
+        <Layout>
+          <BrowserRouter>
+              <HeaderTemplate />
+              <Content className="content">   
+                <Switch>   
+                  <Route location={pathName} exact path="/" component={ LandingTemplate } />
+                  <Route path="/login" exact component={ LoginTemplate } />
+                  <PrivateRoute path="/dashboard" exact component={ DashboardTemplate } />
+                  <Route path="/faq" exact component={ FaqTemplate } />
+                  <PrivateRoute path="/settings" exact component={ SettingsTemplate } />
+                  <Route path="/d/:url" exact component={ DecryptTemplate } />
+                  <Route path="/reset" exact component={ RequestResetTemplate } />
+                  <Route path="/reset/:token" exact component={ NewPasswordTemplate } />
+                  <Route path="*" component={ NotFound } />
+                </Switch>
+              </Content>
+              <FooterTemplate />
+          </BrowserRouter>
+        </Layout>
+      </Fragment>
     );
   }
 }
