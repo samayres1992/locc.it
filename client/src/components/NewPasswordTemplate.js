@@ -12,7 +12,6 @@ class NewPasswordTemplate extends Component {
   constructor (props) {
     super();
     const token = window.location.pathname.split('/')[2];
-    console.log("called", token);
     this.state = {
       token: token,
       password: '',

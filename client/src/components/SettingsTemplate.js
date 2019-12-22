@@ -72,7 +72,6 @@ class SettingsTemplate extends Component {
         password: password
       }
     }).then(res => {
-      console.log('res.status', res.data);
       if(res.data.errors) {
         this.openFailureNotificationWithIcon('error', 'password_update_failed');
       }
@@ -90,12 +89,10 @@ class SettingsTemplate extends Component {
         email: email
       }
     }).then(res => {
-      console.log('res.status', res.data);
       if(res.data.errors) {
         this.openFailureNotificationWithIcon('error', 'update_email_failed');
       }
       else {
-        console.log('i was called', res.data);
         this.openNotificationWithIcon('success', 'update_email');
       }
     });

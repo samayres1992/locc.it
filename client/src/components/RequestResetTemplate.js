@@ -35,7 +35,6 @@ class RequestResetTemplate extends Component {
         email: email
       }
     }).then(res => {
-      console.log('verified new password', res);
       if(res.data.errors && res.data.errors.email) {
         this.openFailureNotificationWithIcon("error", "invalid_email", res.data.errors.email);
       }

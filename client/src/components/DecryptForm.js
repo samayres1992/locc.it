@@ -8,9 +8,16 @@ import * as actions from '../actions';
 
 class DecryptForm extends Component {
 
-  componentDidMount() {
+  constructor() {
+    super()
     const path = window.location.pathname.split('/')[2];
-    console.log('path', path);
+    this.state = {
+      path: path
+    }
+  }
+
+  componentDidMount() {
+    const { path } = this.state;
     this.props.checkUrl(path);
   }
 
@@ -37,10 +44,9 @@ class DecryptForm extends Component {
 
   render() {
     const { decryptForm } = this.props;
-    console.log("decryptform", decryptForm);
     return (
       <Fragment>
-        { decryptForm && decryptForm.lockId ? null : <Redirect to='/404' /> }
+        { decryptForm && !decryptForm.lockId && !decryptForm.locked ? <Redirect to='/404' /> : null }
         <Form 
           onSubmit={this.onSubmit}
           render={({ handleSubmit }) => (
