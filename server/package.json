@@ -10,7 +10,8 @@
   "scripts": {
     "start": "nodemon index.js",
     "dev": "concurrently \"npm run start NODE_ENV=development \" \"npm run start --prefix ../client\"",
-    "prod": "forever index.js"
+    "prod": "forever index.js",
+    "stop": "forever stop"
   },
   "author": "Sam Ayres",
   "license": "ISC",
