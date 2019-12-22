@@ -114,6 +114,11 @@
   text-align: center;
   width: 7em;
 }
+.fancy-input.passcodeInfo.url:before {
+  width: 5em;
+  padding-left: 6em;
+  padding-right: 6em;
+}
 .fancy-input.passcodeInfo.title:before {
   content: "Title";
 }
