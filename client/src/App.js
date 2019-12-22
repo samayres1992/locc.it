@@ -18,6 +18,7 @@ import SettingsTemplate from './components/SettingsTemplate';
 import RequestResetTemplate from './components/RequestResetTemplate';
 import NewPasswordTemplate from './components/NewPasswordTemplate';
 import NotFound from './components/NotFound';
+import logo from './images/loccit-blue.png';
 
 class App extends Component {
 
@@ -33,10 +34,10 @@ class App extends Component {
     const PrivateRoute = ({ component: Component, ...props }) => {
       return (
         <Route
-          {...props}
+          { ...props }
           render={innerProps =>
             auth && auth._id ? 
-              <Component {...innerProps} />
+              <Component { ...innerProps } />
               :
               <Redirect to="/" />
           }
@@ -49,15 +50,27 @@ class App extends Component {
         <Helmet>
           <meta charSet="utf-8" />
           <title>Locc.it</title>
-          <meta name="Locc.it" content="Share passwords safely online." />
+          <meta name="application-name" content="Locc.it" />
+          <meta name="description" content="Share passwords safely online." />
+          <meta name="author" content="Sam Ayres" />
+          <meta name="keywords" content="Share, passwords, online, securely, encrypted" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta name="robots" content="noindex" />
           <meta theme-color="#4b6cb7" />
+          <meta property="og:locale" content="en_US" />
+          <meta property="og:title" content="Locc.it" />
+          <meta property="og:type" content="website" />
+          <meta property="og:description" content="Share passwords safely online." />
+          <meta property="og:image" content={ logo } />
+          <meta property="og:url" content={ process.env.REACT_APP_SITE_URL } />
+          <link rel="apple-touch-icon" href={ logo } />
         </Helmet>
         <Layout>
           <BrowserRouter>
               <HeaderTemplate />
               <Content className="content">   
                 <Switch>   
-                  <Route location={pathName} exact path="/" component={ LandingTemplate } />
+                  <Route location={ pathName } exact path="/" component={ LandingTemplate } />
                   <Route path="/login" exact component={ LoginTemplate } />
                   <PrivateRoute path="/dashboard" exact component={ DashboardTemplate } />
                   <Route path="/faq" exact component={ FaqTemplate } />

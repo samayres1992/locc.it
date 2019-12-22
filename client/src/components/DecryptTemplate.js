@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { Helmet } from "react-helmet";
 import Moment from 'moment';
 import * as actions from '../actions';
 import DecryptForm from './DecryptForm';
@@ -39,6 +40,9 @@ class DecryptTemplate extends Component {
 
     return (
       <Fragment>
+        <Helmet>
+          <meta name="robots" content="noindex" />
+        </Helmet>
         <div className="check">
           <img src={whichIcon} alt="unlock" />
           <span className="success">{attemptsMessage ? attemptsMessage : whichMessage}</span>
