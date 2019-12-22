@@ -6,6 +6,7 @@ const googleStrategy = require('passport-google-oauth20').Strategy;
 const localStrategy = require('passport-local').Strategy;
 const mongoose = require('mongoose');
 const keys = require('../config/keys');
+const system = require('../config/system');
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
@@ -28,7 +29,7 @@ passport.use(
   new facebookStrategy({
     clientID: keys.facebookClientId,
     clientSecret: keys.facebookSecretKey,
-    callbackURL: "/auth/facebook/callback",
+    callbackURL: system.BASE_URL + '/auth/facebook/callback',
     profileFields: ['id', 'emails']
   }, 
   async (accessToken, refreshToken, profile, done) => {
@@ -62,7 +63,7 @@ passport.use(
   new googleStrategy({
     clientID: keys.googleClientId,
     clientSecret: keys.googleClientSecret,
-    callbackURL: '/auth/google/callback'
+    callbackURL: system.BASE_URL + '/auth/google/callback'
   }, 
   async (accessToken, refreshToken, profile, done) => {
     // Check if user already exists through ID
@@ -94,7 +95,7 @@ passport.use(
   new gitHubStrategy({
     clientID: keys.githubPubKey,
     clientSecret: keys.githubSecretKey,
-    callbackURL: "/auth/github/callback"
+    callbackURL: system.BASE_URL + '/auth/github/callback'
   }, 
   async (accessToken, refreshToken, profile, done) => {
     // Check if user already exists through ID

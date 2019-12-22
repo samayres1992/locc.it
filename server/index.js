@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 const path = require('path');
 // Our secret keys
 const keys = require('./config/keys');
+// Env vars
+const system = require('./config/system');
 require('./models/User');
 require('./models/Encrypt');
 require('./services/passport');
@@ -50,8 +52,7 @@ if(process.env.NODE_ENV === 'production') {
   // If the server route doesn't exist, assume react route
   app.use(express.static('../client/build'));
   const path = app.get('*', (req, res) => {
-//    res.sendFile('/srv/live/personal/sam/locc.it/client/build/index.html');
-    res.sendFile(process.env.BUILD);
+    res.sendFile(system.BUILD);
   });
 }
 
