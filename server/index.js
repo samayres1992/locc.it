@@ -50,7 +50,8 @@ if(process.env.NODE_ENV === 'production') {
   // If the server route doesn't exist, assume react route
   app.use(express.static('../client/build'));
   const path = app.get('*', (req, res) => {
-    res.sendfile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+//    res.sendFile('/srv/live/personal/sam/locc.it/client/build/index.html');
+    res.sendFile(process.env.BUILD);
   });
 }
 
