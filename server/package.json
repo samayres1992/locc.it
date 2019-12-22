@@ -10,7 +10,7 @@
   "scripts": {
     "start": "nodemon index.js",
     "dev": "concurrently \"npm run start NODE_ENV=development \" \"npm run start --prefix ../client\"",
-    "prod": "nodemon start NODE_ENV=production"
+    "prod": "forever index.js"
   },
   "author": "Sam Ayres",
   "license": "ISC",
@@ -29,6 +29,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "flatted": "^2.0.1",
+    "forever": "^1.0.0",
     "gravatar": "^1.8.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
@@ -36,7 +37,7 @@
     "mongoose-unique-validator": "^2.0.3",
     "nodemailer": "^6.3.1",
     "nodemailer-express-handlebars": "^3.1.0",
-    "nodemon": "^1.19.3",
+    "nodemon": "^1.19.4",
     "passport": "^0.4.0",
     "passport-facebook": "^3.0.0",
     "passport-github2": "^0.1.11",
