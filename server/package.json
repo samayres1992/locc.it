@@ -10,7 +10,7 @@
   "scripts": {
     "start": "nodemon index.js",
     "dev": "concurrently \"npm run start NODE_ENV=development \" \"npm run start --prefix ../client\"",
-    "prod": "concurrently \"npm run start NODE_ENV=production \" \"npm run start --prefix ../client\""
+    "prod": "nodemon start NODE_ENV=production"
   },
   "author": "Sam Ayres",
   "license": "ISC",
@@ -43,7 +43,6 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "password-validator": "^5.0.3",
-    "path": "^0.12.7",
     "save": "^2.4.0",
     "stripe": "^7.10.0",
     "validator": "^12.1.0"

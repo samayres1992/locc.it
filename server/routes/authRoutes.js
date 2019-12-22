@@ -234,7 +234,7 @@ module.exports = app => {
           });
           return res.send("OK");
         }
-        catch {
+        catch (errors) {
           resetErrors.email = "Unable to reset password, please contact us directly.";
           return res.send({ errors: resetErrors });
         }
