@@ -219,7 +219,6 @@ module.exports = app => {
       return res.send("OK");
     }
     catch (errors) {
-      console.log("errors", errors);
       activationErrors.email = "Something went wrong, please try again. If this issue persists please contact us.";
       return res.send( { errors: activationErrors });
     }
@@ -345,11 +344,11 @@ module.exports = app => {
     } 
   });
 
-  app.post("/auth/delete_user", requireLogin, (req, res) => {
-    const { authId } = req.body.data;
+  app.get("/auth/delete_user", requireLogin, (req, res) => {
+    const { user } = req;
 
     User.deleteOne(
-      { '_id': authId }
+      { '_id': user._id }
     ).then(user => {
       if (user) {
         res.sendStatus(200);
@@ -363,7 +362,8 @@ module.exports = app => {
   }); 
 
   app.post("/auth/update_email", requireLogin, (req, res) => {
-    const { authId, email } = req.body.data;
+    const { email } = req.body.data;
+    const { user } = req;
     var emailErrors = {};
 
     if (!EmailValidator.validate(email)) {
@@ -376,7 +376,7 @@ module.exports = app => {
 
     // When the user updates their email, they must re-verify the address
     User.findOneAndUpdate(
-      { '_id': authId }, 
+      { '_id': user._id }, 
       { 'email': email, activated: false } 
     ).then(user => {
       if (user) {
@@ -425,7 +425,8 @@ module.exports = app => {
   });
 
   app.post("/auth/update_password", requireLogin, (req, res) => {
-    const { authId, password } = req.body.data;
+    const { password } = req.body.data;
+    const { user } = req;
     var updateErrors = {};
 
     if (!passwordSchema.validate(password)) {
@@ -457,7 +458,7 @@ module.exports = app => {
           throw error;
         }
         User.findOneAndUpdate(
-          { '_id': authId }, 
+          { '_id': user._id }, 
           { 'password': hash } 
         ).then(user => {
           if (user) {

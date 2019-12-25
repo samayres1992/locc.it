@@ -47,12 +47,7 @@ class SettingsTemplate extends Component {
   }
 
   deleteUser = () => {
-    const { _id } = this.props.auth;
-    Axios.post('/auth/delete_user', {
-      data: {
-        authId: _id
-      }
-    }).then(res => {
+    Axios.get('/auth/delete_user').then(res => {
       if(res.data === 'OK') {
         this.openNotificationWithIcon('success', 'delete_user');
         // Update props to reflect user logout
@@ -65,10 +60,8 @@ class SettingsTemplate extends Component {
   }
 
   updatePassword = ({ password }) => {
-    const { _id } = this.props.auth;
     Axios.post('/auth/update_password', {
       data: {
-        authId: _id,
         password: password
       }
     }).then(res => {
@@ -82,7 +75,6 @@ class SettingsTemplate extends Component {
   }
 
   updateEmail = ({ email }) => {
-    const { _id } = this.props.auth;
     Axios.post('/auth/update_email', {
       data: {
         authId: _id,
