@@ -13,6 +13,8 @@ const User = mongoose.model('users');
 const requireLogin = require('../middlewares/requireLogin');
 const EmailValidator = require('email-validator');
 const passwordValidator = require('password-validator');
+const throttle = require("express-throttle");
+
 var passwordSchema = new passwordValidator(); 
 passwordSchema
 .is().min(8)          // Minimum length 8
@@ -95,7 +97,7 @@ module.exports = app => {
     });
   });
 
-  app.post('/auth/local/register', (req, res) => {
+  app.post('/auth/local/register', throttle({ "rate": "5/m" }), (req, res) => {
     const { email, password } = req.body;
     let registerErrors = {};
 
@@ -131,7 +133,7 @@ module.exports = app => {
               email: email, 
               password: hash 
             }).save((err, newUser) => {
-              let options = {
+              var options = {
                 viewEngine: {
                   extname: '.html', // handlebars extension
                   layoutsDir: path.join(__dirname, './email/activation'), // location of handlebars templates
@@ -180,10 +182,10 @@ module.exports = app => {
     });
   });
 
-  app.get('/auth/local/send-activation', (req, res) => {
+  app.get('/auth/local/send-activation', throttle({ "rate": "2/m" }), (req, res) => {
     var activationErrors = {};
     try {
-      let options = {
+      var options = {
         viewEngine: {
           extname: '.html', // handlebars extension
           layoutsDir: path.join(__dirname, './email/activation'), // location of handlebars templates
@@ -224,7 +226,7 @@ module.exports = app => {
     }
   });
 
-  app.post('/auth/local/login', (req, res, next) => {
+  app.post('/auth/local/login', throttle({ "rate": "5/m" }), (req, res, next) => {
     var loginErrors = {};
     passport.authenticate('local', 
     (err, user, info) => {
@@ -258,7 +260,7 @@ module.exports = app => {
             data: email
           }, keys.localSecret, { expiresIn: '1d' });
     
-          let options = {
+          var options = {
             viewEngine: {
               extname: '.html', // handlebars extension
               layoutsDir: path.join(__dirname, './email/reset'), // location of handlebars templates
@@ -301,7 +303,7 @@ module.exports = app => {
   });
   
 
-  app.post('/auth/local/reset',  (req, res) => {
+  app.post('/auth/local/reset', throttle({ "rate": "5/m" }),  (req, res) => {
     const { token, password } = req.body;
     var resetErrors = {};
     jwt.verify(token, keys.localSecret, (err, decodedToken) => {
@@ -361,7 +363,7 @@ module.exports = app => {
     req.logout();
   }); 
 
-  app.post("/auth/update_email", requireLogin, (req, res) => {
+  app.post("/auth/update_email", requireLogin, throttle({ "rate": "5/m" }), (req, res) => {
     const { email } = req.body.data;
     const { user } = req;
     var emailErrors = {};
@@ -381,7 +383,7 @@ module.exports = app => {
     ).then(user => {
       if (user) {
         // Set our mailer params
-        let options = {
+        var options = {
           viewEngine: {
             extname: '.html', // handlebars extension
             layoutsDir: path.join(__dirname, './email/update'), // location of handlebars templates
@@ -424,7 +426,7 @@ module.exports = app => {
     });
   });
 
-  app.post("/auth/update_password", requireLogin, (req, res) => {
+  app.post("/auth/update_password", requireLogin, throttle({ "rate": "5/m" }), (req, res) => {
     const { password } = req.body.data;
     const { user } = req;
     var updateErrors = {};
@@ -438,7 +440,7 @@ module.exports = app => {
     }
 
     // Set our mailer params
-    let options = {
+    var options = {
       viewEngine: {
         extname: '.html', // handlebars extension
         layoutsDir: path.join(__dirname, './email/password-change'), // location of handlebars templates

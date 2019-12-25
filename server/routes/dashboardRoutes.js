@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const Encrypt = mongoose.model('locks');
 const requireLogin = require('../middlewares/requireLogin');
+const throttle = require("express-throttle");
 
 module.exports = app => {
-  app.post('/api/delete_lock', requireLogin, async (req, res) => {
+  app.post('/api/delete_lock', requireLogin, throttle({ "rate": "50/m" }), async (req, res) => {
     const { user } = req;
     const { lockId } = req.body;
     
@@ -20,7 +21,7 @@ module.exports = app => {
     });
   });
 
-  app.get('/api/fetch_locks', requireLogin, async (req, res) => {
+  app.get('/api/fetch_locks', requireLogin, throttle({ "rate": "10/m" }), async (req, res) => {
     const { user } = req;
 
     if (user._id) {
@@ -38,7 +39,7 @@ module.exports = app => {
     }
   });
 
-  app.post('/api/update_expiry', requireLogin, async (req, res) => {
+  app.post('/api/update_expiry', requireLogin, throttle({ "rate": "50/m" }), async (req, res) => {
     const { user } = req;
     const { lockId, expiry } = req.body;
 
