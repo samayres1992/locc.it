@@ -142,6 +142,22 @@ header .ant-menu-item {
 .pagination .ant-pagination-item-active a {
   color: #4b6cb7;
 }
+.activation {
+  position: relative;
+}
+.activation .activation-description {
+  width: 80%;
+  width: calc(100% - 200px);
+}
+.activation button {
+  position: absolute;
+  top: 0;
+  right: 15px;
+  padding: 10px;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+}
 .settings h1,
 .settings h2 {
   margin-bottom: 0.5em;

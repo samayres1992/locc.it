@@ -7,6 +7,7 @@ const path = require('path');
 const jwt = require("jsonwebtoken");
 const hbs = require("nodemailer-express-handlebars");
 const bcrypt = require("bcrypt");
+const system = require('../config/system');
 const mongoose = require('mongoose');
 const User = mongoose.model('users');
 const requireLogin = require('../middlewares/requireLogin');
@@ -56,7 +57,6 @@ module.exports = app => {
   app.get(
     '/auth/google/callback', 
     passport.authenticate('google', { 
-      failureRedirect: '/login', 
       successRedirect: '/'
     })
   );
@@ -68,7 +68,6 @@ module.exports = app => {
 
   app.get('/auth/github/callback', 
     passport.authenticate('github', { 
-      failureRedirect: '/login', 
       successRedirect: '/'
     })
   );
@@ -84,7 +83,7 @@ module.exports = app => {
         User.updateOne(
           { 'email': decodedToken.data }, // Find token
           { 'activated': true } // Update value
-      ).then((data) => {
+        ).then((data) => {
           if (data) {
             res.redirect('/login?activated');
           } else {
@@ -123,15 +122,15 @@ module.exports = app => {
       if (user) {
         registerErrors.email = 'Email already exists';
         return res.send({ errors: registerErrors });
-      } else {
+      } 
+      else {
         bcrypt.genSalt(10, (err, salt) => {
           bcrypt.hash(password, salt, (err, hash) => {
             if (err) throw err;
-            
-            const newUser = new User({ email, hash });
-            
-            if (newUser) {
-              const { _id, activated } = newUser;
+            new User({ 
+              email: email, 
+              password: hash 
+            }).save((err, newUser) => {
               let options = {
                 viewEngine: {
                   extname: '.html', // handlebars extension
@@ -157,7 +156,7 @@ module.exports = app => {
                 subject: 'Locc.it: Account verification', // Subject line
                 template: 'index',
                 context: {
-                  verificationToken : "https://locc.it/auth/local/verify/" + verificationToken
+                  verificationToken : system.BASE_URL + '/auth/local/verify/' + verificationToken
                 },
                 attachments:[{
                   filename : 'loccit.png',
@@ -165,22 +164,80 @@ module.exports = app => {
                   cid : 'logo@locc.it'
                 }],
               });
-              res.send({ _id, activated });
-            }
+
+              req.login(newUser, (err) => {
+                if (err) { 
+                  registerErrors.password = 'Failed to authenticate user.';
+                  return res.send({ errors: registerErrors });
+                }
+                const { _id, activated } = newUser
+                res.send({ _id, activated });
+              });
+            });
           });
         });
       }
     });
   });
 
-  app.post('/auth/local/login', 
-    passport.authenticate('local', 
-      { 
-        successRedirect: '/',
-        failureRedirect: '/login',
-        session: true
+  app.get('/auth/local/send-activation', (req, res) => {
+    var activationErrors = {};
+    try {
+      let options = {
+        viewEngine: {
+          extname: '.html', // handlebars extension
+          layoutsDir: path.join(__dirname, './email/activation'), // location of handlebars templates
+          defaultLayout: 'index',
+          viewPath: path.join(__dirname, './email/activation'),
+          partialsDir: path.join(__dirname, './email/activation')
+        },
+        viewPath: path.join(__dirname, './email/activation'),
+        extName: '.html'
       }
-  ));
+      
+      mailer.use('compile', hbs(options));
+
+      // Generate a user verfification token
+      const verificationToken = jwt.sign({
+        data: req.user.email
+      }, keys.localSecret, { expiresIn: '7d' });
+
+      mailer.sendMail({
+        from: keys.emailUser, // sender address
+        to: req.user.email, // list of receivers
+        subject: 'Locc.it: Account verification', // Subject line
+        template: 'index',
+        context: {
+          verificationToken : system.BASE_URL + '/auth/local/verify/' + verificationToken
+        },
+        attachments:[{
+          filename : 'loccit.png',
+          path: path.join(__dirname, 'email/images/loccit.png'),
+          cid : 'logo@locc.it'
+        }],
+      });
+      return res.send("OK");
+    }
+    catch (errors) {
+      console.log("errors", errors);
+      activationErrors.email = "Something went wrong, please try again. If this issue persists please contact us.";
+      return res.send( { errors: activationErrors });
+    }
+  });
+
+  app.post('/auth/local/login', (req, res, next) => {
+    var loginErrors = {};
+    passport.authenticate('local', 
+    (err, user, info) => {
+      if (err) { return next(err) }
+      if (!user) { 
+        loginErrors.email = 'Incorrect login or password.';
+        return res.send( { errors: loginErrors });
+      }
+      const { _id, activated } = user;
+      res.send({ _id, activated });
+    })(req, res, next);
+  });
 
   app.post('/auth/local/send_reset',  (req, res) => {
     const { email } = req.body.data;
@@ -222,7 +279,7 @@ module.exports = app => {
             subject: 'Locc.it: Reset password', // Subject line
             template: 'index',
             context: {
-              verificationToken : "https://locc.it/reset/" + verificationToken
+              verificationToken : system.BASE_URL + '/reset/' + verificationToken
             },
             attachments:[{
               filename : 'loccit.png',
@@ -264,9 +321,16 @@ module.exports = app => {
             User.findOneAndUpdate(
               { 'email': decodedToken.data }, 
               { 'password': hash } 
-            ).then(({ _id, activated }) => {
+            ).then((user) => {
               if (user) {
-                return res.send({ _id, activated });
+                req.login(user, (err) => {
+                  if (err) { 
+                    registerErrors.password = 'Failed to authenticate user.';
+                    return res.send({ errors: registerErrors });
+                  }
+                  const { _id, activated } = user;
+                  res.send({ _id, activated });
+                });
               } 
               else {
                 resetErrors.email = "User with supplied email address does not exist"
@@ -342,7 +406,7 @@ module.exports = app => {
           subject: 'Locc.it: Email update', // Subject line
           template: 'index',
           context: {
-            verificationToken : "https://locc.it/auth/local/verify/" + verificationToken
+            verificationToken : system.BASE_URL + 'auth/local/verify/' + verificationToken
           },
           attachments:[{
             filename : 'loccit.png',
