@@ -157,6 +157,7 @@ header .ant-menu-item {
   border-radius: 3px;
   background: transparent;
   cursor: pointer;
+  border: 1px solid #fff;
 }
 .settings h1,
 .settings h2 {
