@@ -30,6 +30,7 @@
     "email-validator": "^2.0.4",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
+    "express-throttle": "^2.0.0",
     "flatted": "^2.0.1",
     "forever": "^1.0.0",
     "gravatar": "^1.8.0",
