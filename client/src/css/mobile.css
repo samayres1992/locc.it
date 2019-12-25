@@ -11,7 +11,7 @@
     font-size: 1em;
   }
   .ant-layout-header {
-    padding: 0 25px;
+    padding: 0;
     height: 100px;
   }
   .ant-layout-header .am-navbar {
