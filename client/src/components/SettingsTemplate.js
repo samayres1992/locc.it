@@ -77,7 +77,6 @@ class SettingsTemplate extends Component {
   updateEmail = ({ email }) => {
     Axios.post('/auth/update_email', {
       data: {
-        authId: _id,
         email: email
       }
     }).then(res => {
