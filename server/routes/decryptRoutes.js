@@ -3,9 +3,10 @@ const Encrypt = mongoose.model('locks');
 const Moment = require('moment');
 const CryptoJS = require('crypto-js');
 const { parse } = require('flatted/cjs');
+const throttle = require("express-throttle");
 
 module.exports = app => {
-  app.post('/api/check_url', async (req, res) => {
+  app.post('/api/check_url', throttle({ "rate": "5/m" }), async (req, res) => {
     const { url } = req.body;
     Encrypt.findOne({ 
       url: String(url)
@@ -28,7 +29,7 @@ module.exports = app => {
     });
   });
 
-  app.post('/api/decrypt_attempt', async (req, res) => {
+  app.post('/api/decrypt_attempt', throttle({ "rate": "5/m" }), async (req, res) => {
     const { lockId, passcode } = req.body;
 
     // Let's take the value and decrypt it
