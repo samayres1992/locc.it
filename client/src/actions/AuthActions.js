@@ -31,7 +31,6 @@ export const fetchUser = () => async dispatch => {
 export const loginUser = (data) => async dispatch => {
   const { email, password } = data;
   var loginErrors = {};
-  console.log("login user was called", { email, password });
   try {
     await axios({
       method: 'post',
@@ -41,8 +40,6 @@ export const loginUser = (data) => async dispatch => {
         password: password
       }
     }).then((res) => {
-      console.log("res stuff");
-      console.log('res', res);
       if (res.data.errors) {
         return dispatch({ type: SET_ERRORS, payload: res.data.errors });
       }
@@ -51,7 +48,6 @@ export const loginUser = (data) => async dispatch => {
     });
   }
   catch(errors) {
-    console.log('loginusers errors', errors);
     loginErrors.password = "Invalid email or password.";
     dispatch({ type: SET_ERRORS, payload: loginErrors });
   }
@@ -76,7 +72,6 @@ export const registerUser = ({ email, password }) => async dispatch => {
     });
   }
   catch(errors) {
-    console.log("errors", errors);
     registerErrors.email = "Something went wrong, please contact us if this issue persists.";
     dispatch({ type: SET_ERRORS, payload: registerErrors });
   }
