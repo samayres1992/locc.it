@@ -44,8 +44,7 @@ class LoginTemplate extends Component {
     this.recaptcha.execute('register');  
   }
 
-  loginSubmit = () => {
-    const { email, password } = this.state;
+  loginSubmit = ({ email, password }) => {
     this.props.loginUser({ email, password });
   }
 

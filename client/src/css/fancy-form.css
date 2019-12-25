@@ -104,6 +104,10 @@
   padding-left: 8em;
   padding-right: 8em;
 }
+.fancy-input.passcodeInfo.url {
+  padding-left: 85px;
+  padding-right: 7em;
+}
 .fancy-input.passcodeInfo.title:before,
 .fancy-input.passcodeInfo.username:before,
 .fancy-input.passcodeInfo.passcode:before,
@@ -115,9 +119,9 @@
   width: 7em;
 }
 .fancy-input.passcodeInfo.url:before {
-  width: 5em;
-  padding-left: 6em;
-  padding-right: 6em;
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 70px;
 }
 .fancy-input.passcodeInfo.title:before {
   content: "Title";

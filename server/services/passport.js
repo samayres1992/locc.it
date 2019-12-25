@@ -7,7 +7,6 @@ const localStrategy = require('passport-local').Strategy;
 const mongoose = require('mongoose');
 const keys = require('../config/keys');
 const system = require('../config/system');
-const validator = require("validator");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
 
@@ -15,7 +14,7 @@ const _ = require("lodash");
 const User = mongoose.model('users');
 
 passport.serializeUser((user, done) => {
-  done(null, user.id)
+  done(null, user._id );
 });
 
 passport.deserializeUser((id, done) => {
@@ -124,9 +123,11 @@ passport.use(
 
 passport.use(new localStrategy({
     usernameField: 'email',
-    passwordField: 'password'
+    passwordField: 'password',
+    session: true,
+    passReqToCallback: true
   }, 
-  (email, password, done) => {
+  (req, email, password, done) => {
     User.findOne(
       { email: email }
     ).then(user => {
@@ -140,7 +141,10 @@ passport.use(new localStrategy({
           return done(null, null);
         }
         else {
-          return done(null, user);
+          req.login(user, (err) => {
+            if (err) { return next(err); }
+            return done(null, user);
+          });
         }
       });
     });

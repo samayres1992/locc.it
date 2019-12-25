@@ -16,7 +16,7 @@ require('./services/passport');
 // Let's connect to our DB
 mongoose.connect(keys.mongoURI, { 
   useNewUrlParser: true,
-  useUnifiedTopology: true ,
+  useUnifiedTopology: true,
   useFindAndModify: false
 });
 
@@ -51,7 +51,7 @@ require('./services/cron');
 if(process.env.NODE_ENV === 'production') {
   // If the server route doesn't exist, assume react route
   app.use(express.static('../client/build'));
-  const path = app.get('*', (req, res) => {
+  app.get('*', (req, res) => {
     res.sendFile(system.BUILD);
   });
 }
