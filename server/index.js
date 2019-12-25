@@ -48,7 +48,7 @@ require('./routes/dashboardRoutes')(app);
 require('./services/cron');
 
 // Production
-if(process.env.NODE_ENV === 'production') {
+if(system.ENV === 'production') {
   // If the server route doesn't exist, assume react route
   app.use(express.static('../client/build'));
   app.get('*', (req, res) => {
@@ -56,5 +56,5 @@ if(process.env.NODE_ENV === 'production') {
   });
 }
 
-const PORT = process.env.PORT || 5000;
+const PORT = system.PORT || 5000;
 app.listen(PORT);
