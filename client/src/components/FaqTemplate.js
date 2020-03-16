@@ -24,15 +24,14 @@ class FaqTemplate extends Component {
         </Panel>
         <Panel header="Where is my information stored?" key="3">
           <p>
-            Locc.it uses <a href="https://m.do.co/c/39a1326431a0">Digital Ocean</a> to provide its services, along with a third party cloud database. (<a href="https://www.mongodb.com/cloud/atlas">MongoDB Atlas</a>) 
-            to store your encrypted credentials.
+            Locc.it uses <a href="https://m.do.co/c/39a1326431a0">Digital Ocean</a> to provide it's services with a third party cloud database. (<a href="https://www.mongodb.com/cloud/atlas">MongoDB Atlas</a>).
           </p>
         </Panel>
         <Panel header="Disclaimer" key="4">
           <p>
             You accept sole liability for using Locc.it to share your credentials online. We will ensure that the service is as secure as possible, 
-            but ultimately we are not responsible for any disclosed data. The entire repository of Locc.it is available on 
-            <a href="https://github.com/samayres1992/loccit-react">Github</a>. If you notice an issue please raise it on our <a href="https://github.com/samayres1992/loccit-react/issues">issues page</a>.
+            but ultimately we are not responsible for any disclosed data. The entire repository of Locc.it is available on <a href="https://github.com/samayres1992/loccit-react">Github</a>. If you notice an issue 
+            please raise it on our <a href="https://github.com/samayres1992/loccit-react/issues">issues page</a>.
           </p>
         </Panel>
       </Collapse>

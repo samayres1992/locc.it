@@ -9,9 +9,9 @@
   },
   "scripts": {
     "start": "pm2 start index.js",
-    "dev": "pm2 start index.js --env development --name 'server' && cd ../client/src; pm2 start index.js --name 'client'",
-    "prod": "pm2 start index.js --env production --name 'server'",
-    "stop": "pm2 stop index.js --env development --name 'server'"
+    "dev": "pm2 start index.js --name 'server' && cd ../client/src; pm2 start npm -- start 'client'",
+    "prod": "pm2 start index.js --name 'server'",
+    "stop": "pm2 stop index.js -name 'server'"
   },
   "author": "Sam Ayres",
   "license": "ISC",
