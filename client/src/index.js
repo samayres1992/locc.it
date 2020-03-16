@@ -20,7 +20,7 @@ import App from './App';
 // Reducers
 import reducers from './reducers';
 
-ReactGA.initialize('UA-153191251-1');
+ReactGA.initialize('UA-153191251-1',  { debug: true });
 ReactGA.pageview(window.location.pathname + window.location.search);
 
 // Only run devtools in dev
