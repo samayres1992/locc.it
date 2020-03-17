@@ -24,16 +24,6 @@ passwordSchema
 .has().digits()       // Must have digit
 .has().symbols()      // Must have special char
 
-let mailer = nodemailer.createTransport({
-  host: "mail.gandi.net",
-  port: 465,
-  secure: true,
-  auth: {
-    user: keys.emailUser, 
-    pass: keys.emailPass 
-  }
-});
-
 module.exports = app => {
   // Facebook
   app.get('/auth/facebook', 
@@ -133,7 +123,16 @@ module.exports = app => {
               email: email, 
               password: hash 
             }).save((err, newUser) => {
-              var options = {
+              let mailer = nodemailer.createTransport({
+                host: "mail.gandi.net",
+                port: 465,
+                secure: true,
+                auth: {
+                  user: keys.emailUser, 
+                  pass: keys.emailPass 
+                }
+              });
+              let options = {
                 viewEngine: {
                   extname: '.html', // handlebars extension
                   layoutsDir: path.join(__dirname, './email/activation'), // location of handlebars templates
@@ -185,7 +184,18 @@ module.exports = app => {
   app.get('/auth/local/send-activation', throttle({ "rate": "2/m" }), (req, res) => {
     var activationErrors = {};
     try {
-      var options = {
+
+      let mailer = nodemailer.createTransport({
+        host: "mail.gandi.net",
+        port: 465,
+        secure: true,
+        auth: {
+          user: keys.emailUser, 
+          pass: keys.emailPass 
+        }
+      });
+
+      let options = {
         viewEngine: {
           extname: '.html', // handlebars extension
           layoutsDir: path.join(__dirname, './email/activation'), // location of handlebars templates
@@ -259,8 +269,18 @@ module.exports = app => {
           const verificationToken = jwt.sign({
             data: email
           }, keys.localSecret, { expiresIn: '1d' });
+
+          let mailer = nodemailer.createTransport({
+            host: "mail.gandi.net",
+            port: 465,
+            secure: true,
+            auth: {
+              user: keys.emailUser, 
+              pass: keys.emailPass 
+            }
+          });
     
-          var options = {
+          let options = {
             viewEngine: {
               extname: '.html', // handlebars extension
               layoutsDir: path.join(__dirname, './email/reset'), // location of handlebars templates
@@ -382,16 +402,26 @@ module.exports = app => {
       { 'email': email, activated: false } 
     ).then(user => {
       if (user) {
+        let mailer = nodemailer.createTransport({
+          host: "mail.gandi.net",
+          port: 465,
+          secure: true,
+          auth: {
+            user: keys.emailUser, 
+            pass: keys.emailPass 
+          }
+        });
+        
         // Set our mailer params
-        var options = {
+        let options = {
           viewEngine: {
             extname: '.html', // handlebars extension
-            layoutsDir: path.join(__dirname, './email/update'), // location of handlebars templates
+            layoutsDir: path.join(__dirname, './email/update-email'), // location of handlebars templates
             defaultLayout: 'index',
-            viewPath: path.join(__dirname, './email/update'),
-            partialsDir: path.join(__dirname, './email/update')
+            viewPath: path.join(__dirname, './email/update-email'),
+            partialsDir: path.join(__dirname, './email/update-email')
           },
-          viewPath: path.join(__dirname, './email/update'),
+          viewPath: path.join(__dirname, './email/update-email'),
           extName: '.html'
         }
         
@@ -408,7 +438,7 @@ module.exports = app => {
           subject: 'Locc.it: Email update', // Subject line
           template: 'index',
           context: {
-            verificationToken : system.BASE_URL + 'auth/local/verify/' + verificationToken
+            verificationToken : system.BASE_URL + '/auth/local/verify/' + verificationToken
           },
           attachments:[{
             filename : 'loccit.png',
@@ -439,8 +469,18 @@ module.exports = app => {
       return res.send({ errors: updateErrors });
     }
 
+    let mailer = nodemailer.createTransport({
+      host: "mail.gandi.net",
+      port: 465,
+      secure: true,
+      auth: {
+        user: keys.emailUser, 
+        pass: keys.emailPass 
+      }
+    });
+
     // Set our mailer params
-    var options = {
+    let options = {
       viewEngine: {
         extname: '.html', // handlebars extension
         layoutsDir: path.join(__dirname, './email/password-change'), // location of handlebars templates
