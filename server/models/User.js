@@ -4,7 +4,6 @@ const uniqueValidator = require('mongoose-unique-validator');
 const Moment = require('moment');
 
 const userSchema = new Schema({
-  'facebookId': String,
   'githubId': String,
   'googleId': String,
   'email': { type: String, unique: true },
