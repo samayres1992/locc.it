@@ -14,11 +14,20 @@ require('./models/Encrypt');
 require('./services/passport');
 
 // Let's connect to our DB
-mongoose.connect(keys.mongoURI, { 
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false
-});
+try {
+  mongoose.connect(
+    keys.mongoURI,
+    { 
+      useNewUrlParser: true,
+      autoReconnect: true,
+      useFindAndModify: false,
+      useUnifiedTopology: true 
+    }
+  );
+} catch(error) {
+  console.log("Connection to mongoose error", error)
+}
+
 
 // Init express
 const app = express();
