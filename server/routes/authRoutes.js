@@ -25,19 +25,6 @@ passwordSchema
 .has().symbols()      // Must have special char
 
 module.exports = app => {
-  // Facebook
-  app.get('/auth/facebook', 
-    passport.authenticate('facebook', { scope : ['email'] }
-  ));
-
-  app.get('/auth/facebook/callback',
-    passport.authenticate('facebook', { failureRedirect: '/login' }),
-    (req, res) => {
-      // Use manual redirect due to facebook bug that appends "#_=_" to URL
-      res.redirect('/');
-    }
-  );
-
   // Google
   app.get(
     '/auth/google', 
