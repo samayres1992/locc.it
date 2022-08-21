@@ -38,16 +38,14 @@ class HeaderTemplate extends Component {
       case false:
         return [
           <Menu.Item key='1'><Link to="/faq">How it works</Link></Menu.Item>,
-          <Menu.Item key='2'><a href="https://buymeacoffee.com/aQJ2U8H" target="_blank" rel="noopener noreferrer">Support us</a></Menu.Item>,
-          <Menu.Item key='3'><Link to="/login">Sign in</Link></Menu.Item>,
+          <Menu.Item key='2'><Link to="/login">Sign in</Link></Menu.Item>,
         ];
       //  User is logged in
       default:
         return [
           <Menu.Item key='1'><Link to="/dashboard">Dashboard</Link></Menu.Item>,
           <Menu.Item key='2'><Link to="/faq">How it works</Link></Menu.Item>,
-          <Menu.Item key='3'><a href="https://buymeacoffee.com/aQJ2U8H" target="_blank" rel="noopener noreferrer">Support us</a></Menu.Item>,
-          <Menu.Item key='4'><Link to="/settings">Settings</Link></Menu.Item>
+          <Menu.Item key='3'><Link to="/settings">Settings</Link></Menu.Item>
         ];
     }
   }
