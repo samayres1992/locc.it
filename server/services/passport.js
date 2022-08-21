@@ -1,6 +1,5 @@
 // Our requirements
 const passport = require('passport');
-const facebookStrategy = require('passport-facebook').Strategy;
 const gitHubStrategy = require('passport-github2').Strategy;
 const googleStrategy = require('passport-google-oauth20').Strategy;
 const localStrategy = require('passport-local').Strategy;
@@ -22,39 +21,6 @@ passport.deserializeUser((id, done) => {
     done(err, user);
   });
 });
-
-passport.use(
-  // facebook
-  new facebookStrategy({
-    clientID: keys.facebookClientId,
-    clientSecret: keys.facebookSecretKey,
-    callbackURL: system.BASE_URL + '/auth/facebook/callback',
-    profileFields: ['id', 'emails']
-  }, 
-  async (accessToken, refreshToken, profile, done) => {
-    // Check if user already exists through ID
-    const existingUserID = await User.findOne({ facebookId: profile._json.id });
-
-    // Check if email exists (through other Auth method)
-    const existingUserEmail = await User.findOne({ email: profile._json.email});
-
-    if(existingUserID) {
-      // User with that ID already exists
-      return done(null, existingUserID);
-    }
-    else if (existingUserEmail) {
-      // User with that Email already exists
-      return done(null, existingUserEmail);
-    }
-    // New user, save them to the DB
-    const user = await new User({
-      facebookId: profile.id,
-      activated: true,
-      email: profile._json.email,
-    }).save();
-    done(null, user);
-  })
-);
 
 // Create a strategy for passport
 passport.use(

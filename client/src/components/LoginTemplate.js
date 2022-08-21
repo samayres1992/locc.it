@@ -163,7 +163,6 @@ class LoginTemplate extends Component {
           <div className="social-container">
             <span>Or {login ? "sign up" : "sign in"} with</span>
             <div className="oauth">
-              <a href="/auth/facebook" className="social"><Icon type="facebook" /></a>
               <a href="/auth/github" className="social"><Icon type="github" /></a>
               <a href="/auth/google" className="social"><Icon type="google" /></a>
             </div>
