@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "start": "concurrently \"npm run dev --prefix server\" \"npm start --prefix client\"",
     "restart": "concurrently \"npm run restart --prefix server\" \"npm run restart --prefix client\"",
     "restart:server": "npm run restart --prefix server",
     "restart:client": "npm run restart --prefix client"
