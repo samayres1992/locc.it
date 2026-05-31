@@ -14,3 +14,4 @@ export const CREATE_ANOTHER = 'create_another';
 export const RESET_USER = 'reset_user';
 export const SET_ERRORS = 'set_errors';
 export const CLEAR_ERRORS = 'clear_errors';
+export const DECRYPT_FAILED = 'decrypt_failed';

@@ -4,12 +4,12 @@ module.exports = function(app) {
   const target = 'http://localhost:5000';
 
   app.use(
-    ['/api', '/api/decrypt_attempt'],
+    '/api',
     createProxyMiddleware({ target, changeOrigin: true })
   );
 
   app.use(
-    ['/auth', '/auth/google', '/auth/local/login', '/auth/local/register', '/auth/local/send_reset', '/auth/local/one-time'],
+    '/auth',
     createProxyMiddleware({ target, changeOrigin: true })
   );
 };

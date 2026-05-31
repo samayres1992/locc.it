@@ -1,3 +1,8 @@
+// Load .env BEFORE requiring config/keys.js — keys.js reads process.env at
+// require time, so dotenv has to run first or the values will all be empty.
+// Anchoring to __dirname so the file is found regardless of cwd (pm2 etc.).
+require('dotenv').config({ path: __dirname + '/.env' });
+
 // Our requirements
 const express = require('express');
 const cookieSession = require('cookie-session');

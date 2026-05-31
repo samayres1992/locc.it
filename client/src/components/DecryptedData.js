@@ -21,7 +21,10 @@ class DecryptedData extends Component {
   };
 
   render() {
-    const { title, emailUsername, password, note } = this.props.decryptForm.decryptedData;
+    const { decryptForm } = this.props;
+    const decryptedData = (decryptForm && decryptForm.decryptedData) || {};
+    const title = decryptedData.title || decryptForm.title || '';
+    const { emailUsername, password, note } = decryptedData;
     return (
       <div className="decrypted-data">
         <div className="input-effect">

@@ -1,0 +1,13 @@
+{
+  "name": "loccit",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "restart": "concurrently \"npm run restart --prefix server\" \"npm run restart --prefix client\"",
+    "restart:server": "npm run restart --prefix server",
+    "restart:client": "npm run restart --prefix client"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

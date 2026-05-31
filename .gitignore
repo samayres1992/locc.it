@@ -3,6 +3,9 @@ server/node_modules
 client/node_modules
 client/build
 client/yarn.lock
+client/.env
 server/config/dev.js
 server/config/prod.js
 server/config/system.js
+server/.env
+data/*

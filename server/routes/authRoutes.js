@@ -45,31 +45,37 @@ const updateEmailById = db.prepare(
 const deleteUserById = db.prepare(`DELETE FROM users WHERE id = ?`);
 
 module.exports = app => {
-  // Google
-  app.get(
-    '/auth/google',
-    passport.authenticate('google', {
-      scope: ['profile', 'email']
-    }
-  ));
+  // Google — only mount the routes if the strategy was registered in
+  // services/passport.js. Without credentials passport.authenticate('google')
+  // throws "Unknown authentication strategy".
+  if (keys.googleClientId && keys.googleClientSecret) {
+    app.get(
+      '/auth/google',
+      passport.authenticate('google', {
+        scope: ['profile', 'email']
+      })
+    );
 
-  app.get(
-    '/auth/google/callback',
-    passport.authenticate('google', {
-      successRedirect: '/'
-    })
-  );
+    app.get(
+      '/auth/google/callback',
+      passport.authenticate('google', {
+        successRedirect: '/'
+      })
+    );
+  }
 
-  // Github
-  app.get('/auth/github',
-    passport.authenticate('github', { scope: [ 'user:email' ] })
-  );
+  // Github — same gate as Google.
+  if (keys.githubPubKey && keys.githubSecretKey) {
+    app.get('/auth/github',
+      passport.authenticate('github', { scope: [ 'user:email' ] })
+    );
 
-  app.get('/auth/github/callback',
-    passport.authenticate('github', {
-      successRedirect: '/'
-    })
-  );
+    app.get('/auth/github/callback',
+      passport.authenticate('github', {
+        successRedirect: '/'
+      })
+    );
+  }
 
   app.get("/auth/local/verify/:token", (req, res) => {
     const token = req.originalUrl.split('/')[4];
@@ -252,7 +258,10 @@ module.exports = app => {
         loginErrors.email = 'Incorrect login or password.';
         return res.send( { errors: loginErrors });
       }
-      res.send({ id: user.id, activated: user.activated });
+      req.login(user, (loginErr) => {
+        if (loginErr) { return next(loginErr); }
+        res.send({ id: user.id, activated: user.activated });
+      });
     })(req, res, next);
   });
 

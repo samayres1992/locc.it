@@ -15,8 +15,8 @@ export const fetchUser = () => async dispatch => {
       dispatch({ type: SET_ERRORS, payload: res.data.errors });
     } 
     else if (res.data) {
-      const { _id, activated } = res.data;
-      dispatch({ type: FETCH_USER, payload: { _id, activated  } });
+      const { id, activated } = res.data;
+      dispatch({ type: FETCH_USER, payload: { id, activated } });
     }
     else {
       dispatch({ type: FETCH_USER, payload: false });
@@ -43,8 +43,8 @@ export const loginUser = (data) => async dispatch => {
       if (res.data.errors) {
         return dispatch({ type: SET_ERRORS, payload: res.data.errors });
       }
-      const { _id, activated } = res.data;
-      dispatch({ type: LOGIN_USER, payload: { _id, activated }});
+      const { id, activated } = res.data;
+      dispatch({ type: LOGIN_USER, payload: { id, activated }});
     });
   }
   catch(errors) {
@@ -67,8 +67,8 @@ export const registerUser = ({ email, password }) => async dispatch => {
       if (res.data.errors) {
         return dispatch({ type: SET_ERRORS, payload: res.data.errors });
       }
-      const { _id, activated } = res.data;
-      dispatch({ type: REGISTER_USER, payload: { _id, activated }});
+      const { id, activated } = res.data;
+      dispatch({ type: REGISTER_USER, payload: { id, activated }});
     });
   }
   catch(errors) {
@@ -91,8 +91,8 @@ export const anonResetNewPassword = ({ token, password }) => async dispatch => {
       if (res.data.errors) {
         return dispatch({ type: SET_ERRORS, payload: res.data.errors });
       }
-      const { _id, activated } = res.data;
-      dispatch({ type: RESET_USER, payload: { _id, activated }});
+      const { id, activated } = res.data;
+      dispatch({ type: RESET_USER, payload: { id, activated }});
     });
   }
   catch (errors) {

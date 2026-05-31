@@ -57,7 +57,7 @@ class EncryptForm extends Component {
 	encryptData = () => {
     // Deconstruct the data we wish to encrypt
     const { title, emailUsername, password, expiry, note } = this.state;
-    const { _id: userId } = this.props.auth;
+    const { id: userId } = this.props.auth;
 
     try {
 

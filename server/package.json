@@ -10,7 +10,8 @@
     "start": "pm2 start index.js --name server",
     "dev": "pm2 start index.js --name server",
     "prod": "pm2 start index.js --name 'server'",
-    "stop": "pm2 stop server"
+    "stop": "pm2 stop server",
+    "restart": "pm2 restart server"
   },
   "author": "Sam Ayres",
   "license": "ISC",
@@ -24,6 +25,7 @@
     "cookie-session": "^1.3.3",
     "cookie-signature": "^1.1.0",
     "crypto-js": "^3.1.9-1",
+    "dotenv": "^16.4.5",
     "email-templates": "^6.0.4",
     "email-validator": "^2.0.4",
     "express": "^4.17.1",

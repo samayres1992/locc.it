@@ -13,18 +13,21 @@ class FaqTemplate extends Component {
         </Panel>
         <Panel header="How does it work?" key="2">
           <p>
-            After providing credentials to Locc.it they are encrypted with a secret passcode that is generated automatically in your browser. This
-            passcode is provided to you along with a link that you can use to share your credentials. 
+            After providing credentials to Locc.it they are encrypted in your browser with a secret passcode before anything is sent to our servers.
+            The passcode is provided to you along with a shareable link. Pass both to the intended recipient — they enter the passcode on the link page and the credentials are decrypted locally in their browser.
           </p>
           <p>
-            All encryptions are one time use and will be deleted immediately, they also have an expiration date that will result 
-            in automatic deletion if not redeemed in time. The passcode is not stored on Locc.it servers, only you and 
-            the person you choose to share it with will be able to decrypt the credentials.
+            All credentials are one-time use and are deleted from our servers immediately after being unlocked. They also carry an expiry date —
+            if the link is not opened in time it is automatically deleted. The passcode is never stored on Locc.it servers; only you and
+            the person you choose to share it with can decrypt the credentials.
+          </p>
+          <p>
+            To protect against guessing, decryption is limited to 3 attempts. After 3 incorrect passcodes the link is locked for 15 minutes.
           </p>
         </Panel>
         <Panel header="Where is my information stored?" key="3">
           <p>
-            Locc.it uses <a href="https://m.do.co/c/39a1326431a0">Digital Ocean</a> to provide it's services with a third party cloud database. (<a href="https://www.mongodb.com/cloud/atlas">MongoDB Atlas</a>).
+            Locc.it uses <a href="https://m.do.co/c/39a1326431a0">Digital Ocean</a> to provide its services. Encrypted credentials are stored in a local SQLite database on the server and are permanently deleted as soon as they are unlocked or expire.
           </p>
         </Panel>
         <Panel header="Disclaimer" key="4">

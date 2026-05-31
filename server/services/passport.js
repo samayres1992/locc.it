@@ -120,10 +120,7 @@ passport.use(new localStrategy({
       }
       bcrypt.compare(password, user.password).then(isMatch => {
         if (!isMatch) return done(null, null);
-        req.login(user, (err) => {
-          if (err) return done(err);
-          return done(null, user);
-        });
+        return done(null, user);
       });
     } catch (err) {
       return done(err);

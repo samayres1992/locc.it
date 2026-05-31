@@ -44,7 +44,7 @@ class DashboardTemplate extends Component {
       else {
         this.openNotificationWithIcon('success', 'expiry_update');
         // Reload lock list
-        this.props.fetchLocks(this.props.auth._id);
+        this.props.fetchLocks();
       }
     });
   }
@@ -141,18 +141,18 @@ class DashboardTemplate extends Component {
               chunkedLocks.slice(minItems, maxItems).map(chunk => (
                 <Row gutter={16} key={i++}>
                 {chunk.map(lock => (
-                  <Col key={lock._id} xs={24} sm={24} md={12} xl={12} xxl={12} className="dash-card">
+                  <Col key={lock.url} xs={24} sm={24} md={12} xl={12} xxl={12} className="dash-card">
                     <Card title={lock.title} bordered={false} extra={
-                      <Popconfirm placement="top" title={"Are you sure you want to delete?"} onConfirm={() => this.deleteLock(lock._id)} okText="Yes" cancelText="No">
+                      <Popconfirm placement="top" title={"Are you sure you want to delete?"} onConfirm={() => this.deleteLock(lock.url)} okText="Yes" cancelText="No">
                         <Icon type="close-circle" />
                       </Popconfirm>}>
                       <div className="input-effect">
                         <span className="fancy-input passcodeInfo url">
                           <span className="data-to-copy">{domain + lock.url}</span>
                           <Clipboard className="button copy" data-clipboard-text={domain + lock.url} onSuccess={() => this.openNotificationWithIcon('success', 'clipboard')}><Icon type="copy" /> Copy</Clipboard>
-                        </span>    
+                        </span>
                       </div>
-                      <DatePicker style={{"width": "100%"}} onChange={(date, dateString) => this.updateExpiry(date, dateString, lock._id)} defaultValue={Moment(lock.expiry)} format={"[Expires on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required />
+                      <DatePicker style={{"width": "100%"}} onChange={(date, dateString) => this.updateExpiry(date, dateString, lock.url)} defaultValue={Moment(lock.expiry)} format={"[Expires on] MMMM Do, YYYY"} disabledDate={(current) => { return Moment().add(-1, 'days')  >= current; }} required />
                     </Card>
                   </Col>
                ))}

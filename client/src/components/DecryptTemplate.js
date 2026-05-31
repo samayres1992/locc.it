@@ -24,12 +24,10 @@ class DecryptTemplate extends Component {
     var whichMessage = decryptForm && !decryptForm.attempts && !decryptForm.locked && decryptForm.decryptedData ? "Thank you for using our service, your decrypted details are below." : "Please enter the passcode you were provided.";
     var attemptsMessage = '';
 
-    if (decryptForm && decryptForm.attempts) {
-      let attemptPhrasing = "attempt";
-      if (decryptForm.attempts === 1) {
-        attemptPhrasing = "attempts";
-      }
-      attemptsMessage = 'Wrong passcode, ' +  (3 - decryptForm.attempts) + ' ' + attemptPhrasing + ' remaining.';
+    if (decryptForm && decryptForm.attempts && !decryptForm.locked) {
+      const remaining = 3 - decryptForm.attempts;
+      const attemptPhrasing = remaining === 1 ? "attempt" : "attempts";
+      attemptsMessage = 'Wrong passcode, ' + remaining + ' ' + attemptPhrasing + ' remaining.';
     }
     else if (decryptForm && decryptForm.locked) {
       var currentTime = Moment();

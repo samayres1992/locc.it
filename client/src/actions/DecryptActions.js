@@ -5,6 +5,7 @@ import {
   CHECK_URL,
   PASSCODE_DECRYPTED,
   DECRYPT_DATA,
+  DECRYPT_FAILED,
   FETCH_SECRET,
   SET_ERRORS
 } from './types';
@@ -55,20 +56,12 @@ export const tryClientDecrypt = (ciphertext, passcode, url) => async (dispatch) 
     }
     const decryptedData = JSON.parse(decryptedString);
     dispatch({ type: DECRYPT_DATA, payload: { decryptedData } });
-    // Consume the record — best effort. If this fails (network drop, etc.)
-    // the cron sweep will catch it within the hour, and the grace window
-    // self-cleans on next fetch attempt regardless.
-    try {
-      await axios.delete(`/api/secret/${url}`);
-    } catch (e) {
-      // Swallow — the record will be purged by the server's grace-window
-      // logic or the cleanup cron. Plaintext is already in the user's view.
-    }
+    // Consume the record immediately so it can't be read again.
+    await axios.delete(`/api/secret/${url}`);
   } catch (err) {
-    dispatch({
-      type: SET_ERRORS,
-      payload: { decrypt: 'Incorrect passcode. Please try again.' }
-    });
+    // Wrong passcode — increment the attempt counter. The reducer locks
+    // the form after 3 failures.
+    dispatch({ type: DECRYPT_FAILED });
   }
 };
 

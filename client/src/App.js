@@ -36,7 +36,7 @@ class App extends Component {
         <Route
           { ...props }
           render={innerProps =>
-            auth && auth._id ? 
+            auth && (auth.id || auth._id) ?
               <Component { ...innerProps } />
               :
               <Redirect to="/" />

@@ -29,6 +29,8 @@ class DecryptForm extends Component {
     const { path } = this.state;
     const { decryptForm } = this.props;
     if (!decryptForm || !decryptForm.ciphertext) return;
+    // Check if still locked out.
+    if (decryptForm.locked && new Date() < new Date(decryptForm.locked)) return;
     this.props.tryClientDecrypt(decryptForm.ciphertext, passcode, path);
   }
 
