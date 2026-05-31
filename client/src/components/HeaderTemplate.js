@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Layout, Icon, Menu, Dropdown } from 'antd';
 import { NavBar } from 'antd-mobile';
 import logo from '../images/loccit.svg';
+import * as actions from '../actions';
 const { Header } = Layout;
 
 class HeaderTemplate extends Component {
@@ -60,7 +61,7 @@ class HeaderTemplate extends Component {
     return (
       <Header>
         <div className="desktop">
-          <Link to='/'>
+          <Link to='/' onClick={this.props.createAnother}>
             <img className='logo' src={logo} alt='locc.it logo' />
           </Link>
           <Menu
@@ -98,4 +99,4 @@ const mapStateToProps = (state) => {
   return { auth: auth };
 }
 
-export default connect(mapStateToProps)(HeaderTemplate);
+export default connect(mapStateToProps, actions)(HeaderTemplate);

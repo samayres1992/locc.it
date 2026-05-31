@@ -42,9 +42,14 @@ class DashboardTemplate extends Component {
         this.openFailureNotificationWithIcon("errors", "updated_expiry_failed", res.data.errors);
       }
       else {
-        this.openNotificationWithIcon('success', 'expiry_update');
-        // Reload lock list
+        this.openNotificationWithIcon('success', 'delete');
         this.props.fetchLocks();
+        // If the deleted item was the last one on the current page, go back to page 1.
+        const { dashboard } = this.props;
+        const remainingChunks = chunk(dashboard.filter(l => l.url !== lockId), 2);
+        if (!remainingChunks.slice(this.state.minItems, this.state.maxItems).length) {
+          this.setState({ minItems: 0, maxItems: 5 });
+        }
       }
     });
   }
