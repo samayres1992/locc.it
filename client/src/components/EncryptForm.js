@@ -42,7 +42,16 @@ class EncryptForm extends Component {
       password: password,
       note: note,
     });
-    this.recaptcha.execute('encrypt');
+
+    // In local dev, a missing site key should not crash form submission.
+    if (!process.env.REACT_APP_GOOGLE_SITE_KEY) {
+      this.encryptData();
+      return;
+    }
+
+    if (this.recaptcha && typeof this.recaptcha.execute === 'function') {
+      this.recaptcha.execute();
+    }
   }
 
 	encryptData = () => {

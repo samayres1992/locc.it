@@ -1,6 +1,6 @@
 import { CREATE_ANOTHER, ENCRYPT, PASSCODE } from '../actions/types'; 
 
-export default function (state = null, action) {
+export default function encryptReducer(state = null, action) {
   switch (action.type) {
   case ENCRYPT:
       return {

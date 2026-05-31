@@ -1,6 +1,6 @@
 import { FETCH_LOCKS, UPDATE_LOCK } from '../actions/types'; 
 
-export default function (state = null, action) {
+export default function dashboardReducer(state = null, action) {
   switch (action.type) {
     case FETCH_LOCKS:
       return action.payload || false;

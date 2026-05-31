@@ -1,4 +1,6 @@
 // Our requirements
+const { db, uuid } = require('../db');
+const Moment = require('moment');
 const keys = require('../config/keys');
 const passport = require('passport');
 const nodemailer = require("nodemailer");
@@ -6,16 +8,14 @@ const _ = require("lodash");
 const path = require('path');
 const jwt = require("jsonwebtoken");
 const hbs = require("nodemailer-express-handlebars");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const system = require('../config/system');
-const mongoose = require('mongoose');
-const User = mongoose.model('users');
 const requireLogin = require('../middlewares/requireLogin');
 const EmailValidator = require('email-validator');
 const passwordValidator = require('password-validator');
 const throttle = require("express-throttle");
 
-var passwordSchema = new passwordValidator(); 
+var passwordSchema = new passwordValidator();
 passwordSchema
 .is().min(8)          // Minimum length 8
 .is().max(100)        // Maximum length 100
@@ -24,18 +24,38 @@ passwordSchema
 .has().digits()       // Must have digit
 .has().symbols()      // Must have special char
 
+// Prepared statements — compiled once at module load.
+const findUserByEmail = db.prepare(`SELECT * FROM users WHERE email = ?`);
+const insertLocalUser = db.prepare(`
+  INSERT INTO users (id, email, password, activated, activate_by)
+  VALUES (@id, @email, @password, @activated, @activate_by)
+`);
+const updateActivatedByEmail = db.prepare(
+  `UPDATE users SET activated = 1 WHERE email = ?`
+);
+const updatePasswordByEmail = db.prepare(
+  `UPDATE users SET password = ? WHERE email = ?`
+);
+const updatePasswordById = db.prepare(
+  `UPDATE users SET password = ? WHERE id = ?`
+);
+const updateEmailById = db.prepare(
+  `UPDATE users SET email = ?, activated = 0 WHERE id = ?`
+);
+const deleteUserById = db.prepare(`DELETE FROM users WHERE id = ?`);
+
 module.exports = app => {
   // Google
   app.get(
-    '/auth/google', 
+    '/auth/google',
     passport.authenticate('google', {
       scope: ['profile', 'email']
     }
   ));
 
   app.get(
-    '/auth/google/callback', 
-    passport.authenticate('google', { 
+    '/auth/google/callback',
+    passport.authenticate('google', {
       successRedirect: '/'
     })
   );
@@ -45,31 +65,27 @@ module.exports = app => {
     passport.authenticate('github', { scope: [ 'user:email' ] })
   );
 
-  app.get('/auth/github/callback', 
-    passport.authenticate('github', { 
+  app.get('/auth/github/callback',
+    passport.authenticate('github', {
       successRedirect: '/'
     })
   );
-  
+
   app.get("/auth/local/verify/:token", (req, res) => {
     const token = req.originalUrl.split('/')[4];
 
     jwt.verify(token, keys.localSecret, (err, decodedToken) => {
       if (err) {
-        res.sendStatus(500);
+        return res.sendStatus(500);
       }
-      else {
-        User.updateOne(
-          { 'email': decodedToken.data }, // Find token
-          { 'activated': true } // Update value
-        ).then((data) => {
-          if (data) {
-            res.redirect('/login?activated');
-          } else {
-            // Failed to find a result
-            res.send(false);
-          }
-        });
+      try {
+        const info = updateActivatedByEmail.run(decodedToken.data);
+        if (info.changes) {
+          return res.redirect('/login?activated');
+        }
+        return res.send(false);
+      } catch (e) {
+        return res.sendStatus(500);
       }
     });
   });
@@ -82,7 +98,7 @@ module.exports = app => {
       if (!EmailValidator.validate(email)) {
         registerErrors.email = 'Please provide a valid email';
       }
-  
+
       if (!passwordSchema.validate(password)) {
         registerErrors.password = 'Password does not forfil all requirements';
       }
@@ -97,95 +113,100 @@ module.exports = app => {
     }
 
     // If no errors, we can create the user
-    User.findOne({ email: email }).then((user) => {
-      if (user) {
-        registerErrors.email = 'Email already exists';
-        return res.send({ errors: registerErrors });
-      } 
-      else {
-        bcrypt.genSalt(10, (err, salt) => {
-          bcrypt.hash(password, salt, (err, hash) => {
-            if (err) throw err;
-            new User({ 
-              email: email, 
-              password: hash 
-            }).save((err, newUser) => {
-              let mailer = nodemailer.createTransport({
-                host: "mail.gandi.net",
-                port: 465,
-                secure: true,
-                auth: {
-                  user: keys.emailUser, 
-                  pass: keys.emailPass 
-                }
-              });
-              let options = {
-                viewEngine: {
-                  extname: '.html', // handlebars extension
-                  layoutsDir: path.join(__dirname, './email/activation'), // location of handlebars templates
-                  defaultLayout: 'index',
-                  viewPath: path.join(__dirname, './email/activation'),
-                  partialsDir: path.join(__dirname, './email/activation')
-                },
-                viewPath: path.join(__dirname, './email/activation'),
-                extName: '.html'
-              }
-              
-              mailer.use('compile', hbs(options));
-          
-              // Generate a user verfification token
-              const verificationToken = jwt.sign({
-                data: email
-              }, keys.localSecret, { expiresIn: '7d' });
-          
-              mailer.sendMail({
-                from: keys.emailUser, // sender address
-                to: email, // list of receivers
-                subject: 'Locc.it: Account verification', // Subject line
-                template: 'index',
-                context: {
-                  verificationToken : system.BASE_URL + '/auth/local/verify/' + verificationToken
-                },
-                attachments:[{
-                  filename : 'loccit.png',
-                  path: path.join(__dirname, 'email/images/loccit.png'),
-                  cid : 'logo@locc.it'
-                }],
-              });
+    const existing = findUserByEmail.get(email);
+    if (existing) {
+      registerErrors.email = 'Email already exists';
+      return res.send({ errors: registerErrors });
+    }
 
-              req.login(newUser, (err) => {
-                if (err) { 
-                  registerErrors.password = 'Failed to authenticate user.';
-                  return res.send({ errors: registerErrors });
-                }
-                const { _id, activated } = newUser
-                res.send({ _id, activated });
-              });
-            });
-          });
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(password, salt, (err, hash) => {
+        if (err) throw err;
+        const newUser = {
+          id: uuid(),
+          email: email,
+          password: hash,
+          activated: 0,
+          activate_by: Moment().add(7, 'days').toISOString(),
+        };
+        try {
+          insertLocalUser.run(newUser);
+        } catch (e) {
+          registerErrors.email = 'Email already exists';
+          return res.send({ errors: registerErrors });
+        }
+
+        let mailer = nodemailer.createTransport({
+          host: "mail.gandi.net",
+          port: 465,
+          secure: true,
+          auth: {
+            user: keys.emailUser,
+            pass: keys.emailPass
+          }
         });
-      }
+        let options = {
+          viewEngine: {
+            extname: '.html', // handlebars extension
+            layoutsDir: path.join(__dirname, './email/activation'), // location of handlebars templates
+            defaultLayout: 'index',
+            viewPath: path.join(__dirname, './email/activation'),
+            partialsDir: path.join(__dirname, './email/activation')
+          },
+          viewPath: path.join(__dirname, './email/activation'),
+          extName: '.html'
+        }
+
+        mailer.use('compile', hbs(options));
+
+        // Generate a user verfification token
+        const verificationToken = jwt.sign({
+          data: email
+        }, keys.localSecret, { expiresIn: '7d' });
+
+        mailer.sendMail({
+          from: keys.emailUser, // sender address
+          to: email, // list of receivers
+          subject: 'Locc.it: Account verification', // Subject line
+          template: 'index',
+          context: {
+            verificationToken : system.BASE_URL + '/auth/local/verify/' + verificationToken
+          },
+          attachments:[{
+            filename : 'loccit.png',
+            path: path.join(__dirname, 'email/images/loccit.png'),
+            cid : 'logo@locc.it'
+          }],
+        });
+
+        req.login(newUser, (loginErr) => {
+          if (loginErr) {
+            registerErrors.password = 'Failed to authenticate user.';
+            return res.send({ errors: registerErrors });
+          }
+          res.send({ id: newUser.id, activated: newUser.activated });
+        });
+      });
     });
   });
 
   app.get('/auth/local/send-activation', throttle({ "rate": "2/m" }), (req, res) => {
     var activationErrors = {};
     try {
-
       let mailer = nodemailer.createTransport({
         host: "mail.gandi.net",
         port: 465,
         secure: true,
         auth: {
-          user: keys.emailUser, 
-          pass: keys.emailPass 
+          user: keys.emailUser,
+          pass: keys.emailPass
         }
       });
 
       let options = {
         viewEngine: {
-          extname: '.html', // handlebars extension
-          layoutsDir: path.join(__dirname, './email/activation'), // location of handlebars templates
+          extname: '.html',
+          layoutsDir: path.join(__dirname, './email/activation'),
           defaultLayout: 'index',
           viewPath: path.join(__dirname, './email/activation'),
           partialsDir: path.join(__dirname, './email/activation')
@@ -193,18 +214,17 @@ module.exports = app => {
         viewPath: path.join(__dirname, './email/activation'),
         extName: '.html'
       }
-      
+
       mailer.use('compile', hbs(options));
 
-      // Generate a user verfification token
       const verificationToken = jwt.sign({
         data: req.user.email
       }, keys.localSecret, { expiresIn: '7d' });
 
       mailer.sendMail({
-        from: keys.emailUser, // sender address
-        to: req.user.email, // list of receivers
-        subject: 'Locc.it: Account verification', // Subject line
+        from: keys.emailUser,
+        to: req.user.email,
+        subject: 'Locc.it: Account verification',
         template: 'index',
         context: {
           verificationToken : system.BASE_URL + '/auth/local/verify/' + verificationToken
@@ -225,15 +245,14 @@ module.exports = app => {
 
   app.post('/auth/local/login', throttle({ "rate": "5/m" }), (req, res, next) => {
     var loginErrors = {};
-    passport.authenticate('local', 
+    passport.authenticate('local',
     (err, user, info) => {
       if (err) { return next(err) }
-      if (!user) { 
+      if (!user) {
         loginErrors.email = 'Incorrect login or password.';
         return res.send( { errors: loginErrors });
       }
-      const { _id, activated } = user;
-      res.send({ _id, activated });
+      res.send({ id: user.id, activated: user.activated });
     })(req, res, next);
   });
 
@@ -249,66 +268,63 @@ module.exports = app => {
       return res.send({ errors: resetErrors });
     }
 
-    User.findOne({ email: email }).then((user) => {
-      if (user) {
-        try {
-          // Generate a user verfification token
-          const verificationToken = jwt.sign({
-            data: email
-          }, keys.localSecret, { expiresIn: '1d' });
+    const user = findUserByEmail.get(email);
+    if (!user) {
+      resetErrors.email = "Unable to find an account with the email provided.";
+      return res.send({ errors: resetErrors });
+    }
 
-          let mailer = nodemailer.createTransport({
-            host: "mail.gandi.net",
-            port: 465,
-            secure: true,
-            auth: {
-              user: keys.emailUser, 
-              pass: keys.emailPass 
-            }
-          });
-    
-          let options = {
-            viewEngine: {
-              extname: '.html', // handlebars extension
-              layoutsDir: path.join(__dirname, './email/reset'), // location of handlebars templates
-              defaultLayout: 'index',
-              viewPath: path.join(__dirname, './email/reset'),
-              partialsDir: path.join(__dirname, './email/reset')
-            },
-            viewPath: path.join(__dirname, './email/reset'),
-            extName: '.html'
-          }
-          
-          mailer.use('compile', hbs(options));
-    
-          mailer.sendMail({
-            from: keys.emailUser, // sender address
-            to: email, // list of receivers
-            subject: 'Locc.it: Reset password', // Subject line
-            template: 'index',
-            context: {
-              verificationToken : system.BASE_URL + '/reset/' + verificationToken
-            },
-            attachments:[{
-              filename : 'loccit.png',
-              path: path.join(__dirname, 'email/images/loccit.png'),
-              cid : 'logo@locc.it'
-            }],
-          });
-          return res.send("OK");
+    try {
+      const verificationToken = jwt.sign({
+        data: email
+      }, keys.localSecret, { expiresIn: '1d' });
+
+      let mailer = nodemailer.createTransport({
+        host: "mail.gandi.net",
+        port: 465,
+        secure: true,
+        auth: {
+          user: keys.emailUser,
+          pass: keys.emailPass
         }
-        catch (errors) {
-          resetErrors.email = "Unable to reset password, please contact us directly.";
-          return res.send({ errors: resetErrors });
-        }
+      });
+
+      let options = {
+        viewEngine: {
+          extname: '.html',
+          layoutsDir: path.join(__dirname, './email/reset'),
+          defaultLayout: 'index',
+          viewPath: path.join(__dirname, './email/reset'),
+          partialsDir: path.join(__dirname, './email/reset')
+        },
+        viewPath: path.join(__dirname, './email/reset'),
+        extName: '.html'
       }
-      else {
-        resetErrors.email = "Unable to find an account with the email provided.";
-        return res.send({ errors: resetErrors });
-      }
-    });
+
+      mailer.use('compile', hbs(options));
+
+      mailer.sendMail({
+        from: keys.emailUser,
+        to: email,
+        subject: 'Locc.it: Reset password',
+        template: 'index',
+        context: {
+          verificationToken : system.BASE_URL + '/reset/' + verificationToken
+        },
+        attachments:[{
+          filename : 'loccit.png',
+          path: path.join(__dirname, 'email/images/loccit.png'),
+          cid : 'logo@locc.it'
+        }],
+      });
+      return res.send("OK");
+    }
+    catch (errors) {
+      resetErrors.email = "Unable to reset password, please contact us directly.";
+      return res.send({ errors: resetErrors });
+    }
   });
-  
+
 
   app.post('/auth/local/reset', throttle({ "rate": "5/m" }),  (req, res) => {
     const { token, password } = req.body;
@@ -316,59 +332,49 @@ module.exports = app => {
     jwt.verify(token, keys.localSecret, (err, decodedToken) => {
       if (err) {
         resetErrors.verification = "Invalid verification token";
+        return res.send({ errors: resetErrors });
       }
-      else if (!passwordSchema.validate(password)) {
+      if (!passwordSchema.validate(password)) {
         resetErrors.password = 'Password does not forfil all requirements';
+        return res.send({ errors: resetErrors });
       }
-      else {
-        bcrypt.genSalt(10, (error, salt) => {
-          bcrypt.hash(password, salt, (error, hash) => {
-            if (error) {
-              resetErrors.password = "Unable to set user password";
+      bcrypt.genSalt(10, (error, salt) => {
+        bcrypt.hash(password, salt, (error, hash) => {
+          if (error) {
+            resetErrors.password = "Unable to set user password";
+            return res.send({ errors: resetErrors });
+          }
+          const info = updatePasswordByEmail.run(hash, decodedToken.data);
+          if (!info.changes) {
+            resetErrors.email = "User with supplied email address does not exist";
+            return res.send({ errors: resetErrors });
+          }
+          const user = findUserByEmail.get(decodedToken.data);
+          req.login(user, (loginErr) => {
+            if (loginErr) {
+              resetErrors.password = 'Failed to authenticate user.';
+              return res.send({ errors: resetErrors });
             }
-            User.findOneAndUpdate(
-              { 'email': decodedToken.data }, 
-              { 'password': hash } 
-            ).then((user) => {
-              if (user) {
-                req.login(user, (err) => {
-                  if (err) { 
-                    registerErrors.password = 'Failed to authenticate user.';
-                    return res.send({ errors: registerErrors });
-                  }
-                  const { _id, activated } = user;
-                  res.send({ _id, activated });
-                });
-              } 
-              else {
-                resetErrors.email = "User with supplied email address does not exist"
-              }
-            });
+            res.send({ id: user.id, activated: user.activated });
           });
         });
-      }
+      });
     });
-    if (!_.isEmpty(resetErrors)) {
-      return res.send({ errors: resetErrors });  
-    } 
   });
 
   app.get("/auth/delete_user", requireLogin, (req, res) => {
     const { user } = req;
-
-    User.deleteOne(
-      { '_id': user._id }
-    ).then(user => {
-      if (user) {
-        res.sendStatus(200);
+    try {
+      const info = deleteUserById.run(String(user.id));
+      if (info.changes) {
+        req.logout();
+        return res.sendStatus(200);
       }
-      else {
-        return res.sendStatus(500);
-      }
-    });
-    // Delete successful, log them out
-    req.logout();
-  }); 
+      return res.sendStatus(500);
+    } catch (e) {
+      return res.sendStatus(500);
+    }
+  });
 
   app.post("/auth/update_email", requireLogin, throttle({ "rate": "5/m" }), (req, res) => {
     const { email } = req.body.data;
@@ -384,63 +390,60 @@ module.exports = app => {
     }
 
     // When the user updates their email, they must re-verify the address
-    User.findOneAndUpdate(
-      { '_id': user._id }, 
-      { 'email': email, activated: false } 
-    ).then(user => {
-      if (user) {
-        let mailer = nodemailer.createTransport({
-          host: "mail.gandi.net",
-          port: 465,
-          secure: true,
-          auth: {
-            user: keys.emailUser, 
-            pass: keys.emailPass 
-          }
-        });
-        
-        // Set our mailer params
-        let options = {
-          viewEngine: {
-            extname: '.html', // handlebars extension
-            layoutsDir: path.join(__dirname, './email/update-email'), // location of handlebars templates
-            defaultLayout: 'index',
-            viewPath: path.join(__dirname, './email/update-email'),
-            partialsDir: path.join(__dirname, './email/update-email')
-          },
-          viewPath: path.join(__dirname, './email/update-email'),
-          extName: '.html'
-        }
-        
-        mailer.use('compile', hbs(options));
-
-        // Generate a user verfification token
-        const verificationToken = jwt.sign({
-          data: email
-        }, keys.localSecret, { expiresIn: '7d' });
-
-        mailer.sendMail({
-          from: keys.emailUser, // sender address
-          to: email, // list of receivers
-          subject: 'Locc.it: Email update', // Subject line
-          template: 'index',
-          context: {
-            verificationToken : system.BASE_URL + '/auth/local/verify/' + verificationToken
-          },
-          attachments:[{
-            filename : 'loccit.png',
-            path: path.join(__dirname, 'email/images/loccit.png'),
-            cid : 'logo@locc.it'
-          }],
-        });
-        return res.send("OK");
-      } 
-      else {
-        // Failed to find a result
+    try {
+      const info = updateEmailById.run(email, String(user.id));
+      if (!info.changes) {
         emailErrors.email = "Account not found.";
         return res.send({ errors: emailErrors });
       }
-    });
+
+      let mailer = nodemailer.createTransport({
+        host: "mail.gandi.net",
+        port: 465,
+        secure: true,
+        auth: {
+          user: keys.emailUser,
+          pass: keys.emailPass
+        }
+      });
+
+      let options = {
+        viewEngine: {
+          extname: '.html',
+          layoutsDir: path.join(__dirname, './email/update-email'),
+          defaultLayout: 'index',
+          viewPath: path.join(__dirname, './email/update-email'),
+          partialsDir: path.join(__dirname, './email/update-email')
+        },
+        viewPath: path.join(__dirname, './email/update-email'),
+        extName: '.html'
+      }
+
+      mailer.use('compile', hbs(options));
+
+      const verificationToken = jwt.sign({
+        data: email
+      }, keys.localSecret, { expiresIn: '7d' });
+
+      mailer.sendMail({
+        from: keys.emailUser,
+        to: email,
+        subject: 'Locc.it: Email update',
+        template: 'index',
+        context: {
+          verificationToken : system.BASE_URL + '/auth/local/verify/' + verificationToken
+        },
+        attachments:[{
+          filename : 'loccit.png',
+          path: path.join(__dirname, 'email/images/loccit.png'),
+          cid : 'logo@locc.it'
+        }],
+      });
+      return res.send("OK");
+    } catch (e) {
+      emailErrors.email = "Account not found.";
+      return res.send({ errors: emailErrors });
+    }
   });
 
   app.post("/auth/update_password", requireLogin, throttle({ "rate": "5/m" }), (req, res) => {
@@ -461,16 +464,15 @@ module.exports = app => {
       port: 465,
       secure: true,
       auth: {
-        user: keys.emailUser, 
-        pass: keys.emailPass 
+        user: keys.emailUser,
+        pass: keys.emailPass
       }
     });
 
-    // Set our mailer params
     let options = {
       viewEngine: {
-        extname: '.html', // handlebars extension
-        layoutsDir: path.join(__dirname, './email/password-change'), // location of handlebars templates
+        extname: '.html',
+        layoutsDir: path.join(__dirname, './email/password-change'),
         defaultLayout: 'index',
         viewPath: path.join(__dirname, './email/password-change'),
         partialsDir: path.join(__dirname, './email/password-change')
@@ -478,7 +480,7 @@ module.exports = app => {
       viewPath: path.join(__dirname, './email/password-change'),
       extName: '.html'
     }
-    
+
     mailer.use('compile', hbs(options));
 
     bcrypt.genSalt(10, (error, salt) => {
@@ -486,29 +488,22 @@ module.exports = app => {
         if (error) {
           throw error;
         }
-        User.findOneAndUpdate(
-          { '_id': user._id }, 
-          { 'password': hash } 
-        ).then(user => {
-          if (user) {
-            mailer.sendMail({
-              from: keys.emailUser, // sender address
-              to: user.email, // list of receivers
-              subject: 'Locc.it: Password change', // Subject line
-              template: 'index',
-              attachments:[{
-                filename : 'loccit.png',
-                path: path.join(__dirname, 'email/images/loccit.png'),
-                cid : 'logo@locc.it'
-              }],
-            });
-            res.sendStatus(200);
-          } 
-          else {
-            // Failed to find a result
-            return res.sendStatus(500);
-          }
+        const info = updatePasswordById.run(hash, String(user.id));
+        if (!info.changes) {
+          return res.sendStatus(500);
+        }
+        mailer.sendMail({
+          from: keys.emailUser,
+          to: user.email,
+          subject: 'Locc.it: Password change',
+          template: 'index',
+          attachments:[{
+            filename : 'loccit.png',
+            path: path.join(__dirname, 'email/images/loccit.png'),
+            cid : 'logo@locc.it'
+          }],
         });
+        res.sendStatus(200);
       });
     });
   });

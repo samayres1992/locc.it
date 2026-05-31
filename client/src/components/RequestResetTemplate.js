@@ -25,7 +25,15 @@ class RequestResetTemplate extends Component {
     this.setState({
       email: email
     });
-    this.recaptcha.execute('request_new_password');
+
+    if (!process.env.REACT_APP_GOOGLE_SITE_KEY) {
+      this.verifiedRequestNewPasswordSubmit();
+      return;
+    }
+
+    if (this.recaptcha && typeof this.recaptcha.execute === 'function') {
+      this.recaptcha.execute();
+    }
   }
 
   verifiedRequestNewPasswordSubmit = () => {

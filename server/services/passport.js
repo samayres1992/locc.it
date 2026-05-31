@@ -3,116 +3,130 @@ const passport = require('passport');
 const gitHubStrategy = require('passport-github2').Strategy;
 const googleStrategy = require('passport-google-oauth20').Strategy;
 const localStrategy = require('passport-local').Strategy;
-const mongoose = require('mongoose');
+const Moment = require('moment');
+const { db, uuid } = require('../db');
 const keys = require('../config/keys');
 const system = require('../config/system');
-const bcrypt = require("bcrypt");
-const _ = require("lodash");
+const bcrypt = require("bcryptjs");
 
-// Model for our users
-const User = mongoose.model('users');
+// Prepared statements for the auth flow.
+const findUserById       = db.prepare(`SELECT * FROM users WHERE id = ?`);
+const findUserByGoogleId = db.prepare(`SELECT * FROM users WHERE google_id = ?`);
+const findUserByGithubId = db.prepare(`SELECT * FROM users WHERE github_id = ?`);
+const findUserByEmail    = db.prepare(`SELECT * FROM users WHERE email = ?`);
+const insertOAuthUser    = db.prepare(`
+  INSERT INTO users (id, google_id, github_id, email, activated, activate_by)
+  VALUES (@id, @google_id, @github_id, @email, 1, @activate_by)
+`);
 
+// Sessions store just the user id (a UUID string); deserialize fetches the
+// row each request. Cheap with SQLite — one prepared SELECT by primary key.
 passport.serializeUser((user, done) => {
-  done(null, user._id );
+  done(null, user.id);
 });
 
 passport.deserializeUser((id, done) => {
-  User.findById(id, (err, user) => {
-    done(err, user);
-  });
+  try {
+    const user = findUserById.get(String(id));
+    done(null, user || null);
+  } catch (err) {
+    done(err, null);
+  }
 });
 
-// Create a strategy for passport
-passport.use(
-  // Google
-  new googleStrategy({
-    clientID: keys.googleClientId,
-    clientSecret: keys.googleClientSecret,
-    callbackURL: system.BASE_URL + '/auth/google/callback'
-  }, 
-  async (accessToken, refreshToken, profile, done) => {
-    // Check if user already exists through ID
-    const existingUserID = await User.findOne({ googleId: profile.id });
+// Google
+if (keys.googleClientId && keys.googleClientSecret) {
+  passport.use(
+    new googleStrategy({
+      clientID: keys.googleClientId,
+      clientSecret: keys.googleClientSecret,
+      callbackURL: system.BASE_URL + '/auth/google/callback'
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const existingByGoogleId = findUserByGoogleId.get(profile.id);
+        if (existingByGoogleId) return done(null, existingByGoogleId);
 
-    // Check if email exists (through other Auth method)
-    const existingUserEmail = await User.findOne({ email: profile._json.email});
+        const email = profile._json && profile._json.email;
+        if (email) {
+          const existingByEmail = findUserByEmail.get(email);
+          if (existingByEmail) return done(null, existingByEmail);
+        }
 
-    if(existingUserID) {
-      // User with that ID already exists
-      return done(null, existingUserID);
-    }
-    else if (existingUserEmail) {
-      // User with that Email already exists
-      return done(null, existingUserEmail);
-    }
-    // New user, save them to the DB
-    const user = await new User({
-      googleId: profile.id,
-      activated: true,
-      email: profile._json.email
-    }).save();
-    done(null, user);
-  })
-);
-  
-passport.use(
-  // Github
-  new gitHubStrategy({
-    clientID: keys.githubPubKey,
-    clientSecret: keys.githubSecretKey,
-    callbackURL: system.BASE_URL + '/auth/github/callback'
-  }, 
-  async (accessToken, refreshToken, profile, done) => {
-    // Check if user already exists through ID
-    const existingUserID = await User.findOne({ githubId: profile.id });
+        // New user — OAuth identities are auto-activated.
+        const newUser = {
+          id: uuid(),
+          google_id: profile.id,
+          github_id: null,
+          email: email || null,
+          activate_by: Moment().add(7, 'days').toISOString(),
+        };
+        insertOAuthUser.run(newUser);
+        return done(null, findUserById.get(newUser.id));
+      } catch (err) {
+        return done(err, null);
+      }
+    })
+  );
+}
 
-    // Check if email exists (through other Auth method)
-    const existingUserEmail = await User.findOne({ email: profile._json.email});
+// Github
+if (keys.githubPubKey && keys.githubSecretKey) {
+  passport.use(
+    new gitHubStrategy({
+      clientID: keys.githubPubKey,
+      clientSecret: keys.githubSecretKey,
+      callbackURL: system.BASE_URL + '/auth/github/callback'
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const existingByGithubId = findUserByGithubId.get(profile.id);
+        if (existingByGithubId) return done(null, existingByGithubId);
 
-    if(existingUserID) {
-      // User with that ID already exists
-      return done(null, existingUserID);
-    }
-    else if (existingUserEmail) {
-      // User with that Email already exists
-      return done(null, existingUserEmail);
-    }
-    // New user, save them to the DB
-    const user = await new User({
-      githubId: profile.id,
-      activated: true,
-      email: profile._json.email
-    }).save();
-    done(null, user);
-  })
-);
+        const email = profile._json && profile._json.email;
+        if (email) {
+          const existingByEmail = findUserByEmail.get(email);
+          if (existingByEmail) return done(null, existingByEmail);
+        }
+
+        const newUser = {
+          id: uuid(),
+          google_id: null,
+          github_id: profile.id,
+          email: email || null,
+          activate_by: Moment().add(7, 'days').toISOString(),
+        };
+        insertOAuthUser.run(newUser);
+        return done(null, findUserById.get(newUser.id));
+      } catch (err) {
+        return done(err, null);
+      }
+    })
+  );
+}
 
 passport.use(new localStrategy({
     usernameField: 'email',
     passwordField: 'password',
     session: true,
     passReqToCallback: true
-  }, 
+  },
   (req, email, password, done) => {
-    User.findOne(
-      { email: email }
-    ).then(user => {
-      if (!user) {
-        // No user found
+    try {
+      const user = findUserByEmail.get(email);
+      if (!user || !user.password) {
+        // No user, or an OAuth-only account with no local password set.
         return done(null, null);
       }
-      //Check password
       bcrypt.compare(password, user.password).then(isMatch => {
-        if (!isMatch) {
-          return done(null, null);
-        }
-        else {
-          req.login(user, (err) => {
-            if (err) { return next(err); }
-            return done(null, user);
-          });
-        }
+        if (!isMatch) return done(null, null);
+        req.login(user, (err) => {
+          if (err) return done(err);
+          return done(null, user);
+        });
       });
-    });
+    } catch (err) {
+      return done(err);
+    }
   }
 ));

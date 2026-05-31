@@ -1,33 +1,20 @@
 // Our requirements
 const express = require('express');
-const mongoose = require('mongoose');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
 const bodyParser = require('body-parser');
-const path = require('path');
 // Our secret keys
 const keys = require('./config/keys');
 // Env vars
 const system = require('./config/system');
-require('./models/User');
-require('./models/Encrypt');
+
+// Initialise SQLite (creates the file + applies schema on first boot).
+// Required before any route file so prepared statements compile against an
+// existing schema.
+require('./db');
+
+// Passport strategies hit the users table — require it after ./db is ready.
 require('./services/passport');
-
-// Let's connect to our DB
-try {
-  mongoose.connect(
-    keys.mongoURI,
-    { 
-      useNewUrlParser: true,
-      autoReconnect: true,
-      useFindAndModify: false,
-      useUnifiedTopology: true 
-    }
-  );
-} catch(error) {
-  console.log("Connection to mongoose error", error)
-}
-
 
 // Init express
 const app = express();

@@ -1,6 +1,6 @@
 import { SET_ERRORS, CLEAR_ERRORS } from '../actions/types'; 
 
-export default function (state = null, action) {
+export default function errorsReducer(state = null, action) {
   switch (action.type) {
     case SET_ERRORS:
       return action.payload

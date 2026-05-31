@@ -1,6 +1,6 @@
 import { CHECK_URL, DECRYPT_DATA, PASSCODE_DECRYPTED, FETCH_SECRET } from '../actions/types';
 
-export default function (state = null, action) {
+export default function decryptReducer(state = null, action) {
   switch (action.type) {
     case CHECK_URL:
       // Legacy server-side flow.

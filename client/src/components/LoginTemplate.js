@@ -41,7 +41,15 @@ class LoginTemplate extends Component {
       password: password
     });
     this.props.clearErrors();
-    this.recaptcha.execute('register');  
+
+    if (!process.env.REACT_APP_GOOGLE_SITE_KEY) {
+      this.verifiedRegisterSubmit();
+      return;
+    }
+
+    if (this.recaptcha && typeof this.recaptcha.execute === 'function') {
+      this.recaptcha.execute();
+    }
   }
 
   loginSubmit = ({ email, password }) => {

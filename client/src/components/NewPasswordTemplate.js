@@ -28,7 +28,15 @@ class NewPasswordTemplate extends Component {
     this.setState({
       password: password
     });
-    this.recaptcha.execute('new-password');
+
+    if (!process.env.REACT_APP_GOOGLE_SITE_KEY) {
+      this.verifiedPasswordSubmit();
+      return;
+    }
+
+    if (this.recaptcha && typeof this.recaptcha.execute === 'function') {
+      this.recaptcha.execute();
+    }
   }
 
   verifiedPasswordSubmit = () => {
