@@ -5,7 +5,7 @@
   "dependencies": {
     "antd": "^3.26.0",
     "antd-mobile": "^2.3.1",
-    "axios": "^1.16.1",
+    "axios": "^1.18.0",
     "circular-json": "^0.5.9",
     "classnames": "^2.2.6",
     "crypto-js": "^4.2.0",
