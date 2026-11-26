@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "antd": "^3.26.0",
+    "antd": "^6.6.4",
     "antd-mobile": "^2.3.1",
     "axios": "^1.18.0",
     "circular-json": "^0.5.9",
