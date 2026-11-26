@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "antd": "^6.6.4",
-    "antd-mobile": "^5.43.0",
+    "antd": "^3.26.20",
+    "antd-mobile": "^2.3.4",
     "axios": "^1.20.0",
     "circular-json": "^0.5.9",
     "classnames": "^2.2.6",
